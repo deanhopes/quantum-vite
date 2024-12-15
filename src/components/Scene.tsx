@@ -45,14 +45,6 @@ function AnimatedCan() {
                 ease: "power2.inOut"
             }, "<0.4");
 
-        // Add continuous floating rotation
-        gsap.to(canRef.current.rotation, {
-            y: Math.PI * 4,
-            duration: 12,
-            ease: "none",
-            repeat: -1
-        });
-
         return () => {
             tl.kill();
             gsap.killTweensOf(canRef.current.rotation);
@@ -185,12 +177,10 @@ export default function Scene() {
 
         gsap.set(containerRef.current, {
             opacity: 0,
-            scale: 0.95
         });
 
         gsap.to(containerRef.current, {
             opacity: 1,
-            scale: 1,
             duration: 1.2,
             ease: "power4.out"
         });
