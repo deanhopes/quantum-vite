@@ -1,11 +1,9 @@
-import Scene from './components/Scene';
-import PageContent from './components/PageContent';
+import QuantumPage from './components/QuantumPage';
 
 function App() {
     return (
         <main className="relative">
-            <Scene />
-            <PageContent />
+            <QuantumPage />
         </main>
     );
 }
