@@ -4,6 +4,7 @@ import { useEncryptionEffect } from '../hooks/useEncryptionEffect';
 
 interface QuantumLoaderProps {
     children: React.ReactNode;
+    onLoadComplete?: () => void;
 }
 
 // Enhanced random function with better distribution
@@ -27,28 +28,28 @@ const CIRCUIT_SYMBOLS = "━ ┃ ┏ ┓ ┗ ┛ ╋ ┣ ┫ ┳ ┻ ═ ║ ╔
 const MATRIX_CHARS = "αβγδεζηθικλμνξπρστυφχψω∀∃∄∅∈∉∊∋∌∍∎∏∐∑√∛∜∝∞∟∠∡∢∣";
 
 // Generate quantum particles with more properties
-const QUANTUM_PARTICLES = Array.from({ length: 35 }, (_, i) => ({
+const QUANTUM_PARTICLES = Array.from({ length: 150 }, (_, i) => ({
     id: i,
-    size: Math.random() * 5 + 1,
-    delay: Math.random() * 22,
+    size: random(0.5, 2),
+    delay: random(0, 15),
     symbol: QUANTUM_STATES.split(' ')[Math.floor(Math.random() * QUANTUM_STATES.split(' ').length)],
-    orbitRadius: random(30, 222),
-    orbitSpeed: random(1, 1),
-    phase: random(0, Math.PI * 1),
-    pulseSpeed: random(0.1, 0.2),
-    glowIntensity: random(0.5, 1)
+    orbitRadius: random(20, 150),
+    orbitSpeed: random(2, 4),
+    phase: random(0, Math.PI * 2),
+    pulseSpeed: random(0.5, 1),
+    glowIntensity: random(0.1, 0.3)
 }));
 
 // Generate circuit elements with more variety
-const CIRCUIT_ELEMENTS = Array.from({ length: 25 }, (_, i) => ({
+const CIRCUIT_ELEMENTS = Array.from({ length: 100 }, (_, i) => ({
     id: i + 1000,
     symbol: CIRCUIT_SYMBOLS[Math.floor(Math.random() * CIRCUIT_SYMBOLS.length)],
-    x: random(-1000, 1000),
-    y: random(-1000, 1000),
+    x: random(-1500, 1500),
+    y: random(-1500, 1500),
     rotation: random(0, 360),
-    scale: random(0.2, 0.5),
-    opacity: random(0.1, 0.2),
-    rotationSpeed: random(0.5, 2)
+    scale: random(0.1, 0.3),
+    opacity: random(0.05, 0.15),
+    rotationSpeed: random(0.2, 0.8)
 }));
 
 // Generate matrix rain with quantum characters
@@ -63,9 +64,10 @@ const createMatrixRain = () => {
     }));
 };
 
-export function QuantumLoader({ children }: QuantumLoaderProps) {
+export function QuantumLoader({ children, onLoadComplete }: QuantumLoaderProps) {
     const [showScene, setShowScene] = useState(false);
     const [progress, setProgress] = useState(0);
+    const [isUnmounting, setIsUnmounting] = useState(false);
     const progressBarRefs = useRef<(HTMLDivElement | null)[]>([]);
     const progressTextRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -109,12 +111,12 @@ export function QuantumLoader({ children }: QuantumLoaderProps) {
                 opacity: 0
             });
 
-            // Add floating animation
+            // Add subtle floating animation
             gsap.to(element, {
-                y: `+=${random(-20, 20)}`,
-                x: `+=${random(-20, 20)}`,
-                rotation: `+=${random(-45, 45)}`,
-                duration: random(2, 4),
+                y: `+=${random(-10, 10)}`,
+                x: `+=${random(-10, 10)}`,
+                rotation: `+=${random(-15, 15)}`,
+                duration: random(3, 6),
                 repeat: -1,
                 yoyo: true,
                 ease: "sine.inOut"
@@ -123,9 +125,9 @@ export function QuantumLoader({ children }: QuantumLoaderProps) {
             initTl.to(element, {
                 scale: circuit.scale,
                 opacity: circuit.opacity,
-                duration: 1,
-                ease: "power2.out"
-            }, random(0, 0.5));
+                duration: 1.5,
+                ease: "power1.out"
+            }, random(0, 1));
         });
 
         // Initialize particles with enhanced orbital motion
@@ -140,10 +142,10 @@ export function QuantumLoader({ children }: QuantumLoaderProps) {
                 rotation: random(0, 360)
             });
 
-            // Add glow pulse animation
+            // Subtle glow pulse animation
             gsap.to(particle, {
-                filter: `blur(0.5px) brightness(${1 + p.glowIntensity * 2})`,
-                duration: random(1, 2),
+                filter: `blur(0.3px) brightness(${1 + p.glowIntensity})`,
+                duration: random(2, 3),
                 repeat: -1,
                 yoyo: true,
                 ease: "sine.inOut"
@@ -180,7 +182,16 @@ export function QuantumLoader({ children }: QuantumLoaderProps) {
 
         const tl = gsap.timeline({
             onComplete: () => {
-                const fadeOut = gsap.timeline();
+                const fadeOut = gsap.timeline({
+                    onComplete: () => {
+                        setIsUnmounting(true);
+                        // Slight delay before triggering the complete callback
+                        setTimeout(() => {
+                            setShowScene(true);
+                            onLoadComplete?.();
+                        }, 500);
+                    }
+                });
 
                 // Enhanced particle implosion
                 particlesRef.current.forEach((particle) => {
@@ -223,8 +234,7 @@ export function QuantumLoader({ children }: QuantumLoaderProps) {
                 fadeOut.to(containerRef.current, {
                     opacity: 0,
                     duration: 0.5,
-                    ease: "power2.inOut",
-                    onComplete: () => setShowScene(true)
+                    ease: "power2.inOut"
                 }, 0.3);
             }
         });
@@ -370,114 +380,113 @@ export function QuantumLoader({ children }: QuantumLoaderProps) {
             gsap.killTweensOf(circuitElementsRef.current);
             gsap.killTweensOf(binaryRainRef.current);
         };
-    }, []);
+    }, [onLoadComplete]);
+
+    if (isUnmounting) return null;
 
     return (
-        <>
-            <div
-                ref={containerRef}
-                className="fixed inset-0 bg-quantum-black z-50 flex items-center justify-center overflow-hidden"
-                role="progressbar"
-                aria-valuemin={0}
-                aria-valuemax={100}
-                aria-valuenow={progress}
-            >
-                {/* Matrix rain effect */}
-                {createMatrixRain().map((rain, i) => (
-                    <div
-                        key={i}
-                        ref={(el) => setBinaryRainRef(el, i)}
-                        className="absolute font-geist-mono text-quantum-white/30 pointer-events-none transform"
-                        style={{
-                            fontSize: '14px',
-                            willChange: 'transform, opacity',
-                            transform: `scale(${rain.scale})`,
-                            textShadow: '0 0 8px rgba(255,255,255,0.5)'
-                        }}
-                    >
-                        {rain.char}
-                    </div>
-                ))}
+        <div
+            ref={containerRef}
+            className="fixed inset-0 bg-quantum-black z-50 flex items-center justify-center overflow-hidden"
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={progress}
+        >
+            {/* Matrix rain effect */}
+            {createMatrixRain().map((rain, i) => (
+                <div
+                    key={i}
+                    ref={(el) => setBinaryRainRef(el, i)}
+                    className="absolute font-geist-mono text-quantum-white/30 pointer-events-none transform"
+                    style={{
+                        fontSize: '14px',
+                        willChange: 'transform, opacity',
+                        transform: `scale(${rain.scale})`,
+                        textShadow: '0 0 8px rgba(255,255,255,0.5)'
+                    }}
+                >
+                    {rain.char}
+                </div>
+            ))}
 
-                {/* Circuit background elements with enhanced styling */}
-                {CIRCUIT_ELEMENTS.map((circuit) => (
-                    <div
-                        key={circuit.id}
-                        ref={(el) => setCircuitElementRef(el, circuit.id - 1000)}
-                        className="absolute font-geist-mono text-quantum-white pointer-events-none flex items-center justify-center transform"
-                        style={{
-                            fontSize: '24px',
-                            willChange: 'transform, opacity',
-                            textShadow: '0 0 10px rgba(255,255,255,0.3)',
-                            filter: 'blur(0.5px)'
-                        }}
-                    >
-                        {circuit.symbol}
-                    </div>
-                ))}
+            {/* Circuit background elements with enhanced subtle styling */}
+            {CIRCUIT_ELEMENTS.map((circuit) => (
+                <div
+                    key={circuit.id}
+                    ref={(el) => setCircuitElementRef(el, circuit.id - 1000)}
+                    className="absolute font-geist-mono text-quantum-white/20 pointer-events-none flex items-center justify-center transform"
+                    style={{
+                        fontSize: '16px',
+                        willChange: 'transform, opacity',
+                        textShadow: '0 0 5px rgba(255,255,255,0.15)',
+                        filter: 'blur(0.3px)'
+                    }}
+                >
+                    {circuit.symbol}
+                </div>
+            ))}
 
-                {/* Quantum particles with enhanced effects */}
-                {QUANTUM_PARTICLES.map((particle) => (
-                    <div
-                        key={particle.id}
-                        ref={(el) => setParticleRef(el, particle.id)}
-                        className="absolute font-geist-mono text-quantum-white/50 pointer-events-none flex items-center justify-center transform"
-                        style={{
-                            width: `${particle.size * 10}px`,
-                            height: `${particle.size * 10}px`,
-                            fontSize: `${particle.size * 4}px`,
-                            filter: `blur(0.5px) brightness(${1 + particle.glowIntensity})`,
-                            willChange: 'transform, opacity',
-                            textShadow: `0 0 ${particle.size * 2}px rgba(255,255,255,${particle.glowIntensity})`
-                        }}
-                    >
-                        {particle.symbol}
-                    </div>
-                ))}
+            {/* Quantum particles with subtle effects */}
+            {QUANTUM_PARTICLES.map((particle) => (
+                <div
+                    key={particle.id}
+                    ref={(el) => setParticleRef(el, particle.id)}
+                    className="absolute font-geist-mono text-quantum-white/30 pointer-events-none flex items-center justify-center transform"
+                    style={{
+                        width: `${particle.size * 8}px`,
+                        height: `${particle.size * 8}px`,
+                        fontSize: `${particle.size * 3}px`,
+                        filter: `blur(0.3px) brightness(${1 + particle.glowIntensity * 0.5})`,
+                        willChange: 'transform, opacity',
+                        textShadow: `0 0 ${particle.size}px rgba(255,255,255,${particle.glowIntensity * 0.5})`
+                    }}
+                >
+                    {particle.symbol}
+                </div>
+            ))}
 
-                <div className="w-[80vw] max-w-2xl space-y-6 relative">
-                    <div
-                        ref={progressTextRef}
-                        className="text-quantum-white font-geist-mono text-2xl text-center mb-4 h-8 transform"
-                        style={{ 
-                            willChange: 'transform, opacity',
-                            textShadow: '0 0 15px rgba(255,255,255,0.5)'
-                        }}
-                    >
-                        {LOADING_TEXTS[0]}
-                    </div>
+            <div className="w-[80vw] max-w-2xl space-y-6 relative">
+                <div
+                    ref={progressTextRef}
+                    className="text-quantum-white font-geist-mono text-2xl text-center mb-4 h-8 transform"
+                    style={{
+                        willChange: 'transform, opacity',
+                        textShadow: '0 0 15px rgba(255,255,255,0.5)'
+                    }}
+                >
+                    {LOADING_TEXTS[0]}
+                </div>
 
-                    <div className="relative h-4 bg-quantum-white/10 overflow-hidden rounded-sm backdrop-blur-sm">
-                        {[0, 1, 2].map((index) => (
-                            <div
-                                key={index}
-                                ref={(el) => setProgressBarRef(el, index)}
-                                className={`absolute top-0 left-0 h-full w-0 bg-quantum-white/80
-                                    ${index === 1 ? 'mix-blend-difference' : ''}
-                                    ${index === 2 ? 'mix-blend-overlay' : ''}`}
-                                style={{
-                                    boxShadow: '0 0 20px rgba(255,255,255,0.5), 0 0 40px rgba(255,255,255,0.3)',
-                                    transform: `translateY(${index * 33.33}%)`,
-                                    willChange: 'transform, width, opacity',
-                                    backdropFilter: 'blur(4px)'
-                                }}
-                            />
-                        ))}
+                <div className="relative h-4 bg-quantum-white/10 overflow-hidden rounded-sm backdrop-blur-sm">
+                    {[0, 1, 2].map((index) => (
+                        <div
+                            key={index}
+                            ref={(el) => setProgressBarRef(el, index)}
+                            className={`absolute top-0 left-0 h-full w-0 bg-quantum-white/80
+                                ${index === 1 ? 'mix-blend-difference' : ''}
+                                ${index === 2 ? 'mix-blend-overlay' : ''}`}
+                            style={{
+                                boxShadow: '0 0 20px rgba(255,255,255,0.5), 0 0 40px rgba(255,255,255,0.3)',
+                                transform: `translateY(${index * 33.33}%)`,
+                                willChange: 'transform, width, opacity',
+                                backdropFilter: 'blur(4px)'
+                            }}
+                        />
+                    ))}
 
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-quantum-white/20 to-transparent animate-glitch" />
-                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-quantum-white/20 to-transparent animate-glitch" />
+                </div>
 
-                    <div 
-                        className="text-quantum-white/50 font-geist-mono text-sm text-center transform"
-                        style={{
-                            textShadow: '0 0 8px rgba(255,255,255,0.3)'
-                        }}
-                    >
-                        {progress}% COMPLETE
-                    </div>
+                <div
+                    className="text-quantum-white/50 font-geist-mono text-sm text-center transform"
+                    style={{
+                        textShadow: '0 0 8px rgba(255,255,255,0.3)'
+                    }}
+                >
+                    {progress}% COMPLETE
                 </div>
             </div>
-            {showScene && children}
-        </>
+        </div>
     );
 } 

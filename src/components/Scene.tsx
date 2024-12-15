@@ -226,16 +226,6 @@ export default function Scene() {
                     <color attach="background" args={['#000000']} />
                     <fog attach="fog" args={['#000000', 5, 15]} />
 
-                    <OrbitControls
-                        makeDefault
-                        enableDamping
-                        dampingFactor={0.05}
-                        minDistance={2}
-                        maxDistance={10}
-                        minPolarAngle={Math.PI / 4}
-                        maxPolarAngle={Math.PI / 1.5}
-                    />
-
                     <Suspense fallback={null}>
                         <SceneContent />
                     </Suspense>
