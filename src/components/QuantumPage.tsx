@@ -39,7 +39,7 @@ function AnimatedCan() {
         current: 0,
         target: 0,
         defaultRotation: 0,
-        sideRotation: Math.PI / 2, // 90 degrees for opposite orientation
+        sideRotation: Math.PI / 2,
     })
 
     // Initial animation timeline
@@ -77,11 +77,13 @@ function AnimatedCan() {
 
         if (isHorizontalSection) {
             // Adjust the timing of the rotation to match the sequence
-            // Start rotating earlier and complete by the third panel
             const rotationProgress = Math.min(
                 Math.max((scrollProgress - 0.1) * 1.2, 0),
                 1
             )
+
+            // Calculate landing progress near the end of horizontal section
+            const landingProgress = Math.max(0, (scrollProgress - 0.8) * 5) // Starts landing effect at 80% through
 
             rotationRef.current.target = THREE.MathUtils.lerp(
                 rotationRef.current.defaultRotation,
@@ -89,34 +91,59 @@ function AnimatedCan() {
                 rotationProgress
             )
 
-            // Add slight position adjustment during rotation
             if (canRef.current) {
-                // Move can slightly up during rotation to maintain visual center
-                canRef.current.position.y = THREE.MathUtils.lerp(
-                    0,
-                    0.3,
-                    rotationProgress
-                )
+                // Adjust vertical position for landing effect
+                const baseHeight = THREE.MathUtils.lerp(0, 0.3, rotationProgress);
+                const finalHeight = THREE.MathUtils.lerp(
+                    baseHeight,
+                    -0.5, // Lower final landing position
+                    landingProgress
+                );
+                canRef.current.position.y = finalHeight;
 
-                // Move can slightly forward during rotation
-                canRef.current.position.z = THREE.MathUtils.lerp(
-                    0,
-                    -0.5,
-                    rotationProgress
-                )
+                // Adjust z-position during rotation and landing
+                canRef.current.position.z = THREE.MathUtils.lerp(0, -0.5, rotationProgress);
+
+                // Add slight bounce effect during landing
+                if (landingProgress > 0) {
+                    const bounce = Math.sin(landingProgress * Math.PI) * 0.1;
+                    canRef.current.position.y += bounce * (1 - landingProgress);
+                }
             }
         } else {
-            // Outside horizontal section, return to upright position
-            rotationRef.current.target = rotationRef.current.defaultRotation
-            if (canRef.current) {
-                canRef.current.position.y = 0
-                canRef.current.position.z = 0
+            // After horizontal section, flip the can upright
+            const postScrollProgress = Math.min(
+                window.scrollY - window.innerHeight,
+                1
+            )
+
+            if (postScrollProgress > 0) {
+                // Smoothly rotate back to upright position
+                rotationRef.current.target = THREE.MathUtils.lerp(
+                    rotationRef.current.sideRotation,
+                    rotationRef.current.defaultRotation,
+                    postScrollProgress
+                )
+
+                // Smoothly move back to center position
+                if (canRef.current) {
+                    canRef.current.position.y = THREE.MathUtils.lerp(
+                        -0.5, // Landing position
+                        0, // Final center position
+                        postScrollProgress
+                    )
+                    canRef.current.position.z = THREE.MathUtils.lerp(
+                        -0.5,
+                        0,
+                        postScrollProgress
+                    )
+                }
             }
         }
 
         // Smoother rotation transition
         rotationRef.current.current +=
-            (rotationRef.current.target - rotationRef.current.current) * 0.05 // Reduced from 0.1 for smoother motion
+            (rotationRef.current.target - rotationRef.current.current) * 0.05
 
         // Apply rotations
         canRef.current.rotation.z = rotationRef.current.current
@@ -161,7 +188,113 @@ function AnimatedCan() {
     )
 }
 
+function Floor() {
+    const floorRef = useRef<THREE.Mesh>(null)
+    const {scrollProgress, isHorizontalSection} = useScrollContext()
+    const rotationRef = useRef({
+        current: 0,
+        target: 0,
+        defaultRotation: -Math.PI / 2,
+        sideRotation: 0,
+    })
+
+    useFrame(() => {
+        if (!floorRef.current) return
+
+        // Floor opacity logic
+        const floorOpacity = isHorizontalSection
+            ? Math.max(0, (scrollProgress - 0.7) * 3.33)
+            : 1
+
+        if (floorRef.current.material instanceof THREE.Material) {
+            floorRef.current.material.opacity = floorOpacity
+        }
+
+        // Floor rotation logic - synced with can
+        if (isHorizontalSection) {
+            const rotationProgress = Math.min(
+                Math.max((scrollProgress - 0.1) * 1.2, 0),
+                1
+            )
+
+            rotationRef.current.target = THREE.MathUtils.lerp(
+                rotationRef.current.defaultRotation,
+                rotationRef.current.sideRotation,
+                rotationProgress
+            )
+        } else {
+            // After horizontal section, rotate back
+            const postScrollProgress = Math.min(
+                window.scrollY - window.innerHeight,
+                1
+            )
+
+            if (postScrollProgress > 0) {
+                rotationRef.current.target = THREE.MathUtils.lerp(
+                    rotationRef.current.sideRotation,
+                    rotationRef.current.defaultRotation,
+                    postScrollProgress
+                )
+            }
+        }
+
+        // Smooth rotation transition
+        rotationRef.current.current +=
+            (rotationRef.current.target - rotationRef.current.current) * 0.05
+
+        // Apply rotation
+        floorRef.current.rotation.x = rotationRef.current.current
+    })
+
+    return (
+        <mesh
+            ref={floorRef}
+            rotation={[-Math.PI / 2, 0, 0]}
+            position={[0, -0.5, 0]}
+            receiveShadow
+        >
+            <planeGeometry args={[50, 50]} />
+            <meshStandardMaterial
+                color='#101010'
+                transparent
+                opacity={0}
+                roughness={0.7}
+                metalness={0.1}
+            />
+        </mesh>
+    )
+}
+
 function SceneContent() {
+    const cameraRef = useRef()
+    const {scrollProgress, isHorizontalSection} = useScrollContext()
+
+    useFrame(({ camera }) => {
+        if (!isHorizontalSection) return;
+
+        // Define camera parameters
+        const radius = 4; // Distance from camera to can
+        const centerPoint = new THREE.Vector3(0, 0, 0); // Center point (where the can is)
+        const cameraHeight = 1.5; // Raise camera slightly to see the landing better
+        
+        // Calculate target rotation angle (0 to 90 degrees)
+        const rotationAngle = THREE.MathUtils.lerp(0, Math.PI / 2, scrollProgress);
+        
+        // Calculate camera position on the circular path
+        const newX = radius * Math.sin(rotationAngle);
+        const newZ = radius * Math.cos(rotationAngle);
+        
+        // Update camera position with fixed height
+        camera.position.x = newX;
+        camera.position.y = cameraHeight; // Keep camera slightly elevated
+        camera.position.z = newZ;
+        
+        // Adjust lookAt target to be slightly lower for better perspective
+        const lookAtPoint = new THREE.Vector3(0, -0.5, 0); // Look slightly down
+        camera.lookAt(lookAtPoint);
+        camera.updateProjectionMatrix();
+    })
+
     return (
         <>
             <Environment preset='studio' />
@@ -186,7 +319,7 @@ function SceneContent() {
                 color='#b1e1ff'
             />
             <ContactShadows
-                position={[0, -3, 0]}
+                position={[0, -0.49, 0]} // Slightly above the floor
                 opacity={0.4}
                 scale={20}
                 blur={2}
@@ -194,6 +327,7 @@ function SceneContent() {
                 resolution={512}
                 color='#000000'
             />
+            <Floor />
             <AnimatedCan />
             <Preload all />
         </>
