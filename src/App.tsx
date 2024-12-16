@@ -1,11 +1,11 @@
-import QuantumPage from './components/QuantumPage';
+import QuantumPage from "./components/QuantumPage"
 
 function App() {
     return (
-        <main className="relative">
+        <main className='relative'>
             <QuantumPage />
         </main>
-    );
+    )
 }
 
-export default App;
+export default App
