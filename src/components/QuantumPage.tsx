@@ -329,6 +329,77 @@ const QuantumPage = () => {
                     </div>
                 </section>
 
+                <section className='h-screen flex flex-col items-center justify-center'>
+                    <div className='container mx-auto grid grid-cols-12 gap-8 px-8'>
+                        {/* Left side - Large heading */}
+                        <div className='col-span-6'>
+                            <h2 className='text-white font-serif text-5xl leading-tight'>
+                                When we first announced
+                                <br />
+                                a beverage that could alter
+                                <br />
+                                reality, they called us mad.
+                                <br />
+                                <br />
+                                88 billion successful
+                                <br />
+                                reality shifts later, they
+                                <br />
+                                call us the future.
+                            </h2>
+                        </div>
+
+                        {/* Right side - Reviews */}
+                        <div className='col-span-5 col-start-8 space-y-8'>
+                            {/* Review 1 */}
+                            <div className='space-y-4'>
+                                <div className='flex'>
+                                    {[...Array(5)].map((_, i) => (
+                                        <span
+                                            key={i}
+                                            className='text-white text-xl'
+                                        >
+                                            ★
+                                        </span>
+                                    ))}
+                                </div>
+                                <p className='text-white/90 font-mono text-sm leading-relaxed'>
+                                    Yesterday, I made the worst presentation of
+                                    my career. Or I would have, if ctrl-z hadn't
+                                    helped me find the timeline where I
+                                    remembered to actually save my slides. The
+                                    look on my alternate self's face was
+                                    priceless. Worth every penny.
+                                </p>
+                            </div>
+
+                            {/* Review 2 */}
+                            <div className='space-y-4'>
+                                <div className='flex'>
+                                    {[...Array(5)].map((_, i) => (
+                                        <span
+                                            key={i}
+                                            className='text-white text-xl'
+                                        >
+                                            ★
+                                        </span>
+                                    ))}
+                                </div>
+                                <p className='text-white/90 font-mono text-sm leading-relaxed'>
+                                    Used to spend hours overthinking my
+                                    decisions. Now I just ctrl-z through a few
+                                    realities until I find the one that clicks.
+                                    Though I should mention - don't try it
+                                    during a job interview. Explaining why
+                                    you're suddenly speaking fluent Mandarin
+                                    when your resume says you only know English
+                                    can get... awkward.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 {/* Footer Section */}
                 <section className='h-screen flex items-center justify-center'>
                     <div className='text-center px-4'>
