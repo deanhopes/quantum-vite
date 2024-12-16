@@ -35,7 +35,12 @@ function AnimatedCan() {
     const floatRef = useRef<THREE.Group>(null)
     const [isReady, setIsReady] = useState(false)
     const {scrollProgress, isHorizontalSection} = useScrollContext()
-    const rotationRef = useRef({value: 0})
+    const rotationRef = useRef({
+        current: 0,
+        target: 0,
+        defaultRotation: 0,
+        sideRotation: Math.PI / 2, // 90 degrees for opposite orientation
+    })
 
     // Initial animation timeline
     useEffect(() => {
@@ -70,35 +75,60 @@ function AnimatedCan() {
     useFrame(() => {
         if (!canRef.current || !isReady) return
 
-        // Only rotate when in horizontal section
         if (isHorizontalSection) {
-            // Calculate rotation based on scroll progress
-            const targetRotation = scrollProgress * Math.PI * 2 // Full 360-degree rotation
+            // Adjust the timing of the rotation to match the sequence
+            // Start rotating earlier and complete by the third panel
+            const rotationProgress = Math.min(
+                Math.max((scrollProgress - 0.1) * 1.2, 0),
+                1
+            )
 
-            // Smooth lerp to target rotation
-            rotationRef.current.value +=
-                (targetRotation - rotationRef.current.value) * 0.1
+            rotationRef.current.target = THREE.MathUtils.lerp(
+                rotationRef.current.defaultRotation,
+                rotationRef.current.sideRotation,
+                rotationProgress
+            )
 
-            // Apply rotations
-            canRef.current.rotation.y = rotationRef.current.value
-            canRef.current.rotation.z =
-                Math.sin(rotationRef.current.value) * 0.2
+            // Add slight position adjustment during rotation
+            if (canRef.current) {
+                // Move can slightly up during rotation to maintain visual center
+                canRef.current.position.y = THREE.MathUtils.lerp(
+                    0,
+                    0.3,
+                    rotationProgress
+                )
+
+                // Move can slightly forward during rotation
+                canRef.current.position.z = THREE.MathUtils.lerp(
+                    0,
+                    -0.5,
+                    rotationProgress
+                )
+            }
+        } else {
+            // Outside horizontal section, return to upright position
+            rotationRef.current.target = rotationRef.current.defaultRotation
+            if (canRef.current) {
+                canRef.current.position.y = 0
+                canRef.current.position.z = 0
+            }
         }
 
-        // Update float position
-        if (floatRef.current) {
-            floatRef.current.position.y =
-                -0.5 + Math.sin(rotationRef.current.value) * 0.1
-        }
+        // Smoother rotation transition
+        rotationRef.current.current +=
+            (rotationRef.current.target - rotationRef.current.current) * 0.05 // Reduced from 0.1 for smoother motion
+
+        // Apply rotations
+        canRef.current.rotation.z = rotationRef.current.current
     })
 
     return (
         <Float
             ref={floatRef}
-            speed={2}
-            rotationIntensity={0.2}
-            floatIntensity={0.5}
-            floatingRange={[-0.1, 0.1]}
+            speed={1.5} // Reduced for more subtle movement
+            rotationIntensity={0.1} // Reduced for more subtle movement
+            floatIntensity={0.3} // Reduced for more subtle movement
+            floatingRange={[-0.05, 0.05]} // Reduced range
         >
             <Box
                 ref={canRef}
