@@ -12,7 +12,9 @@ import {
     Environment,
     MeshTransmissionMaterial,
     Preload,
+    shaderMaterial,
 } from "@react-three/drei"
+import { extend } from '@react-three/fiber'
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger)
@@ -30,28 +32,85 @@ const ScrollContext = React.createContext<ScrollContextType>({
 
 export const useScrollContext = () => useContext(ScrollContext)
 
-function AnimatedCan() {
-    const canRef = useRef<THREE.Mesh>(null)
-    const floatRef = useRef<THREE.Group>(null)
-    const [isReady, setIsReady] = useState(false)
-    const { scrollProgress, isHorizontalSection } = useScrollContext()
+// Add this new AtmosphereShaderMaterial definition
+const AtmosphereShaderMaterial = shaderMaterial(
+    // Uniforms
+    {
+        uTime: 0,
+        uAtmosphereColor: new THREE.Color(0x3388ff),
+        uAtmosphereStrength: 1.0
+    },
+    // Vertex shader
+    `
+        varying vec3 vNormal;
+        varying vec3 vWorldPosition;
+        
+        void main() {
+            vNormal = normalize(normalMatrix * normal);
+            vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+            vWorldPosition = worldPosition.xyz;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+    `,
+    // Fragment shader
+    `
+        uniform vec3 uAtmosphereColor;
+        uniform float uAtmosphereStrength;
+        uniform float uTime;
+        
+        varying vec3 vNormal;
+        varying vec3 vWorldPosition;
+        
+        void main() {
+            float intensity = pow(0.75 - dot(vNormal, vec3(0, 0, 1.0)), 2.0);
+            vec3 atmosphere = uAtmosphereColor * pow(intensity, 1.5) * uAtmosphereStrength;
+            
+            // Add some subtle animation
+            float pulse = sin(uTime * 0.5) * 0.1 + 0.9;
+            atmosphere *= pulse;
+            
+            gl_FragColor = vec4(atmosphere, intensity);
+        }
+    `
+)
+
+// Extend Three.js with our custom material
+extend({ AtmosphereShaderMaterial })
+
+// Add type declaration for the shader material
+declare global {
+    namespace JSX {
+        interface IntrinsicElements {
+            atmosphereShaderMaterial: any;
+        }
+    }
+}
+
+function QuantumGroup() {
+    const groupRef = useRef<THREE.Group>(null);
+    const canRef = useRef<THREE.Mesh>(null);
+    const [isReady, setIsReady] = useState(false);
+    const { scrollProgress, isHorizontalSection } = useScrollContext();
+    const materialRef = useRef<any>();
+
+    // Animation state
     const rotationRef = useRef({
         current: 0,
         target: 0,
         defaultRotation: 0,
-        sideRotation: Math.PI / 2, // 90 degrees for opposite orientation
-    })
+        sideRotation: Math.PI / 2,
+    });
 
     // Initial animation timeline
     useEffect(() => {
-        if (!canRef.current) return
+        if (!canRef.current || !groupRef.current) return;
 
-        const tl = gsap.timeline()
-        tl.to(canRef.current.position, {
+        const tl = gsap.timeline();
+        tl.to(groupRef.current.position, {
             y: 0,
             duration: 1.5,
             ease: "power2.out",
-        })
+        });
         tl.to(
             canRef.current.scale,
             {
@@ -62,126 +121,121 @@ function AnimatedCan() {
                 ease: "back.out(1.7)",
             },
             "-=1.2"
-        )
+        );
 
-        setIsReady(true)
+        setIsReady(true);
 
         return () => {
-            tl.kill()
-        }
-    }, [])
+            tl.kill();
+        };
+    }, []);
 
-    // Update rotation based on scroll progress
     useFrame((state) => {
-        if (!canRef.current || !isReady) return
+        if (!groupRef.current || !canRef.current || !isReady) return;
 
+        if (materialRef.current) {
+            materialRef.current.uTime = state.clock.elapsedTime;
+        }
+
+        // Calculate vertical position based on scroll before horizontal section
+        if (!isHorizontalSection) {
+            const scrollY = window.scrollY;
+            const heroHeight = window.innerHeight;
+            const heroProgress = Math.min(Math.max(scrollY / heroHeight, 0), 1);
+            // Lerp from -0.5 to 0 based on hero scroll progress
+            canRef.current.position.y = THREE.MathUtils.lerp(-0.5, 0, heroProgress);
+        }
+
+        // Existing horizontal section animation logic
         if (isHorizontalSection) {
-            // Smoother rotation timing curve
-            const rotationProgress = THREE.MathUtils.smoothstep(
-                Math.max((scrollProgress - 0.1) * 1.5, 0),
-                0,
-                1
-            )
-
+            const rotationProgress = Math.min(Math.max((scrollProgress - 0.1) * 1.2, 0), 1);
             rotationRef.current.target = THREE.MathUtils.lerp(
                 rotationRef.current.defaultRotation,
                 rotationRef.current.sideRotation,
                 rotationProgress
-            )
+            );
 
-            // Smoother camera movement during rotation
-            const cameraX = THREE.MathUtils.lerp(-2, -1.5, rotationProgress)
-            const cameraY = THREE.MathUtils.lerp(1, 1.2, rotationProgress)
-            const cameraZ = THREE.MathUtils.lerp(4, 3.5, rotationProgress)
-
-            state.camera.position.lerp(
-                new THREE.Vector3(cameraX, cameraY, cameraZ),
-                0.03
-            )
-
-            // Smoother position adjustments for the can
-            if (canRef.current) {
-                canRef.current.position.y = THREE.MathUtils.lerp(
-                    0,
-                    0.2,
-                    rotationProgress
-                )
-                canRef.current.position.z = THREE.MathUtils.lerp(
-                    0,
-                    -0.3,
-                    rotationProgress
-                )
-            }
+            groupRef.current.position.y = THREE.MathUtils.lerp(0, 0.3, rotationProgress);
+            groupRef.current.position.z = THREE.MathUtils.lerp(0, -0.5, rotationProgress);
         } else {
-            // Reset camera and can position smoothly
-            state.camera.position.lerp(
-                new THREE.Vector3(-2, 1, 4),
-                0.03
-            )
-            
-            rotationRef.current.target = rotationRef.current.defaultRotation
-            if (canRef.current) {
-                canRef.current.position.y = THREE.MathUtils.lerp(
-                    canRef.current.position.y,
-                    0,
-                    0.03
-                )
-                canRef.current.position.z = THREE.MathUtils.lerp(
-                    canRef.current.position.z,
-                    0,
-                    0.03
-                )
-            }
+            rotationRef.current.target = rotationRef.current.defaultRotation;
+            groupRef.current.position.y = 0;
+            groupRef.current.position.z = 0;
         }
 
-        // Even smoother rotation transition
-        rotationRef.current.current += (
-            rotationRef.current.target - rotationRef.current.current
-        ) * 0.03 // Reduced from 0.05 for even smoother motion
-
-        // Apply rotations
-        canRef.current.rotation.z = rotationRef.current.current
-    })
+        rotationRef.current.current += (rotationRef.current.target - rotationRef.current.current) * 0.05;
+        groupRef.current.rotation.z = rotationRef.current.current;
+    });
 
     return (
-        <Float
-            ref={floatRef}
-            speed={1.5} // Reduced for more subtle movement
-            rotationIntensity={0.1} // Reduced for more subtle movement
-            floatIntensity={0.3} // Reduced for more subtle movement
-            floatingRange={[-0.05, 0.05]} // Reduced range
-        >
-            <Box
-                ref={canRef}
-                args={[0.54, 1.23, 0.54]}
-                rotation={[0, 0, 0]}
-                position={[0, -5, 0]}
-                scale={[0, 0, 0]}
-                castShadow
-                receiveShadow
+        <group ref={groupRef} position={[0, -2, 0]}>
+            <Float
+                speed={1.5}
+                rotationIntensity={0.1}
+                floatIntensity={0.3}
+                floatingRange={[-0.05, 0.05]}
             >
-                <MeshTransmissionMaterial
-                    backside
-                    samples={4}
-                    thickness={0.5}
-                    chromaticAberration={0.2}
-                    anisotropy={0.1}
-                    distortion={0.2}
-                    distortionScale={0.1}
-                    temporalDistortion={0.1}
-                    metalness={0.9}
-                    roughness={0.1}
-                    envMapIntensity={1}
-                    clearcoat={1}
-                    clearcoatRoughness={0.1}
-                    ior={1.5}
-                    color='#ffffff'
+                <Box
+                    ref={canRef}
+                    args={[0.54, 1.23, 0.54]}
+                    scale={[0, 0, 0]}
+                    castShadow
+                    receiveShadow
+                >
+                    <MeshTransmissionMaterial
+                        backside
+                        samples={4}
+                        thickness={0.5}
+                        chromaticAberration={0.2}
+                        anisotropy={0.1}
+                        distortion={0.2}
+                        distortionScale={0.1}
+                        temporalDistortion={0.1}
+                        metalness={0.9}
+                        roughness={0.1}
+                        envMapIntensity={1}
+                        clearcoat={1}
+                        clearcoatRoughness={0.1}
+                        ior={1.5}
+                        color='#ffffff'
+                    />
+                </Box>
+            </Float>
+
+            <mesh
+                position={[0, -4, 0]}
+                scale={3}
+                visible={isHorizontalSection}
+            >
+                <sphereGeometry args={[1, 64, 64]} />
+                <atmosphereShaderMaterial
+                    ref={materialRef}
+                    transparent
+                    uAtmosphereColor={new THREE.Color(0x3388ff)}
+                    uAtmosphereStrength={2.5}
+                    blending={THREE.AdditiveBlending}
+                    side={THREE.BackSide}
+                    opacity={1}
                 />
-            </Box>
-        </Float>
-    )
+                <mesh scale={0.98}>
+                    <sphereGeometry args={[1, 64, 64]} />
+                    <meshPhysicalMaterial
+                        roughness={0.1}
+                        metalness={0.9}
+                        color="#000000"
+                        envMapIntensity={2}
+                        clearcoat={1}
+                        clearcoatRoughness={0.1}
+                        transparent
+                        opacity={1}
+                    />
+                </mesh>
+            </mesh>
+        </group>
+    );
 }
 
+// Update SceneContent to include the sphere
 function SceneContent() {
     return (
         <>
@@ -215,7 +269,7 @@ function SceneContent() {
                 resolution={512}
                 color='#000000'
             />
-            <AnimatedCan />
+            <QuantumGroup />
             <Preload all />
         </>
     )
@@ -290,7 +344,7 @@ const QuantumPage = () => {
                 {dimensions.width > 0 && (
                     <Canvas
                         shadows
-                        camera={{ position: [-2, 1, 4], fov: 35 }}
+                        camera={{ position: [0, 1, 4], fov: 35 }}
                         style={{
                             position: "absolute",
                             width: `${dimensions.width}px`,
