@@ -1,10 +1,10 @@
+@import './fonts.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   body {
-    @apply bg-quantum-black text-quantum-white;
+    @apply bg-quantum-black text-quantum-white font-editorial;
   }
 }
-

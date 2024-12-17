@@ -72,14 +72,14 @@ function AnimatedCan() {
     }, [])
 
     // Update rotation based on scroll progress
-    useFrame(() => {
+    useFrame((state) => {
         if (!canRef.current || !isReady) return
 
         if (isHorizontalSection) {
-            // Adjust the timing of the rotation to match the sequence
-            // Start rotating earlier and complete by the third panel
-            const rotationProgress = Math.min(
-                Math.max((scrollProgress - 0.1) * 1.2, 0),
+            // Smoother rotation timing curve
+            const rotationProgress = THREE.MathUtils.smoothstep(
+                Math.max((scrollProgress - 0.1) * 1.5, 0),
+                0,
                 1
             )
 
@@ -89,34 +89,55 @@ function AnimatedCan() {
                 rotationProgress
             )
 
-            // Add slight position adjustment during rotation
+            // Smoother camera movement during rotation
+            const cameraX = THREE.MathUtils.lerp(-2, -1.5, rotationProgress)
+            const cameraY = THREE.MathUtils.lerp(1, 1.2, rotationProgress)
+            const cameraZ = THREE.MathUtils.lerp(4, 3.5, rotationProgress)
+
+            state.camera.position.lerp(
+                new THREE.Vector3(cameraX, cameraY, cameraZ),
+                0.03
+            )
+
+            // Smoother position adjustments for the can
             if (canRef.current) {
-                // Move can slightly up during rotation to maintain visual center
                 canRef.current.position.y = THREE.MathUtils.lerp(
                     0,
-                    0.3,
+                    0.2,
                     rotationProgress
                 )
-
-                // Move can slightly forward during rotation
                 canRef.current.position.z = THREE.MathUtils.lerp(
                     0,
-                    -0.5,
+                    -0.3,
                     rotationProgress
                 )
             }
         } else {
-            // Outside horizontal section, return to upright position
+            // Reset camera and can position smoothly
+            state.camera.position.lerp(
+                new THREE.Vector3(-2, 1, 4),
+                0.03
+            )
+            
             rotationRef.current.target = rotationRef.current.defaultRotation
             if (canRef.current) {
-                canRef.current.position.y = 0
-                canRef.current.position.z = 0
+                canRef.current.position.y = THREE.MathUtils.lerp(
+                    canRef.current.position.y,
+                    0,
+                    0.03
+                )
+                canRef.current.position.z = THREE.MathUtils.lerp(
+                    canRef.current.position.z,
+                    0,
+                    0.03
+                )
             }
         }
 
-        // Smoother rotation transition
-        rotationRef.current.current +=
-            (rotationRef.current.target - rotationRef.current.current) * 0.05 // Reduced from 0.1 for smoother motion
+        // Even smoother rotation transition
+        rotationRef.current.current += (
+            rotationRef.current.target - rotationRef.current.current
+        ) * 0.03 // Reduced from 0.05 for even smoother motion
 
         // Apply rotations
         canRef.current.rotation.z = rotationRef.current.current
@@ -302,11 +323,11 @@ const QuantumPage = () => {
             >
                 {/* Hero Section */}
                 <section className='h-screen flex flex-col items-center justify-start pt-24'>
-                    <h1 className='text-white font-sans text-5xl text-center max-w-3xl'>
+                    <h1 className='text-white font-editorial text-[4.5vw] text-center max-w-[60vw]'>
                         For those moments when you need a different version of
                         now.
                     </h1>
-                    <h2 className='text-white/80 font-sans text-2xl mt-4'>
+                    <h2 className='text-white/80 font-mono text-2xl mt-4'>
                         CTRL-Z: Reality's Undo Button
                     </h2>
                 </section>
@@ -319,7 +340,7 @@ const QuantumPage = () => {
                     <div className='flex'>
                         {/* Panel 1 */}
                         <div className='panel min-w-[100vw] h-screen p-16 grid grid-rows-6 grid-cols-12 gap-8'>
-                            <h2 className='col-span-8 col-start-3 row-start-3 row-span-2 text-white/95 font-mono text-[5.5vw] tracking-[-0.02em] leading-[1.2] flex items-center'>
+                            <h2 className='col-span-4 col-start-2 row-start-3 row-span-2 text-white/95 font-editorial text-[4.5vw] tracking-[-0.02em] leading-[1.2] flex items-center'>
                                 You've been there. That moment when everything
                                 goes sideways.
                             </h2>
@@ -348,7 +369,7 @@ const QuantumPage = () => {
                                 </div>
                             </div>
 
-                            <h2 className='col-span-8 col-start-2 row-start-5 text-white/95 font-mono text-[4.5vw] tracking-[-0.01em] leading-[1.3] flex items-center'>
+                            <h2 className='col-span-8 col-start-2 row-start-6 text-white/95 font-editorial text-[2.5vw] tracking-[-0.01em] leading-[1.3] flex items-center'>
                                 When the timeline you're in is not the one you
                                 wanted.
                             </h2>
@@ -356,10 +377,10 @@ const QuantumPage = () => {
 
                         {/* Panel 3 */}
                         <div className='panel min-w-[100vw] h-screen p-16 grid grid-rows-6 grid-cols-12 gap-8'>
-                            <h2 className='col-span-8 row-span-3 row-start-4 text-white/95 font-mono text-[7vw] tracking-[-0.02em] leading-[1.1] flex items-center font-light'>
+                            <h2 className='col-span-8 row-span-1 row-start-1 text-white/95 font-editorial text-[4.5vw] tracking-[-0.02em] leading-[1.1] flex items-center font-light'>
                                 Until now, you lived with it.
                             </h2>
-                            <div className='col-span-4 col-start-2 row-start-2 flex flex-col gap-12'>
+                            <div className='col-span-4 col-start-12 row-start-5 flex flex-col gap-12'>
                                 <p className='text-white/95 font-mono text-base uppercase tracking-[0.25em]'>
                                     Technical Details
                                 </p>
@@ -373,7 +394,7 @@ const QuantumPage = () => {
 
                         {/* Panel 4 */}
                         <div className='panel min-w-[100vw] h-screen p-16 grid grid-rows-6 grid-cols-12 gap-8'>
-                            <h2 className='col-span-12 row-span-4 row-start-2 text-white/95 font-mono text-[7vw] tracking-[-0.03em] leading-[1] flex items-center justify-center'>
+                            <h2 className='col-span-12 row-span-1 row-start-1 text-white/95 text-[7vw] tracking-[-0.03em] leading-[1] flex items-center justify-center'>
                                 Now you can fix it.
                             </h2>
                         </div>
@@ -384,7 +405,7 @@ const QuantumPage = () => {
                     <div className='container mx-auto grid grid-cols-12 gap-8 px-8'>
                         {/* Left side - Large heading */}
                         <div className='col-span-6'>
-                            <h2 className='text-white font-serif text-5xl leading-tight'>
+                            <h2 className='text-white font-editorial text-6xl leading-tight'>
                                 When we first announced
                                 <br />
                                 a beverage that could alter
@@ -414,7 +435,7 @@ const QuantumPage = () => {
                                         </span>
                                     ))}
                                 </div>
-                                <p className='text-white/90 font-mono text-sm leading-relaxed'>
+                                <p className='text-white/90 font-mono text-lg leading-relaxed'>
                                     Yesterday, I made the worst presentation of
                                     my career. Or I would have, if ctrl-z hadn't
                                     helped me find the timeline where I
@@ -436,7 +457,7 @@ const QuantumPage = () => {
                                         </span>
                                     ))}
                                 </div>
-                                <p className='text-white/90 font-mono text-sm leading-relaxed'>
+                                <p className='text-white/90 font-mono text-lg leading-relaxed'>
                                     Used to spend hours overthinking my
                                     decisions. Now I just ctrl-z through a few
                                     realities until I find the one that clicks.
@@ -454,10 +475,10 @@ const QuantumPage = () => {
                 {/* Footer Section */}
                 <section className='h-screen flex items-center justify-center'>
                     <div className='text-center px-4'>
-                        <h2 className='text-white/90 font-mono text-6xl mb-8'>
+                        <h2 className='text-white/90 font-editorial text-6xl mb-8'>
                             BEGIN YOUR QUANTUM JOURNEY
                         </h2>
-                        <p className='text-white/70 font-mono text-xl max-w-2xl mx-auto mb-12'>
+                        <p className='text-white/70 text-xl font-geist-mono max-w-2xl mx-auto mb-12'>
                             Step into the future of computing where
                             possibilities are limitless.
                         </p>
