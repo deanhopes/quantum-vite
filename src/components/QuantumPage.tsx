@@ -1,9 +1,9 @@
-import React, {useRef, useEffect, useState, useContext} from "react"
-import {Canvas, useFrame} from "@react-three/fiber"
-import {Suspense} from "react"
+import React, { useRef, useEffect, useState, useContext } from "react"
+import { Canvas, useFrame } from "@react-three/fiber"
+import { Suspense } from "react"
 import * as THREE from "three"
 import gsap from "gsap"
-import {ScrollTrigger} from "gsap/ScrollTrigger"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
 import {
     Box,
     Float,
@@ -34,7 +34,7 @@ function AnimatedCan() {
     const canRef = useRef<THREE.Mesh>(null)
     const floatRef = useRef<THREE.Group>(null)
     const [isReady, setIsReady] = useState(false)
-    const {scrollProgress, isHorizontalSection} = useScrollContext()
+    const { scrollProgress, isHorizontalSection } = useScrollContext()
     const rotationRef = useRef({
         current: 0,
         target: 0,
@@ -203,7 +203,7 @@ function SceneContent() {
 const QuantumPage = () => {
     const containerRef = useRef<HTMLDivElement>(null)
     const canvasContainerRef = useRef<HTMLDivElement>(null)
-    const [dimensions, setDimensions] = useState({width: 0, height: 0})
+    const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
     const [scrollState, setScrollState] = useState<ScrollContextType>({
         scrollProgress: 0,
         isHorizontalSection: false,
@@ -269,7 +269,7 @@ const QuantumPage = () => {
                 {dimensions.width > 0 && (
                     <Canvas
                         shadows
-                        camera={{position: [-2, 1, 4], fov: 35}}
+                        camera={{ position: [-2, 1, 4], fov: 35 }}
                         style={{
                             position: "absolute",
                             width: `${dimensions.width}px`,
@@ -318,42 +318,63 @@ const QuantumPage = () => {
                 >
                     <div className='flex'>
                         {/* Panel 1 */}
-                        <div className='panel min-w-[100vw] h-screen p-8 grid grid-rows-6 grid-cols-12 gap-4'>
-                            <h2 className='col-span-8 col-start-5 row-start-3 row-span-2 text-white/90 font-mono text-4xl tracking-tight leading-tight flex items-center justify-end'>
+                        <div className='panel min-w-[100vw] h-screen p-16 grid grid-rows-6 grid-cols-12 gap-8'>
+                            <h2 className='col-span-8 col-start-3 row-start-3 row-span-2 text-white/95 font-mono text-[5.5vw] tracking-[-0.02em] leading-[1.2] flex items-center'>
                                 You've been there. That moment when everything
                                 goes sideways.
                             </h2>
                         </div>
 
                         {/* Panel 2 */}
-                        <div className='panel min-w-[100vw] h-screen p-8 grid grid-rows-6 grid-cols-12 gap-4'>
-                            <div className='col-span-12 row-span-2 flex flex-col gap-2'>
-                                <p className='text-white/90 font-mono text-base leading-relaxed'>
-                                    CORE FEATURES
+                        <div className='panel min-w-[100vw] h-screen p-16 grid grid-rows-6 grid-cols-12 gap-8'>
+                            {/* Core Features - Using modular scale */}
+                            <div className='col-span-5 col-start-2 row-start-2 row-span-2 flex flex-col gap-12'>
+                                <p className='text-white/95 font-mono text-base uppercase tracking-[0.25em]'>
+                                    Core Features
                                 </p>
-                                <p className='text-white/70 font-mono text-base leading-relaxed'>
-                                    TIMESTREAM™ NAVIGATION SYSTEM
-                                    <br />
-                                    REALITY-GRADE QUANTUM STABILIZERS
-                                    <br />
-                                    NEURAL-SYNC TASTE PROFILE
-                                    <br />
-                                    INSTANT TIMELINE ACCESS
-                                </p>
+                                <div className='text-white/80 font-mono text-sm leading-[2.4] tracking-wide space-y-6'>
+                                    <p className='border-l border-white/20 pl-6 transition-all hover:border-white/95 hover:text-white/95'>
+                                        TIMESTREAM™ NAVIGATION SYSTEM
+                                    </p>
+                                    <p className='border-l border-white/20 pl-6 transition-all hover:border-white/95 hover:text-white/95'>
+                                        REALITY-GRADE QUANTUM STABILIZERS
+                                    </p>
+                                    <p className='border-l border-white/20 pl-6 transition-all hover:border-white/95 hover:text-white/95'>
+                                        NEURAL-SYNC TASTE PROFILE
+                                    </p>
+                                    <p className='border-l border-white/20 pl-6 transition-all hover:border-white/95 hover:text-white/95'>
+                                        INSTANT TIMELINE ACCESS
+                                    </p>
+                                </div>
                             </div>
-                        </div>
 
-                        {/* Panel 3 */}
-                        <div className='panel min-w-[100vw] h-screen p-8 grid grid-rows-6 grid-cols-12 gap-4'>
-                            <h2 className='col-span-7 row-span-3 text-white/90 font-mono text-4xl tracking-tight leading-tight flex items-center'>
-                                Until now, you lived with it.
+                            <h2 className='col-span-8 col-start-2 row-start-5 text-white/95 font-mono text-[4.5vw] tracking-[-0.01em] leading-[1.3] flex items-center'>
+                                When the timeline you're in is not the one you
+                                wanted.
                             </h2>
                         </div>
 
+                        {/* Panel 3 */}
+                        <div className='panel min-w-[100vw] h-screen p-16 grid grid-rows-6 grid-cols-12 gap-8'>
+                            <h2 className='col-span-8 row-span-3 row-start-4 text-white/95 font-mono text-[7vw] tracking-[-0.02em] leading-[1.1] flex items-center font-light'>
+                                Until now, you lived with it.
+                            </h2>
+                            <div className='col-span-4 col-start-2 row-start-2 flex flex-col gap-12'>
+                                <p className='text-white/95 font-mono text-base uppercase tracking-[0.25em]'>
+                                    Technical Details
+                                </p>
+                                <div className='text-white/80 font-mono text-sm leading-[2.4] tracking-wide flex flex-col'>
+                                    <p className='py-5 border-t border-white/20 transition-all hover:text-white/95'>QUANTUM CORE RT-749</p>
+                                    <p className='py-5 border-t border-white/20 transition-all hover:text-white/95'>SERIES SHIFT-X</p>
+                                    <p className='py-5 border-t border-b border-white/20 transition-all hover:text-white/95'>EST. 2038</p>
+                                </div>
+                            </div>
+                        </div>
+
                         {/* Panel 4 */}
-                        <div className='panel min-w-[100vw] h-screen p-8 grid grid-rows-6 grid-cols-12 gap-4'>
-                            <h2 className='col-span-7 row-span-3 text-white/90 font-mono text-4xl tracking-tight leading-tight flex items-center'>
-                                Now you can undo it.
+                        <div className='panel min-w-[100vw] h-screen p-16 grid grid-rows-6 grid-cols-12 gap-8'>
+                            <h2 className='col-span-12 row-span-4 row-start-2 text-white/95 font-mono text-[7vw] tracking-[-0.03em] leading-[1] flex items-center justify-center'>
+                                Now you can fix it.
                             </h2>
                         </div>
                     </div>
@@ -450,8 +471,8 @@ const QuantumPage = () => {
                         </div>
                     </div>
                 </section>
-            </div>
-        </ScrollContext.Provider>
+            </div >
+        </ScrollContext.Provider >
     )
 }
 
