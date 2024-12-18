@@ -92,6 +92,13 @@ function QuantumGroup() {
     const [isReady, setIsReady] = useState(false)
     const {scrollProgress, isHorizontalSection} = useScrollContext()
     const materialRef = useRef<any>()
+    const [sphereVisible, setSphereVisible] = useState(false)
+    const sphereRef = useRef<THREE.Group>(null)
+    const [sphereAnimation, setSphereAnimation] = useState({
+        startY: -8, // Start lower
+        targetY: -4, // End position (current position)
+        progress: 0,
+    })
 
     // Animation state
     const rotationRef = useRef({
@@ -131,7 +138,13 @@ function QuantumGroup() {
     }, [])
 
     useFrame((state) => {
-        if (!groupRef.current || !canRef.current || !isReady) return
+        if (
+            !groupRef.current ||
+            !canRef.current ||
+            !isReady ||
+            !sphereRef.current
+        )
+            return
 
         if (materialRef.current) {
             materialRef.current.uTime = state.clock.elapsedTime
@@ -144,8 +157,8 @@ function QuantumGroup() {
             const heroProgress = Math.min(Math.max(scrollY / heroHeight, 0), 1)
             // Lerp from -0.5 to 0 based on hero scroll progress
             canRef.current.position.y = THREE.MathUtils.lerp(
-                -0.5,
-                0,
+                -0.8,
+                -0.4,
                 heroProgress
             )
         }
@@ -162,14 +175,9 @@ function QuantumGroup() {
                 rotationProgress
             )
 
-            groupRef.current.position.y = THREE.MathUtils.lerp(
+            groupRef.current.position.x = THREE.MathUtils.lerp(
                 0,
-                0.3,
-                rotationProgress
-            )
-            groupRef.current.position.z = THREE.MathUtils.lerp(
-                0,
-                -0.5,
+                -0.3,
                 rotationProgress
             )
         } else {
@@ -180,7 +188,36 @@ function QuantumGroup() {
 
         rotationRef.current.current +=
             (rotationRef.current.target - rotationRef.current.current) * 0.05
-        groupRef.current.rotation.z = rotationRef.current.current
+        groupRef.current.rotation.x = rotationRef.current.current
+
+        // Sphere appearance and animation logic
+        if (isHorizontalSection) {
+            if (scrollProgress > 0.9 && !sphereVisible) {
+                setSphereVisible(true)
+                // Reset animation progress when sphere becomes visible
+                setSphereAnimation((prev) => ({...prev, progress: 0}))
+            }
+        } else if (scrollProgress < 0.9 && sphereVisible) {
+            setSphereVisible(false)
+        }
+
+        // Animate sphere position when visible
+        if (sphereVisible && sphereRef.current) {
+            setSphereAnimation((prev) => ({
+                ...prev,
+                progress: Math.min(prev.progress + 0.002, 1), // Adjust speed by changing increment
+            }))
+
+            // Smooth easing function
+            const eased = 1 - Math.pow(1 - sphereAnimation.progress, 3) // Cubic ease-out
+
+            // Update sphere position
+            sphereRef.current.position.y = THREE.MathUtils.lerp(
+                sphereAnimation.startY,
+                sphereAnimation.targetY,
+                eased
+            )
+        }
     })
 
     return (
@@ -221,35 +258,39 @@ function QuantumGroup() {
                 </Box>
             </Float>
 
-            <mesh
-                position={[0, -4, 0]}
-                scale={3}
-                visible={isHorizontalSection}
+            <group
+                ref={sphereRef}
+                position={[0, sphereAnimation.startY, 0]}
+                visible={sphereVisible}
             >
-                <sphereGeometry args={[1, 64, 64]} />
-                <atmosphereShaderMaterial
-                    ref={materialRef}
-                    transparent
-                    uAtmosphereColor={new THREE.Color(0x3388ff)}
-                    uAtmosphereStrength={2.5}
-                    blending={THREE.AdditiveBlending}
-                    side={THREE.BackSide}
-                    opacity={1}
-                />
-                <mesh scale={0.98}>
+                <mesh scale={3}>
                     <sphereGeometry args={[1, 64, 64]} />
-                    <meshPhysicalMaterial
-                        roughness={0.1}
-                        metalness={0.9}
-                        color='#000000'
-                        envMapIntensity={2}
-                        clearcoat={1}
-                        clearcoatRoughness={0.1}
+                    <atmosphereShaderMaterial
+                        ref={materialRef}
                         transparent
+                        uAtmosphereColor={new THREE.Color(0x4499ff)}
+                        uAtmosphereStrength={3.0}
+                        uBloomFactor={2.0}
+                        uRimPower={3.0}
+                        blending={THREE.AdditiveBlending}
+                        side={THREE.BackSide}
                         opacity={1}
                     />
+                    <mesh scale={0.98}>
+                        <sphereGeometry args={[1, 64, 64]} />
+                        <meshPhysicalMaterial
+                            roughness={0.1}
+                            metalness={0.9}
+                            color='#000000'
+                            envMapIntensity={2}
+                            clearcoat={1}
+                            clearcoatRoughness={0.1}
+                            transparent
+                            opacity={1}
+                        />
+                    </mesh>
                 </mesh>
-            </mesh>
+            </group>
         </group>
     )
 }
