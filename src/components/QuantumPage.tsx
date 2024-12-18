@@ -12,7 +12,9 @@ import {
     Environment,
     MeshTransmissionMaterial,
     Preload,
+    shaderMaterial,
 } from "@react-three/drei"
+import {extend} from "@react-three/fiber"
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger)
@@ -30,11 +32,68 @@ const ScrollContext = React.createContext<ScrollContextType>({
 
 export const useScrollContext = () => useContext(ScrollContext)
 
-function AnimatedCan() {
+// Add this new AtmosphereShaderMaterial definition
+const AtmosphereShaderMaterial = shaderMaterial(
+    // Uniforms
+    {
+        uTime: 0,
+        uAtmosphereColor: new THREE.Color(0x3388ff),
+        uAtmosphereStrength: 1.0,
+    },
+    // Vertex shader
+    `
+        varying vec3 vNormal;
+        varying vec3 vWorldPosition;
+        
+        void main() {
+            vNormal = normalize(normalMatrix * normal);
+            vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+            vWorldPosition = worldPosition.xyz;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+    `,
+    // Fragment shader
+    `
+        uniform vec3 uAtmosphereColor;
+        uniform float uAtmosphereStrength;
+        uniform float uTime;
+        
+        varying vec3 vNormal;
+        varying vec3 vWorldPosition;
+        
+        void main() {
+            float intensity = pow(0.75 - dot(vNormal, vec3(0, 0, 1.0)), 2.0);
+            vec3 atmosphere = uAtmosphereColor * pow(intensity, 1.5) * uAtmosphereStrength;
+            
+            // Add some subtle animation
+            float pulse = sin(uTime * 0.5) * 0.1 + 0.9;
+            atmosphere *= pulse;
+            
+            gl_FragColor = vec4(atmosphere, intensity);
+        }
+    `
+)
+
+// Extend Three.js with our custom material
+extend({AtmosphereShaderMaterial})
+
+// Add type declaration for the shader material
+declare global {
+    namespace JSX {
+        interface IntrinsicElements {
+            atmosphereShaderMaterial: any
+        }
+    }
+}
+
+function QuantumGroup() {
+    const groupRef = useRef<THREE.Group>(null)
     const canRef = useRef<THREE.Mesh>(null)
-    const floatRef = useRef<THREE.Group>(null)
     const [isReady, setIsReady] = useState(false)
     const {scrollProgress, isHorizontalSection} = useScrollContext()
+    const materialRef = useRef<any>()
+
+    // Animation state
     const rotationRef = useRef({
         current: 0,
         target: 0,
@@ -44,10 +103,10 @@ function AnimatedCan() {
 
     // Initial animation timeline
     useEffect(() => {
-        if (!canRef.current) return
+        if (!canRef.current || !groupRef.current) return
 
         const tl = gsap.timeline()
-        tl.to(canRef.current.position, {
+        tl.to(groupRef.current.position, {
             y: 0,
             duration: 1.5,
             ease: "power2.out",
@@ -71,228 +130,163 @@ function AnimatedCan() {
         }
     }, [])
 
-    // Update rotation based on scroll progress
-    useFrame(() => {
-        if (!canRef.current || !isReady) return
+    useFrame((state) => {
+        if (!groupRef.current || !canRef.current || !isReady) return
 
+        if (materialRef.current) {
+            materialRef.current.uTime = state.clock.elapsedTime
+        }
+
+        // Calculate vertical position based on scroll before horizontal section
+        if (!isHorizontalSection) {
+            const scrollY = window.scrollY
+            const heroHeight = window.innerHeight
+            const heroProgress = Math.min(Math.max(scrollY / heroHeight, 0), 1)
+            // Lerp from -0.5 to 0 based on hero scroll progress
+            canRef.current.position.y = THREE.MathUtils.lerp(
+                -0.5,
+                0,
+                heroProgress
+            )
+        }
+
+        // Existing horizontal section animation logic
         if (isHorizontalSection) {
-            // Adjust the timing of the rotation to match the sequence
             const rotationProgress = Math.min(
                 Math.max((scrollProgress - 0.1) * 1.2, 0),
                 1
             )
-
-            // Calculate landing progress near the end of horizontal section
-            const landingProgress = Math.max(0, (scrollProgress - 0.8) * 5) // Starts landing effect at 80% through
-
             rotationRef.current.target = THREE.MathUtils.lerp(
                 rotationRef.current.defaultRotation,
                 rotationRef.current.sideRotation,
                 rotationProgress
             )
 
-            if (canRef.current) {
-                // Adjust vertical position for landing effect
-                const baseHeight = THREE.MathUtils.lerp(0, 0.3, rotationProgress);
-                const finalHeight = THREE.MathUtils.lerp(
-                    baseHeight,
-                    -0.5, // Lower final landing position
-                    landingProgress
-                );
-                canRef.current.position.y = finalHeight;
-
-                // Adjust z-position during rotation and landing
-                canRef.current.position.z = THREE.MathUtils.lerp(0, -0.5, rotationProgress);
-
-                // Add slight bounce effect during landing
-                if (landingProgress > 0) {
-                    const bounce = Math.sin(landingProgress * Math.PI) * 0.1;
-                    canRef.current.position.y += bounce * (1 - landingProgress);
-                }
-            }
-        } else {
-            // After horizontal section, flip the can upright
-            const postScrollProgress = Math.min(
-                window.scrollY - window.innerHeight,
-                1
+            groupRef.current.position.y = THREE.MathUtils.lerp(
+                0,
+                0.3,
+                rotationProgress
             )
-
-            if (postScrollProgress > 0) {
-                // Smoothly rotate back to upright position
-                rotationRef.current.target = THREE.MathUtils.lerp(
-                    rotationRef.current.sideRotation,
-                    rotationRef.current.defaultRotation,
-                    postScrollProgress
-                )
-
-                // Smoothly move back to center position
-                if (canRef.current) {
-                    canRef.current.position.y = THREE.MathUtils.lerp(
-                        -0.5, // Landing position
-                        0, // Final center position
-                        postScrollProgress
-                    )
-                    canRef.current.position.z = THREE.MathUtils.lerp(
-                        -0.5,
-                        0,
-                        postScrollProgress
-                    )
-                }
-            }
+            groupRef.current.position.z = THREE.MathUtils.lerp(
+                0,
+                -0.5,
+                rotationProgress
+            )
+        } else {
+            rotationRef.current.target = rotationRef.current.defaultRotation
+            groupRef.current.position.y = 0
+            groupRef.current.position.z = 0
         }
 
-        // Smoother rotation transition
         rotationRef.current.current +=
             (rotationRef.current.target - rotationRef.current.current) * 0.05
-
-        // Apply rotations
-        canRef.current.rotation.z = rotationRef.current.current
+        groupRef.current.rotation.z = rotationRef.current.current
     })
 
     return (
-        <Float
-            ref={floatRef}
-            speed={1.5} // Reduced for more subtle movement
-            rotationIntensity={0.1} // Reduced for more subtle movement
-            floatIntensity={0.3} // Reduced for more subtle movement
-            floatingRange={[-0.05, 0.05]} // Reduced range
+        <group
+            ref={groupRef}
+            position={[0, -2, 0]}
         >
-            <Box
-                ref={canRef}
-                args={[0.54, 1.23, 0.54]}
-                rotation={[0, 0, 0]}
-                position={[0, -5, 0]}
-                scale={[0, 0, 0]}
-                castShadow
-                receiveShadow
+            <Float
+                speed={1.5}
+                rotationIntensity={0.1}
+                floatIntensity={0.3}
+                floatingRange={[-0.05, 0.05]}
             >
-                <MeshTransmissionMaterial
-                    backside
-                    samples={4}
-                    thickness={0.5}
-                    chromaticAberration={0.2}
-                    anisotropy={0.1}
-                    distortion={0.2}
-                    distortionScale={0.1}
-                    temporalDistortion={0.1}
-                    metalness={0.9}
-                    roughness={0.1}
-                    envMapIntensity={1}
-                    clearcoat={1}
-                    clearcoatRoughness={0.1}
-                    ior={1.5}
-                    color='#ffffff'
+                <Box
+                    ref={canRef}
+                    args={[0.54, 1.23, 0.54]}
+                    scale={[0, 0, 0]}
+                    castShadow
+                    receiveShadow
+                >
+                    <MeshTransmissionMaterial
+                        backside
+                        samples={4}
+                        thickness={0.5}
+                        chromaticAberration={0.2}
+                        anisotropy={0.1}
+                        distortion={0.2}
+                        distortionScale={0.1}
+                        temporalDistortion={0.1}
+                        metalness={0.9}
+                        roughness={0.1}
+                        envMapIntensity={1}
+                        clearcoat={1}
+                        clearcoatRoughness={0.1}
+                        ior={1.5}
+                        color='#ffffff'
+                    />
+                </Box>
+            </Float>
+
+            <mesh
+                position={[0, -4, 0]}
+                scale={3}
+                visible={isHorizontalSection}
+            >
+                <sphereGeometry args={[1, 64, 64]} />
+                <atmosphereShaderMaterial
+                    ref={materialRef}
+                    transparent
+                    uAtmosphereColor={new THREE.Color(0x3388ff)}
+                    uAtmosphereStrength={2.5}
+                    blending={THREE.AdditiveBlending}
+                    side={THREE.BackSide}
+                    opacity={1}
                 />
-            </Box>
-        </Float>
+                <mesh scale={0.98}>
+                    <sphereGeometry args={[1, 64, 64]} />
+                    <meshPhysicalMaterial
+                        roughness={0.1}
+                        metalness={0.9}
+                        color='#000000'
+                        envMapIntensity={2}
+                        clearcoat={1}
+                        clearcoatRoughness={0.1}
+                        transparent
+                        opacity={1}
+                    />
+                </mesh>
+            </mesh>
+        </group>
     )
 }
 
-function Floor() {
-    const floorRef = useRef<THREE.Mesh>(null)
-    const {scrollProgress, isHorizontalSection} = useScrollContext()
-    const rotationRef = useRef({
-        current: 0,
-        target: 0,
-        defaultRotation: -Math.PI / 2,
-        sideRotation: 0,
-    })
-
-    useFrame(() => {
-        if (!floorRef.current) return
-
-        // Floor opacity logic
-        const floorOpacity = isHorizontalSection
-            ? Math.max(0, (scrollProgress - 0.7) * 3.33)
-            : 1
-
-        if (floorRef.current.material instanceof THREE.Material) {
-            floorRef.current.material.opacity = floorOpacity
-        }
-
-        // Floor rotation logic - synced with can
-        if (isHorizontalSection) {
-            const rotationProgress = Math.min(
-                Math.max((scrollProgress - 0.1) * 1.2, 0),
-                1
-            )
-
-            rotationRef.current.target = THREE.MathUtils.lerp(
-                rotationRef.current.defaultRotation,
-                rotationRef.current.sideRotation,
-                rotationProgress
-            )
-        } else {
-            // After horizontal section, rotate back
-            const postScrollProgress = Math.min(
-                window.scrollY - window.innerHeight,
-                1
-            )
-
-            if (postScrollProgress > 0) {
-                rotationRef.current.target = THREE.MathUtils.lerp(
-                    rotationRef.current.sideRotation,
-                    rotationRef.current.defaultRotation,
-                    postScrollProgress
-                )
-            }
-        }
-
-        // Smooth rotation transition
-        rotationRef.current.current +=
-            (rotationRef.current.target - rotationRef.current.current) * 0.05
-
-        // Apply rotation
-        floorRef.current.rotation.x = rotationRef.current.current
-    })
-
-    return (
-        <mesh
-            ref={floorRef}
-            rotation={[-Math.PI / 2, 0, 0]}
-            position={[0, -0.5, 0]}
-            receiveShadow
-        >
-            <planeGeometry args={[50, 50]} />
-            <meshStandardMaterial
-                color='#101010'
-                transparent
-                opacity={0}
-                roughness={0.7}
-                metalness={0.1}
-            />
-        </mesh>
-    )
-}
-
+// Update SceneContent to include the sphere
 function SceneContent() {
     const cameraRef = useRef()
     const {scrollProgress, isHorizontalSection} = useScrollContext()
 
-    useFrame(({ camera }) => {
-        if (!isHorizontalSection) return;
+    useFrame(({camera}) => {
+        if (!isHorizontalSection) return
 
         // Define camera parameters
-        const radius = 4; // Distance from camera to can
-        const centerPoint = new THREE.Vector3(0, 0, 0); // Center point (where the can is)
-        const cameraHeight = 1.5; // Raise camera slightly to see the landing better
-        
+        const radius = 4 // Distance from camera to can
+        const centerPoint = new THREE.Vector3(0, 0, 0) // Center point (where the can is)
+        const cameraHeight = 1.5 // Raise camera slightly to see the landing better
+
         // Calculate target rotation angle (0 to 90 degrees)
-        const rotationAngle = THREE.MathUtils.lerp(0, Math.PI / 2, scrollProgress);
-        
+        const rotationAngle = THREE.MathUtils.lerp(
+            0,
+            Math.PI / 2,
+            scrollProgress
+        )
+
         // Calculate camera position on the circular path
-        const newX = radius * Math.sin(rotationAngle);
-        const newZ = radius * Math.cos(rotationAngle);
-        
+        const newX = radius * Math.sin(rotationAngle)
+        const newZ = radius * Math.cos(rotationAngle)
+
         // Update camera position with fixed height
-        camera.position.x = newX;
-        camera.position.y = cameraHeight; // Keep camera slightly elevated
-        camera.position.z = newZ;
-        
+        camera.position.x = newX
+        camera.position.y = cameraHeight // Keep camera slightly elevated
+        camera.position.z = newZ
+
         // Adjust lookAt target to be slightly lower for better perspective
-        const lookAtPoint = new THREE.Vector3(0, -0.5, 0); // Look slightly down
-        camera.lookAt(lookAtPoint);
-        camera.updateProjectionMatrix();
+        const lookAtPoint = new THREE.Vector3(0, -0.5, 0) // Look slightly down
+        camera.lookAt(lookAtPoint)
+        camera.updateProjectionMatrix()
     })
 
     return (
@@ -327,8 +321,7 @@ function SceneContent() {
                 resolution={512}
                 color='#000000'
             />
-            <Floor />
-            <AnimatedCan />
+            <QuantumGroup />
             <Preload all />
         </>
     )
@@ -403,7 +396,7 @@ const QuantumPage = () => {
                 {dimensions.width > 0 && (
                     <Canvas
                         shadows
-                        camera={{position: [-2, 1, 4], fov: 35}}
+                        camera={{position: [0, 1, 4], fov: 35}}
                         style={{
                             position: "absolute",
                             width: `${dimensions.width}px`,
@@ -436,11 +429,11 @@ const QuantumPage = () => {
             >
                 {/* Hero Section */}
                 <section className='h-screen flex flex-col items-center justify-start pt-24'>
-                    <h1 className='text-white font-sans text-5xl text-center max-w-3xl'>
+                    <h1 className='text-white font-editorial text-[4.5vw] text-center max-w-[60vw]'>
                         For those moments when you need a different version of
                         now.
                     </h1>
-                    <h2 className='text-white/80 font-sans text-2xl mt-4'>
+                    <h2 className='text-white/80 font-mono text-2xl mt-4'>
                         CTRL-Z: Reality's Undo Button
                     </h2>
                 </section>
@@ -452,42 +445,69 @@ const QuantumPage = () => {
                 >
                     <div className='flex'>
                         {/* Panel 1 */}
-                        <div className='panel min-w-[100vw] h-screen p-8 grid grid-rows-6 grid-cols-12 gap-4'>
-                            <h2 className='col-span-8 col-start-5 row-start-3 row-span-2 text-white/90 font-mono text-4xl tracking-tight leading-tight flex items-center justify-end'>
+                        <div className='panel min-w-[100vw] h-screen p-16 grid grid-rows-6 grid-cols-12 gap-8'>
+                            <h2 className='col-span-4 col-start-2 row-start-3 row-span-2 text-white/95 font-editorial text-[4.5vw] tracking-[-0.02em] leading-[1.2] flex items-center'>
                                 You've been there. That moment when everything
                                 goes sideways.
                             </h2>
                         </div>
 
                         {/* Panel 2 */}
-                        <div className='panel min-w-[100vw] h-screen p-8 grid grid-rows-6 grid-cols-12 gap-4'>
-                            <div className='col-span-12 row-span-2 flex flex-col gap-2'>
-                                <p className='text-white/90 font-mono text-base leading-relaxed'>
-                                    CORE FEATURES
+                        <div className='panel min-w-[100vw] h-screen p-16 grid grid-rows-6 grid-cols-12 gap-8'>
+                            {/* Core Features - Using modular scale */}
+                            <div className='col-span-5 col-start-2 row-start-2 row-span-2 flex flex-col gap-12'>
+                                <p className='text-white/95 font-mono text-base uppercase tracking-[0.25em]'>
+                                    Core Features
                                 </p>
-                                <p className='text-white/70 font-mono text-base leading-relaxed'>
-                                    TIMESTREAM™ NAVIGATION SYSTEM
-                                    <br />
-                                    REALITY-GRADE QUANTUM STABILIZERS
-                                    <br />
-                                    NEURAL-SYNC TASTE PROFILE
-                                    <br />
-                                    INSTANT TIMELINE ACCESS
-                                </p>
+                                <div className='text-white/80 font-mono text-sm leading-[2.4] tracking-wide space-y-6'>
+                                    <p className='border-l border-white/20 pl-6 transition-all hover:border-white/95 hover:text-white/95'>
+                                        TIMESTREAM™ NAVIGATION SYSTEM
+                                    </p>
+                                    <p className='border-l border-white/20 pl-6 transition-all hover:border-white/95 hover:text-white/95'>
+                                        REALITY-GRADE QUANTUM STABILIZERS
+                                    </p>
+                                    <p className='border-l border-white/20 pl-6 transition-all hover:border-white/95 hover:text-white/95'>
+                                        NEURAL-SYNC TASTE PROFILE
+                                    </p>
+                                    <p className='border-l border-white/20 pl-6 transition-all hover:border-white/95 hover:text-white/95'>
+                                        INSTANT TIMELINE ACCESS
+                                    </p>
+                                </div>
                             </div>
-                        </div>
 
-                        {/* Panel 3 */}
-                        <div className='panel min-w-[100vw] h-screen p-8 grid grid-rows-6 grid-cols-12 gap-4'>
-                            <h2 className='col-span-7 row-span-3 text-white/90 font-mono text-4xl tracking-tight leading-tight flex items-center'>
-                                Until now, you lived with it.
+                            <h2 className='col-span-8 col-start-2 row-start-6 text-white/95 font-editorial text-[2.5vw] tracking-[-0.01em] leading-[1.3] flex items-center'>
+                                When the timeline you're in is not the one you
+                                wanted.
                             </h2>
                         </div>
 
+                        {/* Panel 3 */}
+                        <div className='panel min-w-[100vw] h-screen p-16 grid grid-rows-6 grid-cols-12 gap-8'>
+                            <h2 className='col-span-8 row-span-1 row-start-1 text-white/95 font-editorial text-[4.5vw] tracking-[-0.02em] leading-[1.1] flex items-center font-light'>
+                                Until now, you lived with it.
+                            </h2>
+                            <div className='col-span-4 col-start-12 row-start-5 flex flex-col gap-12'>
+                                <p className='text-white/95 font-mono text-base uppercase tracking-[0.25em]'>
+                                    Technical Details
+                                </p>
+                                <div className='text-white/80 font-mono text-sm leading-[2.4] tracking-wide flex flex-col'>
+                                    <p className='py-5 border-t border-white/20 transition-all hover:text-white/95'>
+                                        QUANTUM CORE RT-749
+                                    </p>
+                                    <p className='py-5 border-t border-white/20 transition-all hover:text-white/95'>
+                                        SERIES SHIFT-X
+                                    </p>
+                                    <p className='py-5 border-t border-b border-white/20 transition-all hover:text-white/95'>
+                                        EST. 2038
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
                         {/* Panel 4 */}
-                        <div className='panel min-w-[100vw] h-screen p-8 grid grid-rows-6 grid-cols-12 gap-4'>
-                            <h2 className='col-span-7 row-span-3 text-white/90 font-mono text-4xl tracking-tight leading-tight flex items-center'>
-                                Now you can undo it.
+                        <div className='panel min-w-[100vw] h-screen p-16 grid grid-rows-6 grid-cols-12 gap-8'>
+                            <h2 className='col-span-12 row-span-1 row-start-1 text-white/95 text-[7vw] tracking-[-0.03em] leading-[1] flex items-center justify-center'>
+                                Now you can fix it.
                             </h2>
                         </div>
                     </div>
@@ -497,7 +517,7 @@ const QuantumPage = () => {
                     <div className='container mx-auto grid grid-cols-12 gap-8 px-8'>
                         {/* Left side - Large heading */}
                         <div className='col-span-6'>
-                            <h2 className='text-white font-serif text-5xl leading-tight'>
+                            <h2 className='text-white font-editorial text-6xl leading-tight'>
                                 When we first announced
                                 <br />
                                 a beverage that could alter
@@ -527,7 +547,7 @@ const QuantumPage = () => {
                                         </span>
                                     ))}
                                 </div>
-                                <p className='text-white/90 font-mono text-sm leading-relaxed'>
+                                <p className='text-white/90 font-mono text-lg leading-relaxed'>
                                     Yesterday, I made the worst presentation of
                                     my career. Or I would have, if ctrl-z hadn't
                                     helped me find the timeline where I
@@ -549,7 +569,7 @@ const QuantumPage = () => {
                                         </span>
                                     ))}
                                 </div>
-                                <p className='text-white/90 font-mono text-sm leading-relaxed'>
+                                <p className='text-white/90 font-mono text-lg leading-relaxed'>
                                     Used to spend hours overthinking my
                                     decisions. Now I just ctrl-z through a few
                                     realities until I find the one that clicks.
@@ -567,10 +587,10 @@ const QuantumPage = () => {
                 {/* Footer Section */}
                 <section className='h-screen flex items-center justify-center'>
                     <div className='text-center px-4'>
-                        <h2 className='text-white/90 font-mono text-6xl mb-8'>
+                        <h2 className='text-white/90 font-editorial text-6xl mb-8'>
                             BEGIN YOUR QUANTUM JOURNEY
                         </h2>
-                        <p className='text-white/70 font-mono text-xl max-w-2xl mx-auto mb-12'>
+                        <p className='text-white/70 text-xl font-geist-mono max-w-2xl mx-auto mb-12'>
                             Step into the future of computing where
                             possibilities are limitless.
                         </p>

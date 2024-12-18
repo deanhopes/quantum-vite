@@ -1,6 +1,6 @@
-import {useEffect, useRef, useState} from "react"
+import { useEffect, useRef, useState } from "react"
 import gsap from "gsap"
-import {useEncryptionEffect} from "../hooks/useEncryptionEffect"
+import { useEncryptionEffect } from "../hooks/useEncryptionEffect"
 
 interface QuantumLoaderProps {
     children: React.ReactNode
@@ -28,7 +28,7 @@ const CIRCUIT_SYMBOLS = "━ ┃ ┏ ┓ ┗ ┛ ╋ ┣ ┫ ┳ ┻ ═ ║ ╔
 const MATRIX_CHARS = "αβγδεζηθικλμνξπρστυφχψω∀∃∄∅∈∉∊∋∌∍∎∏∐∑√∛∜∝∞∟∠∡∢∣"
 
 // Generate quantum particles with more properties
-const QUANTUM_PARTICLES = Array.from({length: 150}, (_, i) => ({
+const QUANTUM_PARTICLES = Array.from({ length: 150 }, (_, i) => ({
     id: i,
     size: random(0.5, 2),
     delay: random(0, 15),
@@ -43,7 +43,7 @@ const QUANTUM_PARTICLES = Array.from({length: 150}, (_, i) => ({
 }))
 
 // Generate circuit elements with more variety
-const CIRCUIT_ELEMENTS = Array.from({length: 100}, (_, i) => ({
+const CIRCUIT_ELEMENTS = Array.from({ length: 100 }, (_, i) => ({
     id: i + 1000,
     symbol: CIRCUIT_SYMBOLS[Math.floor(Math.random() * CIRCUIT_SYMBOLS.length)],
     x: random(-1500, 1500),
@@ -56,7 +56,7 @@ const CIRCUIT_ELEMENTS = Array.from({length: 100}, (_, i) => ({
 
 // Generate matrix rain with quantum characters
 const createMatrixRain = () => {
-    return Array.from({length: 150}, () => ({
+    return Array.from({ length: 150 }, () => ({
         x: random(-2550, 2550),
         y: random(-2550, 2550),
         speed: random(0.5, 2),
@@ -66,7 +66,7 @@ const createMatrixRain = () => {
     }))
 }
 
-export function QuantumLoader({children, onLoadComplete}: QuantumLoaderProps) {
+export function QuantumLoader({ children, onLoadComplete }: QuantumLoaderProps) {
     const [showScene, setShowScene] = useState(false)
     const [progress, setProgress] = useState(0)
     const [isUnmounting, setIsUnmounting] = useState(false)
@@ -76,7 +76,7 @@ export function QuantumLoader({children, onLoadComplete}: QuantumLoaderProps) {
     const particlesRef = useRef<(HTMLDivElement | null)[]>([])
     const binaryRainRef = useRef<(HTMLDivElement | null)[]>([])
     const circuitElementsRef = useRef<(HTMLDivElement | null)[]>([])
-    const {createEncryptionEffect} = useEncryptionEffect()
+    const { createEncryptionEffect } = useEncryptionEffect()
 
     const setProgressBarRef = (
         element: HTMLDivElement | null,
@@ -418,7 +418,7 @@ export function QuantumLoader({children, onLoadComplete}: QuantumLoaderProps) {
             })
 
             tl.add(stepTl)
-            tl.to({}, {duration: random(0.2, 0.4)})
+            tl.to({}, { duration: random(0.2, 0.4) })
         })
 
         return () => {
@@ -484,13 +484,11 @@ export function QuantumLoader({children, onLoadComplete}: QuantumLoaderProps) {
                         width: `${particle.size * 8}px`,
                         height: `${particle.size * 8}px`,
                         fontSize: `${particle.size * 3}px`,
-                        filter: `blur(0.3px) brightness(${
-                            1 + particle.glowIntensity * 0.5
-                        })`,
+                        filter: `blur(0.3px) brightness(${1 + particle.glowIntensity * 0.5
+                            })`,
                         willChange: "transform, opacity",
-                        textShadow: `0 0 ${particle.size}px rgba(255,255,255,${
-                            particle.glowIntensity * 0.5
-                        })`,
+                        textShadow: `0 0 ${particle.size}px rgba(255,255,255,${particle.glowIntensity * 0.5
+                            })`,
                     }}
                 >
                     {particle.symbol}
@@ -531,7 +529,7 @@ export function QuantumLoader({children, onLoadComplete}: QuantumLoaderProps) {
                 </div>
 
                 <div
-                    className='text-quantum-white/50 font-geist-mono text-sm text-center transform'
+                    className='text-quantum-white/50 font-mono text-sm text-center transform'
                     style={{
                         textShadow: "0 0 8px rgba(255,255,255,0.3)",
                     }}
