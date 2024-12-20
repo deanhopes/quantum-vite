@@ -16,7 +16,7 @@ import {
 } from "@react-three/drei"
 
 // Import SplitType with proper type declarations
-import SplitType from 'split-type'
+import SplitType from "split-type"
 
 // Extend SplitType types
 type SplitTypeResult = {
@@ -32,10 +32,10 @@ gsap.registerPlugin(ScrollTrigger)
 // Define the material type
 type PS1MaterialType = THREE.ShaderMaterial & {
     uniforms: {
-        uTime: { value: number }
-        uResolution: { value: THREE.Vector2 }
-        uGlitchIntensity: { value: number }
-        uScrollProgress: { value: number }
+        uTime: {value: number}
+        uResolution: {value: THREE.Vector2}
+        uGlitchIntensity: {value: number}
+        uScrollProgress: {value: number}
     }
 }
 
@@ -156,10 +156,10 @@ const PS1Material = shaderMaterial(
 )
 
 // Extend Three.js with our custom material
-extend({ PS1Material })
+extend({PS1Material})
 
 // Add proper type declarations
-declare module '@react-three/fiber' {
+declare module "@react-three/fiber" {
     interface ThreeElements {
         pS1Material: Object3DNode<PS1MaterialType, typeof PS1Material>
     }
@@ -180,17 +180,18 @@ export const useScrollContext = () => useContext(ScrollContext)
 
 function SpaceBackground() {
     const starsRef = useRef<THREE.Points>(null)
-    
+
     useFrame((state) => {
         if (starsRef.current) {
             starsRef.current.rotation.y += 0.0001
-            starsRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.1) * 0.1
+            starsRef.current.rotation.x =
+                Math.sin(state.clock.elapsedTime * 0.1) * 0.1
         }
     })
 
     return (
         <group>
-            <Stars 
+            <Stars
                 ref={starsRef}
                 radius={50}
                 depth={50}
@@ -252,7 +253,7 @@ function QuantumGroup() {
 
         if (materialRef.current) {
             materialRef.current.uniforms.uTime.value = state.clock.elapsedTime
-            materialRef.current.uniforms.uGlitchIntensity.value = 
+            materialRef.current.uniforms.uGlitchIntensity.value =
                 Math.max(0, Math.sin(state.clock.elapsedTime * 2)) * 0.2 +
                 (scrollProgress > 0.1 ? scrollProgress * 0.3 : 0)
             materialRef.current.uniforms.uScrollProgress.value = scrollProgress
@@ -263,14 +264,30 @@ function QuantumGroup() {
             // First panel: Can floats up and rotates
             if (scrollProgress < 0.33) {
                 const progress = scrollProgress / 0.33
-                canRef.current.position.y = THREE.MathUtils.lerp(-0.8, 0, progress)
-                canRef.current.rotation.y = THREE.MathUtils.lerp(0, Math.PI * 2, progress)
+                canRef.current.position.y = THREE.MathUtils.lerp(
+                    -0.8,
+                    0,
+                    progress
+                )
+                canRef.current.rotation.y = THREE.MathUtils.lerp(
+                    0,
+                    Math.PI * 2,
+                    progress
+                )
             }
             // Second panel: Can splits into multiple versions
             else if (scrollProgress < 0.66) {
                 const progress = (scrollProgress - 0.33) / 0.33
-                groupRef.current.position.x = THREE.MathUtils.lerp(0, -0.5, progress)
-                canRef.current.rotation.z = THREE.MathUtils.lerp(0, Math.PI * 0.1, progress)
+                groupRef.current.position.x = THREE.MathUtils.lerp(
+                    0,
+                    -0.5,
+                    progress
+                )
+                canRef.current.rotation.z = THREE.MathUtils.lerp(
+                    0,
+                    Math.PI * 0.1,
+                    progress
+                )
             }
             // Third panel: Can transforms into sphere
             else {
@@ -302,17 +319,25 @@ function QuantumGroup() {
     })
 
     return (
-        <group ref={groupRef} position={[0, -2, 0]}>
-            <Float speed={1.5} rotationIntensity={0.1} floatIntensity={0.3} floatingRange={[-0.05, 0.05]}>
-                <Cylinder 
+        <group
+            ref={groupRef}
+            position={[0, -2, 0]}
+        >
+            <Float
+                speed={1.5}
+                rotationIntensity={0.1}
+                floatIntensity={0.3}
+                floatingRange={[-0.05, 0.05]}
+            >
+                <Cylinder
                     ref={canRef}
                     args={[0.3, 0.3, 1.2, 32]}
                     scale={[0, 0, 0]}
                     castShadow
                     receiveShadow
                 >
-                    <pS1Material 
-                        ref={materialRef} 
+                    <pS1Material
+                        ref={materialRef}
                         transparent={true}
                         depthWrite={true}
                         side={THREE.DoubleSide}
@@ -320,10 +345,14 @@ function QuantumGroup() {
                 </Cylinder>
             </Float>
 
-            <group ref={sphereRef} position={[0, sphereAnimation.startY, 0]} visible={sphereVisible}>
+            <group
+                ref={sphereRef}
+                position={[0, sphereAnimation.startY, 0]}
+                visible={sphereVisible}
+            >
                 <mesh scale={3}>
                     <sphereGeometry args={[1, 32, 32]} />
-                    <pS1Material 
+                    <pS1Material
                         ref={materialRef}
                         transparent={true}
                         depthWrite={false}
@@ -344,7 +373,11 @@ function SceneContent() {
 
         const radius = 4
         const cameraHeight = 1.5
-        const rotationAngle = THREE.MathUtils.lerp(0, Math.PI / 2, scrollProgress)
+        const rotationAngle = THREE.MathUtils.lerp(
+            0,
+            Math.PI / 2,
+            scrollProgress
+        )
         const newX = radius * Math.sin(rotationAngle)
         const newZ = radius * Math.cos(rotationAngle)
 
@@ -427,197 +460,420 @@ const QuantumPage = () => {
         return () => resizeObserver.disconnect()
     }, [])
 
+    // Add CSS for new cyber effects
+    const cyberStyles = `
+        /* Base text styles */
+        .cyber-text {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Large text effect - ultra subtle */
+        .cyber-large {
+            position: relative;
+            display: inline-block;
+            color: rgba(255, 255, 255, 0.95);
+            text-shadow: 0 0 2px rgba(255, 255, 255, 0.2);
+            transition: text-shadow 0.4s ease;
+        }
+
+        .cyber-large:hover {
+            text-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Medium text effect - minimal movement */
+        .cyber-medium {
+            position: relative;
+            display: inline-block;
+            transition: opacity 0.4s ease;
+        }
+
+        /* Small text effect - fade only */
+        .cyber-small {
+            position: relative;
+            display: inline-block;
+            transition: opacity 0.4s ease;
+        }
+
+        /* Technical details */
+        .technical-readout {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+        }
+
+        .technical-readout:hover {
+            opacity: 0.8;
+        }
+
+        /* Grid lines - more subtle */
+        .technical-grid {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 24px 24px, 24px 24px, 96px 96px;
+            mask-image: none;
+            opacity: 1;
+            pointer-events: none;
+        }
+
+        /* Enhanced technical markers */
+        .technical-marker {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            opacity: 0.6;
+            color: rgba(255, 255, 255, 0.8);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            position: relative;
+            padding-left: 16px;
+        }
+
+        .technical-marker::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 8px;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Technical readout enhancements */
+        .technical-readout {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            opacity: 0.8;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .technical-readout::before {
+            content: '[';
+            position: absolute;
+            left: 0;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .technical-readout::after {
+            content: ']';
+            position: absolute;
+            right: -12px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Feature block refinements */
+        .feature-block {
+            position: relative;
+            padding: 2rem;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .feature-block:hover {
+            background: rgba(255, 255, 255, 0.02);
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Spec items - simplified */
+        .spec-item {
+            position: relative;
+            padding: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .spec-item:hover {
+            transform: translateX(4px);
+        }
+
+        /* Enhanced grid system */
+        .horizontal-grid-container {
+            position: absolute;
+            inset: 0;
+            width: 300vw; /* Match total scroll width */
+            height: 100vh;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .technical-grid {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 24px 24px, 24px 24px, 96px 96px;
+            opacity: 0;
+            transform: scale(1.1);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .technical-grid.is-visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Parallax text containers */
+        .parallax-text-container {
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .parallax-layer-back {
+            transform: translateZ(-10px) scale(2);
+        }
+
+        .parallax-layer-mid {
+            transform: translateZ(-5px) scale(1.5);
+        }
+
+        .parallax-layer-front {
+            transform: translateZ(0) scale(1);
+        }
+
+        /* Enhanced HUD elements */
+        .hud-element {
+            position: absolute;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.4);
+            pointer-events: none;
+        }
+
+        .hud-corner {
+            width: 20px;
+            height: 20px;
+            border-style: solid;
+            border-width: 1px;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .hud-corner-tl {
+            top: 16px;
+            left: 16px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .hud-corner-tr {
+            top: 16px;
+            right: 16px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .hud-corner-bl {
+            bottom: 16px;
+            left: 16px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .hud-corner-br {
+            bottom: 16px;
+            right: 16px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .hud-scan-line {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            opacity: 0.5;
+            animation: scan-line 8s linear infinite;
+        }
+
+        @keyframes scan-line {
+            0% { top: -2px; }
+            100% { top: 100%; }
+        }
+
+        /* Enhanced CTA Button Styles */
+        .cta-button {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: -100%;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .cta-button:hover::after {
+            right: 100%;
+        }
+    `
+
     // Update the text animation setup
     useEffect(() => {
-        if (!heroTextRef.current || !subTextRef.current) return
-
-        // Helper function to preserve whitespace and line breaks
-        const preserveWhitespace = (element: HTMLElement) => {
-            const html = element.innerHTML
-            const preservedHtml = html.replace(/<br\s*\/?>/gi, '§')
-            element.innerHTML = preservedHtml
-
-            const textNodes = Array.from(element.childNodes).filter(node => 
-                node.nodeType === Node.TEXT_NODE && node.textContent?.trim()
-            )
-            
-            textNodes.forEach(node => {
-                const span = document.createElement('span')
-                span.style.whiteSpace = 'pre-wrap'
-                const text = node.textContent?.replace(/§/g, '<br>') || ''
-                span.innerHTML = text
-                node.parentNode?.replaceChild(span, node)
-            })
-        }
-
-        // Apply whitespace preservation
-        preserveWhitespace(heroTextRef.current)
-        preserveWhitespace(subTextRef.current)
-
-        // Split hero text
-        const heroText = new SplitType(heroTextRef.current, {
-            types: 'chars,words,lines',
-            tagName: 'span',
-        }) as SplitTypeResult
-
-        // Split subtitle
-        const subText = new SplitType(subTextRef.current, {
-            types: 'words',
-            tagName: 'span',
-        }) as SplitTypeResult
-
-        // Hero text animation
-        const tl = gsap.timeline()
-        
-        // Set initial states
-        gsap.set(heroText.chars, { opacity: 0, y: 100, rotationX: 180 })
-        gsap.set(subText.words, { opacity: 0, y: 20 })
-        
-        // Animate hero text
-        tl.to(heroText.chars, {
-            duration: 1.5,
-            opacity: 1,
-            y: 0,
-            rotationX: 0,
-            stagger: {
-                amount: 1,
-                from: "random"
-            },
-            ease: "back.out(1.7)",
-        })
-
-        // Animate subtitle
-        tl.to(subText.words, {
-            duration: 1,
-            opacity: 1,
-            y: 0,
-            stagger: {
-                amount: 0.5,
-                from: "start"
-            },
-            ease: "power4.out",
-        }, "-=1")
-
-        // Cleanup
-        return () => {
-            tl.kill()
-            heroText.revert()
-            subText.revert()
-        }
-    }, [])
-
-    // Update the horizontal scroll animation setup
-    useEffect(() => {
-        const horizontalSection = document.querySelector("#horizontalSection") as HTMLElement
+        const panelTexts = gsap.utils.toArray<HTMLElement>(".panel-text")
+        const horizontalSection = document.querySelector("#horizontalSection")
         const panels = gsap.utils.toArray<HTMLElement>(".panel")
-        const panelTexts = document.querySelectorAll<HTMLElement>('.panel-text')
-        const featureBlocks = document.querySelectorAll<HTMLElement>('.feature-block')
-        const specItems = document.querySelectorAll<HTMLElement>('.spec-item')
+        const grids = gsap.utils.toArray<HTMLElement>(".technical-grid")
+        const totalWidth = panels.length * window.innerWidth
 
-        // Set initial states
-        gsap.set(panelTexts, { opacity: 0, y: 50 })
-
-        // Create main horizontal scroll animation
+        // Create main scroll animation
         const horizontalScroll = gsap.timeline({
             scrollTrigger: {
-                trigger: "#horizontalSection",
+                trigger: horizontalSection,
                 start: "top top",
-                end: () => `+=${(panels.length - 1) * window.innerWidth}`,
+                end: () => `+=${totalWidth - window.innerWidth}`,
                 pin: true,
-                scrub: 1,
-                snap: 1 / (panels.length - 1),
-                invalidateOnRefresh: true,
-                anticipatePin: 1,
+                scrub: 0.8,
                 onUpdate: (self) => {
                     setScrollState({
                         scrollProgress: self.progress,
                         isHorizontalSection: self.isActive,
                     })
+
+                    // Update grid visibility based on scroll progress
+                    grids.forEach((grid, index) => {
+                        const gridProgress =
+                            self.progress * panels.length - index
+                        if (gridProgress > 0 && gridProgress < 1) {
+                            grid.classList.add("is-visible")
+                        } else {
+                            grid.classList.remove("is-visible")
+                        }
+                    })
                 },
-            }
+            },
         })
 
-        // Animate panels horizontally
+        // Smoother panel animation with parallax
         horizontalScroll.to(panels, {
-            xPercent: -100 * (panels.length - 1),
+            x: () => -(totalWidth - window.innerWidth),
             ease: "none",
         })
 
-        // Animate panel texts
+        // Parallax text animations
         panelTexts.forEach((text) => {
-            gsap.to(text, {
-                scrollTrigger: {
-                    trigger: text,
-                    start: "left center",
-                    end: "right center",
-                    containerAnimation: horizontalScroll,
-                    toggleActions: "play none none reverse",
-                    onEnter: () => text.classList.add('is-visible'),
-                    onLeave: () => text.classList.remove('is-visible'),
-                    onEnterBack: () => text.classList.add('is-visible'),
-                    onLeaveBack: () => text.classList.remove('is-visible'),
+            const splitText = new SplitType(text, {
+                types: "words",
+                tagName: "span",
+            })
+
+            // Set initial states
+            gsap.set(text, {opacity: 0, y: 20})
+            gsap.set(splitText.words, {opacity: 0, y: 10})
+
+            // Create parallax effect based on text container class
+            const parallaxAmount = text.closest(".parallax-layer-back")
+                ? 100
+                : text.closest(".parallax-layer-mid")
+                ? 50
+                : 20
+
+            ScrollTrigger.create({
+                trigger: text,
+                start: "left center+=15%",
+                end: "right center-=15%",
+                containerAnimation: horizontalScroll,
+                onEnter: () => {
+                    const tl = gsap.timeline({
+                        defaults: {ease: "power2.out"},
+                    })
+
+                    tl.to(text, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.5,
+                    }).to(
+                        splitText.words,
+                        {
+                            opacity: 1,
+                            y: 0,
+                            duration: 0.4,
+                            stagger: {
+                                amount: 0.3,
+                                from: "start",
+                            },
+                        },
+                        "-=0.2"
+                    )
+
+                    // Add parallax movement
+                    gsap.to(text, {
+                        x: parallaxAmount,
+                        ease: "none",
+                        scrollTrigger: {
+                            trigger: text,
+                            containerAnimation: horizontalScroll,
+                            start: "left right",
+                            end: "right left",
+                            scrub: true,
+                        },
+                    })
+
+                    // Apply size-based styles
+                    const fontSize = parseFloat(
+                        window.getComputedStyle(text).fontSize
+                    )
+                    if (fontSize > 40) {
+                        text.classList.add("cyber-large")
+                    } else if (fontSize > 24) {
+                        text.classList.add("cyber-medium")
+                    } else {
+                        text.classList.add("cyber-small")
+                    }
                 },
-                opacity: 1,
-                y: 0,
-                duration: 0.8,
-                ease: "power3.out",
             })
         })
 
-        // Setup feature block hover animations
-        featureBlocks.forEach(block => {
-            const title = block.querySelector('h3')
-            const content = block.querySelector('p')
-
-            // Create hover animation
-            const hoverTl = gsap.timeline({ paused: true })
-                .to(title, {
-                    x: 10,
-                    duration: 0.3,
-                    ease: "power2.out"
-                })
-                .to(content, {
-                    opacity: 0.9,
-                    duration: 0.3
-                }, 0)
-
-            // Add event listeners
-            block.addEventListener('mouseenter', () => hoverTl.play())
-            block.addEventListener('mouseleave', () => hoverTl.reverse())
-        })
-
-        // Setup spec items hover animations
-        specItems.forEach(item => {
-            const label = item.querySelector('p:first-child')
-            const value = item.querySelector('p:last-child')
-
-            // Create hover animation
-            const hoverTl = gsap.timeline({ paused: true })
-                .to(label, {
-                    opacity: 0.8,
-                    duration: 0.3
-                })
-                .to(value, {
-                    x: 10,
-                    duration: 0.3,
-                    ease: "power2.out"
-                }, 0)
-
-            // Add event listeners
-            item.addEventListener('mouseenter', () => hoverTl.play())
-            item.addEventListener('mouseleave', () => hoverTl.reverse())
-        })
-
         return () => {
-            horizontalScroll.kill()
+            ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
         }
     }, [])
 
     return (
         <ScrollContext.Provider value={scrollState}>
+            {/* Canvas Container - Fixed */}
             <div
                 ref={canvasContainerRef}
-                className="fixed inset-0 w-full h-full overflow-hidden bg-gradient-to-b from-black via-purple-900/20 to-black"
+                className='fixed inset-0 w-full h-full overflow-hidden bg-gradient-to-b from-black via-purple-900/20 to-black pointer-events-none'
             >
                 {dimensions.width > 0 && (
                     <Canvas
@@ -627,10 +883,10 @@ const QuantumPage = () => {
                             position: "absolute",
                             width: `${dimensions.width}px`,
                             height: `${dimensions.height}px`,
-                            imageRendering: "pixelated", // PS1-style pixelation
+                            imageRendering: "pixelated",
                         }}
                         gl={{
-                            antialias: false, // Disable antialiasing for PS1 look
+                            antialias: false,
                             powerPreference: "high-performance",
                             alpha: true,
                         }}
@@ -642,7 +898,7 @@ const QuantumPage = () => {
                         <fog
                             attach='fog'
                             args={["#000000", 5, 15]}
-                        /> {/* Reduced fog distance for PS1 feel */}
+                        />
                         <Suspense fallback={null}>
                             <SceneContent />
                         </Suspense>
@@ -650,138 +906,301 @@ const QuantumPage = () => {
                 )}
             </div>
 
-            <div ref={containerRef} className="relative w-full">
+            {/* Main Scrollable Content */}
+            <div
+                ref={containerRef}
+                className='relative w-full'
+            >
                 {/* Hero Section */}
-                <section className="h-screen flex flex-col items-center justify-start pt-24 relative overflow-hidden">
-                    <div className="glitch-container relative">
+                <section className='relative h-screen flex flex-col items-center justify-start pt-24 overflow-hidden'>
+                    <div className='glitch-container relative'>
                         <h1
                             ref={heroTextRef}
-                            className="text-white font-editorial text-[4.5vw] text-center max-w-[60vw] leading-tight tracking-tight mix-blend-difference"
+                            className='text-white font-editorial text-[4.5vw] text-center max-w-[60vw] leading-tight tracking-tight mix-blend-difference'
                         >
-                            For those moments when you need a different version of now.
+                            For those moments when you need a different version
+                            of now.
                         </h1>
                     </div>
                     <h2
                         ref={subTextRef}
-                        className="text-white/80 font-mono text-2xl mt-8 tracking-widest glitch-text"
+                        className='text-white/80 font-mono text-2xl mt-8 tracking-widest glitch-text'
                     >
                         CTRL-Z: Reality's Undo Button
                     </h2>
-                    <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center space-y-4">
-                        <span className="text-white/40 font-mono text-sm tracking-wider">Scroll to explore</span>
-                        <div className="w-6 h-10 border-2 border-white/20 rounded-full flex items-start p-1">
-                            <div className="w-1 h-2 bg-white/40 rounded-full animate-scroll-hint mx-auto" />
+                    <div className='absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center space-y-4'>
+                        <span className='text-white/40 font-mono text-sm tracking-wider'>
+                            Scroll to explore
+                        </span>
+                        <div className='w-6 h-10 border-2 border-white/20 rounded-full flex items-start p-1'>
+                            <div className='w-1 h-2 bg-white/40 rounded-full animate-scroll-hint mx-auto' />
                         </div>
                     </div>
                 </section>
 
                 {/* Horizontal Scroll Section */}
-                <section id="horizontalSection" className="horizontal-scroll">
-                    <div className="horizontal-scroll-content">
-                        {/* Panel 1 - Impact Statement */}
-                        <div className="panel p-16 grid grid-rows-6 grid-cols-12 gap-8">
-                            <div className="col-span-8 col-start-2 row-start-2 row-span-4 grid grid-rows-[auto_1fr] gap-16">
-                                <h2 className="panel-text text-white/95 font-editorial text-[12vw] tracking-[-0.04em] leading-[0.85] max-w-[12ch] mix-blend-difference fade-up">
-                                    You've been there. That moment when everything goes sideways.
-                                </h2>
-                                <div className="self-end">
-                                    <p className="text-white/60 font-mono text-sm tracking-[0.2em] uppercase mb-4">Scroll to continue</p>
-                                    <div className="w-16 h-[1px] bg-white/20"></div>
+                <section
+                    id='horizontalSection'
+                    className='relative h-screen w-screen overflow-hidden'
+                >
+                    {/* Grid Container */}
+                    <div className='horizontal-grid-container'>
+                        {Array.from({length: 4}).map((_, index) => (
+                            <div
+                                key={index}
+                                className='technical-grid'
+                                style={{left: `${index * 100}vw`}}
+                            />
+                        ))}
+                        <div className='hud-scan-line' />
+                        <div className='hud-corner hud-corner-tl' />
+                        <div className='hud-corner hud-corner-tr' />
+                        <div className='hud-corner hud-corner-bl' />
+                        <div className='hud-corner hud-corner-br' />
+                    </div>
+
+                    <div className='absolute top-0 left-0 h-full flex'>
+                        {/* Update panel content with parallax containers */}
+                        <div className='panel w-screen h-screen flex-shrink-0 p-16 grid grid-rows-6 grid-cols-12 gap-8 relative'>
+                            <div className='col-span-8 col-start-2 row-start-2 row-span-4 grid grid-rows-[auto_1fr] gap-16'>
+                                <div className='parallax-layer-front'>
+                                    <h2 className='panel-text text-white/95 font-editorial text-[3.5vw] tracking-[-0.02em] leading-[1.1] max-w-[24ch] mix-blend-difference'>
+                                        You've been there. That moment when
+                                        everything goes sideways.
+                                    </h2>
+                                </div>
+                                <div className='self-end space-y-6'>
+                                    <p className='technical-readout mb-4'>
+                                        System Status: Active
+                                    </p>
+                                    <div className='grid grid-cols-3 gap-4 text-xs font-mono text-white/40'>
+                                        <div>CPU: 98.2%</div>
+                                        <div>MEM: 64.7%</div>
+                                        <div>TEMP: 42°C</div>
+                                    </div>
+                                    <div className='w-16 h-[1px] bg-white/20'></div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Panel 2 - Features Grid */}
-                        <div className="panel p-16 grid grid-rows-6 grid-cols-12 gap-8">
-                            <div className="col-span-10 col-start-2 row-span-full grid grid-cols-2 gap-x-32 content-center">
-                                <div className="space-y-32">
-                                    <div className="panel-text feature-block group">
-                                        <p className="text-white/40 font-mono text-sm tracking-[0.2em] uppercase mb-6 group-hover:text-white/60 transition-colors">
-                                            Core Technology
-                                        </p>
-                                        <h3 className="text-white/95 font-editorial text-[4vw] leading-[0.9] mb-8 transform group-hover:translate-x-2 transition-transform">
-                                            TIMESTREAM™<br />NAVIGATION
-                                        </h3>
-                                        <p className="text-white/70 font-mono text-base leading-relaxed max-w-[40ch] group-hover:text-white/90 transition-opacity">
-                                            Proprietary quantum tunneling allows seamless timeline transitions with zero temporal artifacts.
-                                        </p>
+                        {/* Panel 2 */}
+                        <div className='panel w-screen h-screen flex-shrink-0'>
+                            {/* Main Grid Container */}
+                            <div className='w-full h-full grid grid-cols-12 grid-rows-6 p-16 gap-8'>
+                                {/* Technical Details Top */}
+                                <div className='col-span-12 row-span-1 flex justify-between items-start'>
+                                    <div className='technical-readout'>
+                                        <div className='text-xs opacity-60'>
+                                            SYSTEM STATUS
+                                        </div>
+                                        <div className='text-sm mt-1'>
+                                            QUANTUM FIELD: STABLE
+                                        </div>
                                     </div>
-                                    <div className="panel-text feature-block group">
-                                        <h3 className="text-white/95 font-editorial text-[4vw] leading-[0.9] mb-8 transition-transform duration-500 group-hover:translate-x-2">
-                                            NEURAL-SYNC<br />INTERFACE
-                                        </h3>
-                                        <p className="text-white/70 font-mono text-base leading-relaxed max-w-[40ch] transition-opacity duration-300 group-hover:text-white/90">
-                                            Memory preservation across realities, ensuring cognitive continuity.
-                                        </p>
+                                    <div className='technical-readout text-right'>
+                                        <div className='text-xs opacity-60'>
+                                            TIMELINE
+                                        </div>
+                                        <div className='text-sm mt-1'>
+                                            BRANCH: ALPHA-7
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="space-y-32 mt-48">
-                                    <div className="panel-text feature-block group">
-                                        <h3 className="text-white/95 font-editorial text-[4vw] leading-[0.9] mb-8 transition-transform duration-500 group-hover:translate-x-2">
-                                            QUANTUM<br />STABILIZERS
-                                        </h3>
-                                        <p className="text-white/70 font-mono text-base leading-relaxed max-w-[40ch] transition-opacity duration-300 group-hover:text-white/90">
-                                            Reality-grade containment field prevents unwanted timeline bleed.
-                                        </p>
+
+                                {/* Main Content Grid */}
+                                <div className='col-span-12 row-span-4 grid grid-cols-2 gap-x-32 content-center'>
+                                    {/* Left Column */}
+                                    <div className='space-y-24'>
+                                        <div className='panel-text feature-block group relative overflow-hidden'>
+                                            <div className='absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
+                                            <div className='relative z-10'>
+                                                <p className='technical-readout mb-4 text-sm'>
+                                                    <span className='inline-block w-2 h-2 bg-white/20 group-hover:bg-white/40 transition-colors mr-2'></span>
+                                                    Core Technology
+                                                </p>
+                                                <h3 className='text-white/95 font-editorial text-[1.5vw] leading-[1.1] mb-4 transform group-hover:translate-x-2 transition-transform duration-500'>
+                                                    TIMESTREAM™ NAVIGATION
+                                                </h3>
+                                                <p className='text-white/70 font-mono text-sm leading-relaxed max-w-[40ch] group-hover:text-white/90 transition-colors duration-300'>
+                                                    Proprietary quantum
+                                                    tunneling allows seamless
+                                                    timeline transitions with
+                                                    zero temporal artifacts.
+                                                </p>
+                                                <div className='mt-6 grid grid-cols-2 gap-4 text-xs font-mono text-white/30'>
+                                                    <div className='group-hover:text-white/50 transition-colors duration-300'>
+                                                        Latency: 0.0042ms
+                                                    </div>
+                                                    <div className='group-hover:text-white/50 transition-colors duration-300'>
+                                                        Quantum State: Stable
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className='absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent transform translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000'></div>
+                                        </div>
+
+                                        <div className='panel-text feature-block group relative overflow-hidden'>
+                                            <div className='absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
+                                            <div className='relative z-10'>
+                                                <h3 className='text-white/95 font-editorial text-[4vw] leading-[0.9] mb-8 transform group-hover:translate-x-2 transition-transform duration-500'>
+                                                    NEURAL-SYNC
+                                                    <br />
+                                                    INTERFACE
+                                                </h3>
+                                                <p className='text-white/70 font-mono text-base leading-relaxed max-w-[40ch] transition-opacity duration-300 group-hover:text-white/90'>
+                                                    Memory preservation across
+                                                    realities, ensuring
+                                                    cognitive continuity.
+                                                </p>
+                                            </div>
+                                            <div className='absolute top-0 right-0 w-[1px] h-full bg-gradient-to-b from-transparent via-white/20 to-transparent transform translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-1000'></div>
+                                        </div>
                                     </div>
-                                    <div className="panel-text feature-block group">
-                                        <h3 className="text-white/95 font-editorial text-[4vw] leading-[0.9] mb-8 transition-transform duration-500 group-hover:translate-x-2">
-                                            INSTANT<br />ACCESS
-                                        </h3>
-                                        <p className="text-white/70 font-mono text-base leading-relaxed max-w-[40ch] transition-opacity duration-300 group-hover:text-white/90">
-                                            Zero latency between decision and implementation.
-                                        </p>
+
+                                    {/* Right Column */}
+                                    <div className='space-y-32 mt-48'>
+                                        <div className='panel-text feature-block group relative overflow-hidden'>
+                                            <div className='absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
+                                            <div className='relative z-10'>
+                                                <h3 className='text-white/95 font-editorial text-[4vw] leading-[0.9] mb-8 transform group-hover:translate-x-2 transition-transform duration-500'>
+                                                    QUANTUM
+                                                    <br />
+                                                    STABILIZERS
+                                                </h3>
+                                                <p className='text-white/70 font-mono text-base leading-relaxed max-w-[40ch] transition-opacity duration-300 group-hover:text-white/90'>
+                                                    Reality-grade containment
+                                                    field prevents unwanted
+                                                    timeline bleed.
+                                                </p>
+                                                <div className='mt-6 grid grid-cols-3 gap-2'>
+                                                    {Array.from({
+                                                        length: 3,
+                                                    }).map((_, i) => (
+                                                        <div
+                                                            key={i}
+                                                            className='h-[2px] bg-white/20 group-hover:bg-white/40 transition-colors duration-300 delay-[${i * 100}ms]'
+                                                        ></div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className='panel-text feature-block group relative overflow-hidden'>
+                                            <div className='absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
+                                            <div className='relative z-10'>
+                                                <h3 className='text-white/95 font-editorial text-[4vw] leading-[0.9] mb-8 transform group-hover:translate-x-2 transition-transform duration-500'>
+                                                    INSTANT
+                                                    <br />
+                                                    ACCESS
+                                                </h3>
+                                                <p className='text-white/70 font-mono text-base leading-relaxed max-w-[40ch] transition-opacity duration-300 group-hover:text-white/90'>
+                                                    Zero latency between
+                                                    decision and implementation.
+                                                </p>
+                                                <div className='absolute bottom-4 right-4 opacity-20 group-hover:opacity-40 transition-opacity duration-300'>
+                                                    <div className='font-mono text-[10px] tracking-wider'>
+                                                        ACCESS_POINT_01
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
+                                </div>
+
+                                {/* Technical Details Bottom */}
+                                <div className='col-span-12 row-span-1 flex justify-between items-end font-mono text-xs text-white/40'>
+                                    <div className='grid grid-cols-3 gap-8'>
+                                        <div>MEMORY: 87.2%</div>
+                                        <div>UPTIME: 847:23:12</div>
+                                        <div>TEMP: 42.3°C</div>
+                                    </div>
+                                    <div className='text-right'>
+                                        <div>LOC: 37.7749° N, 122.4194° W</div>
+                                        <div className='mt-1'>
+                                            TIME: {new Date().toISOString()}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Background Elements */}
+                            <div className='absolute inset-0 pointer-events-none'>
+                                <div className='absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent'></div>
+                                <div className='absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent'></div>
+                                <div className='absolute top-8 right-8 flex items-center space-x-2'>
+                                    <div className='w-2 h-2 bg-white/20'></div>
+                                    <div className='w-2 h-2 bg-white/30'></div>
+                                    <div className='w-2 h-2 bg-white/40'></div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Panel 3 - Technical Details */}
-                        <div className="panel p-16 grid grid-rows-6 grid-cols-12 gap-8">
-                            <div className="col-span-10 col-start-2 row-span-full grid grid-cols-[1fr_auto] items-center gap-32">
-                                <div className="panel-text max-w-[24ch] fade-up">
-                                    <h2 className="text-white/95 font-editorial text-[10vw] tracking-[-0.03em] leading-[0.85] mb-16">
+                        {/* Panel 3 */}
+                        <div className='panel w-screen h-screen flex-shrink-0 p-16 grid grid-rows-6 grid-cols-12 gap-8'>
+                            <div className='col-span-10 col-start-2 row-span-full grid grid-cols-[1fr_auto] items-center gap-32'>
+                                <div className='panel-text max-w-[32ch] fade-up'>
+                                    <h2 className='text-white/95 font-editorial text-[4vw] tracking-[-0.03em] leading-[0.95] mb-8'>
                                         Until now, you lived with it.
                                     </h2>
-                                    <p className="text-white/70 font-mono text-lg leading-relaxed">
-                                        Every decision point creates infinite branches. We just help you find the right one.
+                                    <p className='text-white/70 font-mono text-sm leading-relaxed mb-6'>
+                                        Every decision point creates infinite
+                                        branches. We just help you find the
+                                        right one.
                                     </p>
+                                    <div className='grid grid-cols-2 gap-4 text-xs font-mono text-white/40 mt-8'>
+                                        <div>Branch Count: ∞</div>
+                                        <div>Success Rate: 99.99%</div>
+                                    </div>
                                 </div>
-                                <div className="panel-text w-[360px] border-l border-white/10 pl-16 tech-specs">
-                                    <p className="text-white/40 font-mono text-sm tracking-[0.2em] uppercase mb-12">
+                                <div className='panel-text w-[360px] border-l border-white/10 pl-16 tech-specs'>
+                                    <p className='text-white/40 font-mono text-sm tracking-[0.2em] uppercase mb-12'>
                                         Technical Specifications
                                     </p>
-                                    <div className="space-y-12">
-                                        <div className="spec-item group">
-                                            <p className="text-white/40 font-mono text-xs tracking-[0.15em] uppercase mb-2 transition-colors duration-300 group-hover:text-white/60">MODEL</p>
-                                            <p className="text-white/90 font-mono text-xl transition-transform duration-500 group-hover:translate-x-2">QUANTUM CORE RT-749</p>
+                                    <div className='space-y-12'>
+                                        <div className='spec-item group'>
+                                            <p className='text-white/40 font-mono text-xs tracking-[0.15em] uppercase mb-2 transition-colors duration-300 group-hover:text-white/60'>
+                                                MODEL
+                                            </p>
+                                            <p className='text-white/90 font-mono text-xl transition-transform duration-500 group-hover:translate-x-2'>
+                                                QUANTUM CORE RT-749
+                                            </p>
                                         </div>
-                                        <div className="spec-item group">
-                                            <p className="text-white/40 font-mono text-xs tracking-[0.15em] uppercase mb-2 transition-colors duration-300 group-hover:text-white/60">SERIES</p>
-                                            <p className="text-white/90 font-mono text-xl transition-transform duration-500 group-hover:translate-x-2">SHIFT-X</p>
+                                        <div className='spec-item group'>
+                                            <p className='text-white/40 font-mono text-xs tracking-[0.15em] uppercase mb-2 transition-colors duration-300 group-hover:text-white/60'>
+                                                SERIES
+                                            </p>
+                                            <p className='text-white/90 font-mono text-xl transition-transform duration-500 group-hover:translate-x-2'>
+                                                SHIFT-X
+                                            </p>
                                         </div>
-                                        <div className="spec-item group">
-                                            <p className="text-white/40 font-mono text-xs tracking-[0.15em] uppercase mb-2 transition-colors duration-300 group-hover:text-white/60">ESTABLISHED</p>
-                                            <p className="text-white/90 font-mono text-xl transition-transform duration-500 group-hover:translate-x-2">2038</p>
+                                        <div className='spec-item group'>
+                                            <p className='text-white/40 font-mono text-xs tracking-[0.15em] uppercase mb-2 transition-colors duration-300 group-hover:text-white/60'>
+                                                ESTABLISHED
+                                            </p>
+                                            <p className='text-white/90 font-mono text-xl transition-transform duration-500 group-hover:translate-x-2'>
+                                                2038
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Panel 4 - Call to Action */}
-                        <div className="panel p-16 grid grid-rows-6 grid-cols-12 gap-8">
-                            <div className="col-span-full row-span-full flex flex-col items-center justify-center text-center">
-                                <p className="panel-text text-white/40 font-mono text-base tracking-[0.5em] uppercase mb-8 fade-up">
+                        {/* Panel 4 */}
+                        <div className='panel w-screen h-screen flex-shrink-0 p-16 grid grid-rows-6 grid-cols-12 gap-8'>
+                            <div className='col-span-full row-span-full flex flex-col items-center justify-center text-center'>
+                                <p className='panel-text text-white/40 font-mono text-base tracking-[0.5em] uppercase mb-8 fade-up'>
                                     Introducing
                                 </p>
-                                <h2 className="panel-text text-white/95 font-editorial text-[10vw] tracking-[-0.03em] leading-[0.9] mb-12 fade-up">
+                                <h2 className='panel-text text-white/95 font-editorial text-[10vw] tracking-[-0.03em] leading-[0.9] mb-12 fade-up'>
                                     Now you can fix it.
                                 </h2>
-                                <div className="panel-text mt-12 flex items-center gap-8 fade-up">
-                                    <div className="w-12 h-[1px] bg-white/20"></div>
-                                    <p className="text-white/60 font-mono text-sm tracking-[0.2em] uppercase">Continue to experience</p>
-                                    <div className="w-12 h-[1px] bg-white/20"></div>
+                                <div className='panel-text mt-12 flex items-center gap-8 fade-up'>
+                                    <div className='w-12 h-[1px] bg-white/20'></div>
+                                    <p className='text-white/60 font-mono text-sm tracking-[0.2em] uppercase'>
+                                        Continue to experience
+                                    </p>
+                                    <div className='w-12 h-[1px] bg-white/20'></div>
                                 </div>
                             </div>
                         </div>
@@ -789,42 +1208,62 @@ const QuantumPage = () => {
                 </section>
 
                 {/* Testimonial Section */}
-                <section className="min-h-screen bg-black/90 flex items-center justify-center py-24">
-                    <div className="container mx-auto grid grid-cols-12 gap-8 px-8">
-                        <div className="col-span-6">
-                            <h2 className="text-white font-editorial text-6xl leading-tight mb-16">
-                                When we first announced<br />
-                                a beverage that could alter<br />
-                                reality, they called us mad.<br />
+                <section className='relative min-h-screen bg-black/90 flex items-center justify-center py-24'>
+                    <div className='container mx-auto grid grid-cols-12 gap-8 px-8'>
+                        <div className='col-span-6'>
+                            <h2 className='text-white font-editorial text-6xl leading-tight mb-16'>
+                                When we first announced
                                 <br />
-                                88 billion successful<br />
-                                reality shifts later, they<br />
+                                a beverage that could alter
+                                <br />
+                                reality, they called us mad.
+                                <br />
+                                <br />
+                                88 billion successful
+                                <br />
+                                reality shifts later, they
+                                <br />
                                 call us the future.
                             </h2>
                         </div>
-                        <div className="col-span-5 col-start-8 space-y-12">
-                            <div className="space-y-6">
-                                <div className="flex">
+                        <div className='col-span-5 col-start-8 space-y-12'>
+                            <div className='space-y-6'>
+                                <div className='flex'>
                                     {Array.from({length: 5}, (_, index) => (
-                                        <span key={index} className="text-white text-xl">★</span>
+                                        <span
+                                            key={index}
+                                            className='text-white text-xl'
+                                        >
+                                            ★
+                                        </span>
                                     ))}
                                 </div>
-                                <p className="text-white/90 font-mono text-lg leading-relaxed">
-                                    "Yesterday, I made the worst presentation of my career. Or I would have, 
-                                    if ctrl-z hadn't helped me find the timeline where I remembered to actually 
-                                    save my slides. The look on my alternate self's face was priceless."
+                                <p className='text-white/90 font-mono text-lg leading-relaxed'>
+                                    "Yesterday, I made the worst presentation of
+                                    my career. Or I would have, if ctrl-z hadn't
+                                    helped me find the timeline where I
+                                    remembered to actually save my slides. The
+                                    look on my alternate self's face was
+                                    priceless."
                                 </p>
                             </div>
-                            <div className="space-y-6">
-                                <div className="flex">
+                            <div className='space-y-6'>
+                                <div className='flex'>
                                     {Array.from({length: 5}, (_, index) => (
-                                        <span key={index} className="text-white text-xl">★</span>
+                                        <span
+                                            key={index}
+                                            className='text-white text-xl'
+                                        >
+                                            ★
+                                        </span>
                                     ))}
                                 </div>
-                                <p className="text-white/90 font-mono text-lg leading-relaxed">
-                                    "Used to spend hours overthinking my decisions. Now I just ctrl-z through 
-                                    a few realities until I find the one that clicks. Though I should mention - 
-                                    don't try it during a job interview."
+                                <p className='text-white/90 font-mono text-lg leading-relaxed'>
+                                    "Used to spend hours overthinking my
+                                    decisions. Now I just ctrl-z through a few
+                                    realities until I find the one that clicks.
+                                    Though I should mention - don't try it
+                                    during a job interview."
                                 </p>
                             </div>
                         </div>
@@ -832,29 +1271,98 @@ const QuantumPage = () => {
                 </section>
 
                 {/* Final CTA Section */}
-                <section className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden">
-                    <div className="text-center px-4 relative z-10">
-                        <h2 className="text-white/90 font-editorial text-7xl mb-8">
-                            BEGIN YOUR QUANTUM JOURNEY
+                <section className='relative min-h-screen bg-black flex items-center justify-center overflow-hidden'>
+                    {/* Technical Grid Background */}
+                    <div className='technical-grid opacity-20'></div>
+                    <div className='hud-scan-line'></div>
+
+                    {/* Corner Brackets */}
+                    <div className='hud-corner hud-corner-tl'></div>
+                    <div className='hud-corner hud-corner-tr'></div>
+                    <div className='hud-corner hud-corner-bl'></div>
+                    <div className='hud-corner hud-corner-br'></div>
+
+                    {/* Main Content */}
+                    <div className='text-center px-4 relative z-10 max-w-6xl mx-auto'>
+                        {/* Technical Readout Header */}
+                        <div className='technical-readout text-sm mb-8 tracking-[0.3em]'>
+                            QUANTUM SHIFT PROTOCOL: READY
+                        </div>
+
+                        {/* Main Title */}
+                        <h2 className='panel-text text-white/90 font-editorial text-8xl mb-12 leading-[0.9]'>
+                            Begin Your
+                            <br />
+                            Quantum Journey
                         </h2>
-                        <p className="text-white/70 text-xl font-mono max-w-2xl mx-auto mb-12">
-                            Step into a future where every possibility is within reach.
+
+                        {/* Technical Stats */}
+                        <div className='grid grid-cols-3 gap-8 mb-16 font-mono'>
+                            <div className='technical-readout text-left'>
+                                <div className='text-xs mb-2 opacity-60'>
+                                    REALITY SHIFTS
+                                </div>
+                                <div className='text-2xl'>88.2B+</div>
+                            </div>
+                            <div className='technical-readout text-center'>
+                                <div className='text-xs mb-2 opacity-60'>
+                                    SUCCESS RATE
+                                </div>
+                                <div className='text-2xl'>99.99%</div>
+                            </div>
+                            <div className='technical-readout text-right'>
+                                <div className='text-xs mb-2 opacity-60'>
+                                    QUANTUM STABILITY
+                                </div>
+                                <div className='text-2xl'>100%</div>
+                            </div>
+                        </div>
+
+                        {/* Description */}
+                        <p className='text-white/70 font-mono text-lg max-w-2xl mx-auto mb-16 leading-relaxed'>
+                            Step into a future where every possibility is within
+                            reach. Your perfect timeline awaits.
                         </p>
-                        <div className="space-x-6">
-                            <button className="px-8 py-4 text-white/90 font-mono text-lg border border-white/20 rounded-sm hover:bg-white/10 transition-all duration-300">
-                                EXPLORE NOW
+
+                        {/* CTA Buttons */}
+                        <div className='space-x-8'>
+                            <button className='cta-button group relative px-12 py-5 bg-white/5 hover:bg-white/10'>
+                                <div className='absolute inset-0 border border-white/20 group-hover:border-white/40 transition-colors'></div>
+                                <div className='absolute top-0 left-0 w-2 h-2 border-l-2 border-t-2 border-white/40 group-hover:border-white/60 transition-colors'></div>
+                                <div className='absolute top-0 right-0 w-2 h-2 border-r-2 border-t-2 border-white/40 group-hover:border-white/60 transition-colors'></div>
+                                <div className='absolute bottom-0 left-0 w-2 h-2 border-l-2 border-b-2 border-white/40 group-hover:border-white/60 transition-colors'></div>
+                                <div className='absolute bottom-0 right-0 w-2 h-2 border-r-2 border-b-2 border-white/40 group-hover:border-white/60 transition-colors'></div>
+                                <span className='text-white/90 font-mono text-lg tracking-wider relative z-10'>
+                                    INITIATE SHIFT
+                                </span>
                             </button>
-                            <button className="px-8 py-4 text-white/90 font-mono text-lg border border-white/20 rounded-sm hover:bg-white/10 transition-all duration-300">
-                                LEARN MORE
+                            <button className='cta-button group relative px-12 py-5'>
+                                <div className='absolute inset-0 border border-white/10 group-hover:border-white/20 transition-colors'></div>
+                                <span className='text-white/70 font-mono text-lg tracking-wider relative z-10'>
+                                    LEARN MORE
+                                </span>
                             </button>
                         </div>
+
+                        {/* Technical Details */}
+                        <div className='absolute bottom-8 left-8 font-mono text-xs text-white/40 tracking-wider'>
+                            <div>MODEL: QS-749-X</div>
+                            <div>BUILD: 2038.12.1</div>
+                        </div>
+                        <div className='absolute bottom-8 right-8 font-mono text-xs text-white/40 tracking-wider text-right'>
+                            <div>LAT: 37.7749° N</div>
+                            <div>LONG: 122.4194° W</div>
+                        </div>
                     </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-purple-900/20 to-black opacity-50"></div>
+
+                    {/* Background Gradient */}
+                    <div className='absolute inset-0 bg-gradient-to-t from-black via-purple-900/10 to-black opacity-70'></div>
                 </section>
 
                 {/* Add this CSS to your global styles or a CSS module */}
-                <style dangerouslySetInnerHTML={{
-                    __html: `
+                <style
+                    dangerouslySetInnerHTML={{
+                        __html: `
                         @keyframes glitch {
                             0% {
                                 transform: translate(0);
@@ -1065,9 +1573,11 @@ const QuantumPage = () => {
                             opacity: 1;
                             transform: translateY(0);
                         }
-                    `
-                }} />
+                    `,
+                    }}
+                />
             </div>
+            <style dangerouslySetInnerHTML={{__html: cyberStyles}} />
         </ScrollContext.Provider>
     )
 }

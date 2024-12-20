@@ -14,45 +14,118 @@ body {
 }
 
 /* Horizontal scroll container */
-.horizontal-scroll {
-  @apply relative h-screen overflow-hidden;
+#horizontalSection {
+  @apply relative h-screen;
+  width: 100vw;
 }
 
-.horizontal-scroll-content {
-  @apply flex h-full;
+#horizontalSection > div {
+  @apply flex absolute top-0 left-0;
+  height: 100vh;
 }
 
 .panel {
-  @apply min-w-[100vw] h-screen relative;
+  @apply relative;
+  width: 100vw;
+  height: 100vh;
+  flex-shrink: 0;
+}
+
+/* Text animation helpers */
+.char {
+  @apply inline-block relative text-white;
+  will-change: transform, opacity, filter;
+  mix-blend-mode: screen;
+}
+
+.word {
+  @apply inline-block relative;
+  will-change: transform;
+}
+
+/* Panel text styles */
+.panel-text {
+  @apply relative z-10;
+  mix-blend-mode: difference;
+}
+
+.panel-text .word {
+  @apply overflow-hidden;
+}
+
+/* RGB split effect */
+.rgb-split {
+  position: relative;
+}
+
+.rgb-split::before,
+.rgb-split::after {
+  @apply absolute inset-0 opacity-50;
+  content: attr(data-text);
+  mix-blend-mode: screen;
+}
+
+.rgb-split::before {
+  @apply text-[#ff0000] left-[0.5px];
+  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+}
+
+.rgb-split::after {
+  @apply text-[#00ff00] -left-[0.5px];
+  clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
 }
 
 /* Feature blocks */
 .feature-block {
-  @apply relative p-8 transition-all duration-500;
+  @apply relative p-8;
 }
 
 /* Tech specs */
 .tech-specs {
-  @apply relative overflow-hidden;
+  @apply relative overflow-hidden border-l border-white/10 pl-16;
 }
 
-/* Scroll indicator */
-.scroll-indicator {
-  @apply animate-bounce;
+/* Technical text styles */
+.technical-readout {
+  font-family: 'JetBrains Mono', monospace;
+  @apply text-xs uppercase tracking-[0.2em] text-white/60;
+  mix-blend-mode: difference;
 }
 
-/* Animation classes */
-.fade-up {
-  opacity: 0;
-  transform: translateY(20px);
+/* Technical grid */
+.technical-grid {
+  @apply absolute inset-0 pointer-events-none opacity-20;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
+  mix-blend-mode: overlay;
 }
 
-.fade-up.is-visible {
-  opacity: 1;
-  transform: translateY(0);
+/* Technical details */
+.technical-marker {
+  @apply absolute text-white/20 font-mono text-xs uppercase tracking-wider;
+  font-variant-numeric: tabular-nums;
 }
 
-/* PS1 style pixelation */
-.pixelated {
-  image-rendering: pixelated;
+.technical-marker.top-left {
+  @apply top-6 left-6;
+}
+
+.technical-marker.top-right {
+  @apply top-6 right-6;
+}
+
+.technical-marker.bottom-left {
+  @apply bottom-6 left-6;
+}
+
+.technical-marker.bottom-right {
+  @apply bottom-6 right-6;
+}
+
+/* Data value */
+.data-value {
+  @apply font-mono text-white/90;
+  font-variant-numeric: tabular-nums;
 }
