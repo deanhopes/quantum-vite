@@ -447,6 +447,7 @@ const QuantumPage = () => {
                             antialias: true,
                             toneMapping: THREE.ACESFilmicToneMapping,
                             toneMappingExposure: 1.5,
+                            powerPreference: "high-performance",
                         }}
                     >
                         <color
@@ -455,7 +456,7 @@ const QuantumPage = () => {
                         />
                         <fog
                             attach='fog'
-                            args={["#000000", 5, 15]}
+                            args={["#000000", 10, 50]}
                         />
                         <Suspense fallback={null}>
                             <SceneContent />
