@@ -3,8 +3,56 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  body {
-    @apply bg-quantum-black text-quantum-white font-editorial;
-  }
+/* Base styles */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-black text-white overflow-x-hidden;
+  font-kerning: none;
+}
+
+/* Horizontal scroll container */
+.horizontal-scroll {
+  @apply relative h-screen overflow-hidden;
+}
+
+.horizontal-scroll-content {
+  @apply flex h-full;
+}
+
+.panel {
+  @apply min-w-[100vw] h-screen relative;
+}
+
+/* Feature blocks */
+.feature-block {
+  @apply relative p-8 transition-all duration-500;
+}
+
+/* Tech specs */
+.tech-specs {
+  @apply relative overflow-hidden;
+}
+
+/* Scroll indicator */
+.scroll-indicator {
+  @apply animate-bounce;
+}
+
+/* Animation classes */
+.fade-up {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.fade-up.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* PS1 style pixelation */
+.pixelated {
+  image-rendering: pixelated;
 }
