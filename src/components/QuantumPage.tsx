@@ -655,22 +655,78 @@ const QuantumPage = () => {
         .cta-button {
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
-            overflow: hidden;
+            overflow: visible;
         }
 
         .cta-button::before {
             content: '';
             position: absolute;
+            inset: 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .cta-button .corner {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-color: rgba(255, 255, 255, 0.4);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0));
+        }
+
+        .cta-button .corner-tl {
             top: 0;
-            left: -100%;
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            left: 0;
+            border-top: 1px solid;
+            border-left: 1px solid;
+        }
+
+        .cta-button .corner-tr {
+            top: 0;
+            right: 0;
+            border-top: 1px solid;
+            border-right: 1px solid;
+        }
+
+        .cta-button .corner-bl {
+            bottom: 0;
+            left: 0;
+            border-bottom: 1px solid;
+            border-left: 1px solid;
+        }
+
+        .cta-button .corner-br {
+            bottom: 0;
+            right: 0;
+            border-bottom: 1px solid;
+            border-right: 1px solid;
+        }
+
+        .cta-button:hover .corner-tl {
+            transform: translate(-4px, -4px);
+        }
+
+        .cta-button:hover .corner-tr {
+            transform: translate(4px, -4px);
+        }
+
+        .cta-button:hover .corner-bl {
+            transform: translate(-4px, 4px);
+        }
+
+        .cta-button:hover .corner-br {
+            transform: translate(4px, 4px);
+        }
+
+        .cta-button:hover .corner {
+            border-color: rgba(255, 255, 255, 0.8);
+            filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
         }
 
         .cta-button:hover::before {
-            left: 100%;
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
         }
 
         .cta-button::after {
@@ -818,7 +874,6 @@ const QuantumPage = () => {
 
     // Update the text animation setup
     useEffect(() => {
-        const panelTexts = gsap.utils.toArray<HTMLElement>(".panel-text")
         const horizontalSection = document.querySelector("#horizontalSection")
         const panels = gsap.utils.toArray<HTMLElement>(".panel")
         const grids = gsap.utils.toArray<HTMLElement>(".technical-grid")
@@ -856,80 +911,6 @@ const QuantumPage = () => {
         horizontalScroll.to(panels, {
             x: () => -(totalWidth - window.innerWidth),
             ease: "none",
-        })
-
-        // Parallax text animations
-        panelTexts.forEach((text) => {
-            const splitText = new SplitType(text, {
-                types: "words",
-                tagName: "span",
-            })
-
-            // Set initial states
-            gsap.set(text, { opacity: 0, y: 20 })
-            gsap.set(splitText.words, { opacity: 0, y: 10 })
-
-            // Create parallax effect based on text container class
-            const parallaxAmount = text.closest(".parallax-layer-back")
-                ? 100
-                : text.closest(".parallax-layer-mid")
-                    ? 50
-                    : 20
-
-            ScrollTrigger.create({
-                trigger: text,
-                start: "left center+=15%",
-                end: "right center-=15%",
-                containerAnimation: horizontalScroll,
-                onEnter: () => {
-                    const tl = gsap.timeline({
-                        defaults: { ease: "power2.out" },
-                    })
-
-                    tl.to(text, {
-                        opacity: 1,
-                        y: 0,
-                        duration: 0.5,
-                    }).to(
-                        splitText.words,
-                        {
-                            opacity: 1,
-                            y: 0,
-                            duration: 0.4,
-                            stagger: {
-                                amount: 0.3,
-                                from: "start",
-                            },
-                        },
-                        "-=0.2"
-                    )
-
-                    // Add parallax movement
-                    gsap.to(text, {
-                        x: parallaxAmount,
-                        ease: "none",
-                        scrollTrigger: {
-                            trigger: text,
-                            containerAnimation: horizontalScroll,
-                            start: "left right",
-                            end: "right left",
-                            scrub: true,
-                        },
-                    })
-
-                    // Apply size-based styles
-                    const fontSize = parseFloat(
-                        window.getComputedStyle(text).fontSize
-                    )
-                    if (fontSize > 40) {
-                        text.classList.add("cyber-large")
-                    } else if (fontSize > 24) {
-                        text.classList.add("cyber-medium")
-                    } else {
-                        text.classList.add("cyber-small")
-                    }
-                },
-            })
         })
 
         return () => {
@@ -980,18 +961,7 @@ const QuantumPage = () => {
 
                         {/* Main Content Container */}
                         <div className='relative z-10 flex flex-col items-center max-w-[90vw] mx-auto px-8'>
-                            {/* Status Bar */}
-                            <div className='hero-status-bar fixed top-8 left-8 right-8 flex justify-between items-center text-[10px] font-mono tracking-[0.3em] text-white/40'>
-                                <div className='flex items-center gap-8'>
-                                    <div className='status-item'>SYSTEM: ONLINE</div>
-                                    <div className='status-item'>QUANTUM FIELD: STABLE</div>
-                                    <div className='status-item'>TIMELINE: ALPHA-7</div>
-                                </div>
-                                <div className='flex items-center gap-8'>
-                                    <div className='status-item'>LAT: 37.7749° N</div>
-                                    <div className='status-item'>LONG: 122.4194° W</div>
-                                </div>
-                            </div>
+
 
                             {/* Main Title Group */}
                             <div className='glitch-container relative mb-16 mt-24'>
@@ -1005,9 +975,9 @@ const QuantumPage = () => {
                                 </div>
 
                                 {/* Main Title */}
-                                <div className='hero-title-wrapper overflow-hidden px-16'>
+                                <div className='hero-title-wrapper overflow-visible px-16 mb-24'>
                                     <h1 ref={heroTextRef}
-                                        className='text-white/90 font-editorial text-[5vw] text-center leading-tight tracking-tight mix-blend-difference'
+                                        className='text-white/90 font-editorial text-[4vw] md:text-[3.5vw] lg:text-[3vw] text-center leading-[1.2] tracking-tight mix-blend-difference max-w-[24ch] mx-auto'
                                         data-splitting
                                     >
                                         For those moments when you need a different version of now.
@@ -1067,7 +1037,7 @@ const QuantumPage = () => {
                             <div className='panel w-screen h-screen flex-shrink-0 p-16 grid grid-rows-6 grid-cols-12 gap-8 relative'>
                                 <div className='col-span-8 col-start-2 row-start-2 row-span-4 grid grid-rows-[auto_1fr] gap-16'>
                                     <div className='parallax-layer-front'>
-                                        <h2 className='panel-text text-white/95 font-editorial text-[3.5vw] tracking-[-0.02em] leading-[1.1] max-w-[24ch] mix-blend-difference'>
+                                        <h2 className='text-white/95 font-editorial text-[3.5vw] tracking-[-0.02em] leading-[1.1] max-w-[24ch] mix-blend-difference'>
                                             You've been there. That moment when
                                             everything goes sideways.
                                         </h2>
@@ -1092,60 +1062,18 @@ const QuantumPage = () => {
                                 <div className='w-full h-full grid grid-cols-12 grid-rows-6 p-16 gap-8'>
                                     {/* Technical Details Top */}
                                     <div className='col-span-12 row-span-1 flex justify-between items-start'>
-                                        <div className='technical-readout'>
-                                            <div className='text-xs opacity-60'>
-                                                SYSTEM STATUS
-                                            </div>
-                                            <div className='text-sm mt-1'>
-                                                QUANTUM FIELD: STABLE
-                                            </div>
-                                        </div>
-                                        <div className='technical-readout text-right'>
-                                            <div className='text-xs opacity-60'>
-                                                TIMELINE
-                                            </div>
-                                            <div className='text-sm mt-1'>
-                                                BRANCH: ALPHA-7
-                                            </div>
-                                        </div>
+
+
                                     </div>
 
                                     {/* Main Content Grid */}
-                                    <div className='col-span-12 row-span-4 grid grid-cols-2 gap-x-32 content-center'>
+                                    <div className='col-span-12 row-span-4 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-x-16 lg:gap-x-32 content-center p-4 md:p-8'>
                                         {/* Left Column */}
-                                        <div className='space-y-24'>
-                                            <div className='panel-text feature-block group relative overflow-hidden'>
+                                        <div className='space-y-12 md:space-y-24'>
+                                            <div className='feature-block group relative overflow-visible p-8 md:p-12'>
                                                 <div className='absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
-                                                <div className='relative z-10'>
-                                                    <p className='technical-readout mb-4 text-sm'>
-                                                        <span className='inline-block w-2 h-2 bg-white/20 group-hover:bg-white/40 transition-colors mr-2'></span>
-                                                        Core Technology
-                                                    </p>
-                                                    <h3 className='text-white/95 font-editorial text-[1.5vw] leading-[1.1] mb-4 transform group-hover:translate-x-2 transition-transform duration-500'>
-                                                        TIMESTREAM™ NAVIGATION
-                                                    </h3>
-                                                    <p className='text-white/70 font-mono text-sm leading-relaxed max-w-[40ch] group-hover:text-white/90 transition-colors duration-300'>
-                                                        Proprietary quantum
-                                                        tunneling allows seamless
-                                                        timeline transitions with
-                                                        zero temporal artifacts.
-                                                    </p>
-                                                    <div className='mt-6 grid grid-cols-2 gap-4 text-xs font-mono text-white/30'>
-                                                        <div className='group-hover:text-white/50 transition-colors duration-300'>
-                                                            Latency: 0.0042ms
-                                                        </div>
-                                                        <div className='group-hover:text-white/50 transition-colors duration-300'>
-                                                            Quantum State: Stable
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className='absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent transform translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000'></div>
-                                            </div>
-
-                                            <div className='panel-text feature-block group relative overflow-hidden'>
-                                                <div className='absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
-                                                <div className='relative z-10'>
-                                                    <h3 className='text-white/95 font-editorial text-[4vw] leading-[0.9] mb-8 transform group-hover:translate-x-2 transition-transform duration-500'>
+                                                <div className='relative z-10 space-y-6'>
+                                                    <h3 className='text-white/95 font-editorial text-[3vw] md:text-[2.5vw] lg:text-[2vw] leading-[1.1] transform group-hover:translate-x-2 transition-transform duration-500'>
                                                         NEURAL-SYNC
                                                         <br />
                                                         INTERFACE
@@ -1156,13 +1084,9 @@ const QuantumPage = () => {
                                                         cognitive continuity.
                                                     </p>
                                                 </div>
-                                                <div className='absolute top-0 right-0 w-[1px] h-full bg-gradient-to-b from-transparent via-white/20 to-transparent transform translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-1000'></div>
                                             </div>
-                                        </div>
 
-                                        {/* Right Column */}
-                                        <div className='space-y-32 mt-48'>
-                                            <div className='panel-text feature-block group relative overflow-hidden'>
+                                            <div className='feature-block group relative overflow-hidden'>
                                                 <div className='absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
                                                 <div className='relative z-10'>
                                                     <h3 className='text-white/95 font-editorial text-[4vw] leading-[0.9] mb-8 transform group-hover:translate-x-2 transition-transform duration-500'>
@@ -1187,8 +1111,11 @@ const QuantumPage = () => {
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
 
-                                            <div className='panel-text feature-block group relative overflow-hidden'>
+                                        {/* Right Column */}
+                                        <div className='space-y-16 md:space-y-32 mt-12 md:mt-48'>
+                                            <div className='feature-block group relative overflow-hidden'>
                                                 <div className='absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
                                                 <div className='relative z-10'>
                                                     <h3 className='text-white/95 font-editorial text-[4vw] leading-[0.9] mb-8 transform group-hover:translate-x-2 transition-transform duration-500'>
@@ -1211,15 +1138,15 @@ const QuantumPage = () => {
                                     </div>
 
                                     {/* Technical Details Bottom */}
-                                    <div className='col-span-12 row-span-1 flex justify-between items-end font-mono text-xs text-white/40'>
-                                        <div className='grid grid-cols-3 gap-8'>
-                                            <div>MEMORY: 87.2%</div>
-                                            <div>UPTIME: 847:23:12</div>
-                                            <div>TEMP: 42.3°C</div>
+                                    <div className='col-span-12 row-span-1 flex flex-col md:flex-row justify-between items-start md:items-end gap-4 font-mono text-xs text-white/40 p-4'>
+                                        <div className='grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-2'>
+                                            <div className='whitespace-nowrap'>MEMORY: 87.2%</div>
+                                            <div className='whitespace-nowrap'>UPTIME: 847:23:12</div>
+                                            <div className='whitespace-nowrap'>TEMP: 42.3°C</div>
                                         </div>
-                                        <div className='text-right'>
-                                            <div>LOC: 37.7749° N, 122.4194° W</div>
-                                            <div className='mt-1'>
+                                        <div className='text-left md:text-right space-y-1'>
+                                            <div className='whitespace-nowrap'>LOC: 37.7749° N, 122.4194° W</div>
+                                            <div className='whitespace-nowrap'>
                                                 TIME: {new Date().toISOString()}
                                             </div>
                                         </div>
@@ -1241,7 +1168,7 @@ const QuantumPage = () => {
                             {/* Panel 3 */}
                             <div className='panel w-screen h-screen flex-shrink-0 p-16 grid grid-rows-6 grid-cols-12 gap-8'>
                                 <div className='col-span-10 col-start-2 row-span-full grid grid-cols-[1fr_auto] items-center gap-32'>
-                                    <div className='panel-text max-w-[50vw]'>
+                                    <div className='max-w-[50vw]'>
                                         <div className='technical-readout text-[10px] tracking-[0.5em] text-white/40 mb-8'>SYSTEM ANALYSIS</div>
                                         <h2 className='text-white/95 font-editorial text-[4vw] tracking-[-0.03em] leading-[0.95] mb-8'>
                                             Until now, you lived with it.
@@ -1291,18 +1218,18 @@ const QuantumPage = () => {
                             {/* Panel 4 */}
                             <div className='panel w-screen h-screen flex-shrink-0 p-16 grid grid-rows-6 grid-cols-12 gap-8'>
                                 <div className='col-span-full row-span-full flex flex-col items-center justify-center text-center'>
-                                    <p className='panel-text text-white/40 font-mono text-base tracking-[0.5em] uppercase mb-8 fade-up'>
-                                        Introducing
+                                    <p className='text-white/40 font-mono text-base tracking-[0.5em] uppercase mb-8 fade-up'>
+                                        CRTL-Z
                                     </p>
-                                    <h2 className='panel-text text-white/95 font-editorial text-[10vw] tracking-[-0.03em] leading-[0.9] mb-12 fade-up'>
+                                    <h2 className='text-white/95 font-editorial text-[10vw] tracking-[-0.03em] leading-[0.9]  fade-up'>
                                         Now you can fix it.
                                     </h2>
-                                    <div className='panel-text mt-12 flex items-center gap-8 fade-up'>
-                                        <div className='w-12 h-[1px] bg-white/20'></div>
+                                    <div className='mt-12 flex items-center gap-8 fade-up'>
+
                                         <p className='text-white/60 font-mono text-sm tracking-[0.2em] uppercase'>
                                             Continue to experience
                                         </p>
-                                        <div className='w-12 h-[1px] bg-white/20'></div>
+
                                     </div>
                                 </div>
                             </div>
@@ -1405,11 +1332,10 @@ const QuantumPage = () => {
                             {/* CTA Buttons */}
                             <div className='space-x-8'>
                                 <button className='cta-button hover-highlight group relative px-12 py-4 bg-transparent'>
-                                    <div className='absolute inset-0 border border-white/20'></div>
-                                    <div className='absolute top-0 left-0 w-2 h-2 border-l border-t border-white/40'></div>
-                                    <div className='absolute top-0 right-0 w-2 h-2 border-r border-t border-white/40'></div>
-                                    <div className='absolute bottom-0 left-0 w-2 h-2 border-l border-b border-white/40'></div>
-                                    <div className='absolute bottom-0 right-0 w-2 h-2 border-r border-b border-white/40'></div>
+                                    <div className='corner corner-tl'></div>
+                                    <div className='corner corner-tr'></div>
+                                    <div className='corner corner-bl'></div>
+                                    <div className='corner corner-br'></div>
                                     <span className='text-white/90 font-mono text-sm tracking-[0.3em] relative z-10'>
                                         INITIATE SHIFT
                                     </span>
