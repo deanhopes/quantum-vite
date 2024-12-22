@@ -1,9 +1,9 @@
-import React, {useRef, useEffect, useState, useContext} from "react"
-import {Canvas, useFrame, extend, Object3DNode} from "@react-three/fiber"
-import {Suspense} from "react"
+import React, { useRef, useEffect, useState, useContext } from "react"
+import { Canvas, useFrame, extend, Object3DNode } from "@react-three/fiber"
+import { Suspense } from "react"
 import * as THREE from "three"
 import gsap from "gsap"
-import {ScrollTrigger} from "gsap/ScrollTrigger"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
 import {
     Float,
     SpotLight,
@@ -32,10 +32,10 @@ gsap.registerPlugin(ScrollTrigger)
 // Define the material type
 type PS1MaterialType = THREE.ShaderMaterial & {
     uniforms: {
-        uTime: {value: number}
-        uResolution: {value: THREE.Vector2}
-        uGlitchIntensity: {value: number}
-        uScrollProgress: {value: number}
+        uTime: { value: number }
+        uResolution: { value: THREE.Vector2 }
+        uGlitchIntensity: { value: number }
+        uScrollProgress: { value: number }
     }
 }
 
@@ -156,7 +156,7 @@ const PS1Material = shaderMaterial(
 )
 
 // Extend Three.js with our custom material
-extend({PS1Material})
+extend({ PS1Material })
 
 // Add proper type declarations
 declare module "@react-three/fiber" {
@@ -209,7 +209,7 @@ function QuantumGroup() {
     const groupRef = useRef<THREE.Group>(null)
     const canRef = useRef<THREE.Mesh>(null)
     const [isReady, setIsReady] = useState(false)
-    const {scrollProgress, isHorizontalSection} = useScrollContext()
+    const { scrollProgress, isHorizontalSection } = useScrollContext()
     const materialRef = useRef<PS1MaterialType>(null)
     const sphereRef = useRef<THREE.Group>(null)
     const [sphereVisible, setSphereVisible] = useState(false)
@@ -366,9 +366,9 @@ function QuantumGroup() {
 
 // Update SceneContent to include space background
 function SceneContent() {
-    const {scrollProgress, isHorizontalSection} = useScrollContext()
+    const { scrollProgress, isHorizontalSection } = useScrollContext()
 
-    useFrame(({camera}) => {
+    useFrame(({ camera }) => {
         if (!isHorizontalSection) return
 
         const radius = 4
@@ -429,12 +429,50 @@ function SceneContent() {
     )
 }
 
+// Move component definitions outside the main component
+const DataReadout = ({ label, value }: { label: string; value: string }) => (
+    <div className='technical-readout text-center group'>
+        <div className='relative'>
+            <div className='absolute -top-1 -left-1 w-2 h-2 border-t border-l border-white/20 transform scale-0 group-hover:scale-100 transition-transform duration-300'></div>
+            <div className='absolute -top-1 -right-1 w-2 h-2 border-t border-r border-white/20 transform scale-0 group-hover:scale-100 transition-transform duration-300'></div>
+            <div className='text-[10px] mb-2 opacity-60 tracking-[0.3em] uppercase relative'>
+                {label}
+                <div className='absolute left-0 bottom-0 w-0 h-[1px] bg-white/20 group-hover:w-full transition-all duration-500'></div>
+            </div>
+        </div>
+        <div className='text-xl tracking-widest relative overflow-hidden group-hover:text-white/90 transition-colors duration-300'>
+            {value}
+            <div className='absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000'></div>
+        </div>
+    </div>
+);
+
+const TechnicalHeader = ({ text }: { text: string }) => (
+    <div className='technical-readout text-[10px] tracking-[0.5em] text-white/40 mb-8 group relative px-8'>
+        <div className='absolute -left-2 top-1/2 w-2 h-[1px] bg-white/20 transform -translate-y-1/2 scale-x-0 opacity-0 group-hover:scale-x-100 group-hover:opacity-100 transition-all duration-300'></div>
+        <span className='relative'>
+            {text}
+            <div className='absolute left-0 bottom-0 w-0 h-[1px] bg-white/20 opacity-0 group-hover:w-full group-hover:opacity-100 transition-all duration-500 delay-200'></div>
+        </span>
+    </div>
+);
+
+const InteractiveGrid = () => (
+    <div className='interactive-grid absolute inset-0'>
+        <div className='grid-lines'></div>
+        <div className='grid-points'></div>
+        <div className='grid-scan'></div>
+        <div className='grid-noise'></div>
+        <div className='data-particles'></div>
+    </div>
+);
+
 const QuantumPage = () => {
     const containerRef = useRef<HTMLDivElement>(null)
     const canvasContainerRef = useRef<HTMLDivElement>(null)
     const heroTextRef = useRef<HTMLHeadingElement>(null)
     const subTextRef = useRef<HTMLHeadingElement>(null)
-    const [dimensions, setDimensions] = useState({width: 0, height: 0})
+    const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
     const [scrollState, setScrollState] = useState<ScrollContextType>({
         scrollProgress: 0,
         isHorizontalSection: false,
@@ -510,102 +548,6 @@ const QuantumPage = () => {
         }
 
         /* Grid lines - more subtle */
-        .technical-grid {
-            position: absolute;
-            inset: 0;
-            background-image: 
-                linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-                radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-            background-size: 24px 24px, 24px 24px, 96px 96px;
-            mask-image: none;
-            opacity: 1;
-            pointer-events: none;
-        }
-
-        /* Enhanced technical markers */
-        .technical-marker {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.65rem;
-            letter-spacing: 0.15em;
-            opacity: 0.6;
-            color: rgba(255, 255, 255, 0.8);
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-            position: relative;
-            padding-left: 16px;
-        }
-
-        .technical-marker::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            width: 8px;
-            height: 1px;
-            background: rgba(255, 255, 255, 0.4);
-        }
-
-        /* Technical readout enhancements */
-        .technical-readout {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            opacity: 0.8;
-            color: rgba(255, 255, 255, 0.9);
-            text-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
-            position: relative;
-            padding-left: 20px;
-        }
-
-        .technical-readout::before {
-            content: '[';
-            position: absolute;
-            left: 0;
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        .technical-readout::after {
-            content: ']';
-            position: absolute;
-            right: -12px;
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        /* Feature block refinements */
-        .feature-block {
-            position: relative;
-            padding: 2rem;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-        }
-
-        .feature-block:hover {
-            background: rgba(255, 255, 255, 0.02);
-            border-color: rgba(255, 255, 255, 0.05);
-        }
-
-        /* Spec items - simplified */
-        .spec-item {
-            position: relative;
-            padding: 1rem;
-            transition: transform 0.3s ease;
-        }
-
-        .spec-item:hover {
-            transform: translateX(4px);
-        }
-
-        /* Enhanced grid system */
-        .horizontal-grid-container {
-            position: absolute;
-            inset: 0;
-            width: 300vw; /* Match total scroll width */
-            height: 100vh;
-            overflow: hidden;
-            pointer-events: none;
-        }
-
         .technical-grid {
             position: absolute;
             inset: 0;
@@ -745,6 +687,133 @@ const QuantumPage = () => {
         .cta-button:hover::after {
             right: 100%;
         }
+
+        /* Update technical readout styles */
+        .technical-readout {
+            font-family: 'JetBrains Mono', monospace;
+            position: relative;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 0.5em;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
+        .technical-readout::before,
+        .technical-readout::after {
+            content: '';
+            position: absolute;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .technical-readout:hover {
+            opacity: 1;
+        }
+
+        .technical-readout:hover::before,
+        .technical-readout:hover::after {
+            opacity: 0.4;
+        }
+
+        /* Update header styles */
+        h1, h2, h3, h4 {
+            position: relative;
+            margin: 0;
+            padding: 0.5em 0;
+        }
+
+        h1::after, h2::after, h3::after, h4::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent);
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        h1:hover::after, h2:hover::after, h3:hover::after, h4:hover::after {
+            width: 100%;
+            opacity: 1;
+        }
+
+        /* Update panel text styles */
+        .panel-text {
+            position: relative;
+            padding: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .panel-text.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Update feature block styles */
+        .feature-block {
+            position: relative;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-block::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 1px solid rgba(255,255,255,0);
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .feature-block:hover::before {
+            border-color: rgba(255,255,255,0.1);
+            opacity: 1;
+        }
+
+        /* Update hero lines animation */
+        .hero-line-left,
+        .hero-line-right {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .glitch-container:hover .hero-line-left,
+        .glitch-container:hover .hero-line-right {
+            opacity: 0.2;
+        }
+
+        /* Update status bar styles */
+        .hero-status-bar {
+            backdrop-filter: blur(4px);
+            background: rgba(0,0,0,0.2);
+            padding: 1rem;
+            border-radius: 4px;
+            z-index: 50;
+        }
+
+        .status-item {
+            position: relative;
+            padding: 0.5rem 1rem;
+        }
+
+        .status-item::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 4px;
+            height: 4px;
+            background: currentColor;
+            border-radius: 50%;
+            opacity: 0.4;
+            transform: translate(-50%, -50%);
+        }
     `
 
     // Update the text animation setup
@@ -797,15 +866,15 @@ const QuantumPage = () => {
             })
 
             // Set initial states
-            gsap.set(text, {opacity: 0, y: 20})
-            gsap.set(splitText.words, {opacity: 0, y: 10})
+            gsap.set(text, { opacity: 0, y: 20 })
+            gsap.set(splitText.words, { opacity: 0, y: 10 })
 
             // Create parallax effect based on text container class
             const parallaxAmount = text.closest(".parallax-layer-back")
                 ? 100
                 : text.closest(".parallax-layer-mid")
-                ? 50
-                : 20
+                    ? 50
+                    : 20
 
             ScrollTrigger.create({
                 trigger: text,
@@ -814,7 +883,7 @@ const QuantumPage = () => {
                 containerAnimation: horizontalScroll,
                 onEnter: () => {
                     const tl = gsap.timeline({
-                        defaults: {ease: "power2.out"},
+                        defaults: { ease: "power2.out" },
                     })
 
                     tl.to(text, {
@@ -870,499 +939,508 @@ const QuantumPage = () => {
 
     return (
         <ScrollContext.Provider value={scrollState}>
-            {/* Canvas Container - Fixed */}
-            <div
-                ref={canvasContainerRef}
-                className='fixed inset-0 w-full h-full overflow-hidden bg-gradient-to-b from-black via-purple-900/20 to-black pointer-events-none'
-            >
-                {dimensions.width > 0 && (
-                    <Canvas
-                        shadows
-                        camera={{position: [0, 1, 4], fov: 35}}
-                        style={{
-                            position: "absolute",
-                            width: `${dimensions.width}px`,
-                            height: `${dimensions.height}px`,
-                            imageRendering: "pixelated",
-                        }}
-                        gl={{
-                            antialias: false,
-                            powerPreference: "high-performance",
-                            alpha: true,
-                        }}
-                    >
-                        <color
-                            attach='background'
-                            args={["#000000"]}
-                        />
-                        <fog
-                            attach='fog'
-                            args={["#000000", 5, 15]}
-                        />
-                        <Suspense fallback={null}>
-                            <SceneContent />
-                        </Suspense>
-                    </Canvas>
-                )}
-            </div>
-
-            {/* Main Scrollable Content */}
-            <div
-                ref={containerRef}
-                className='relative w-full'
-            >
-                {/* Hero Section */}
-                <section className='relative h-screen flex flex-col items-center justify-start pt-24 overflow-hidden'>
-                    <div className='glitch-container relative'>
-                        <h1
-                            ref={heroTextRef}
-                            className='text-white font-editorial text-[4.5vw] text-center max-w-[60vw] leading-tight tracking-tight mix-blend-difference'
-                        >
-                            For those moments when you need a different version
-                            of now.
-                        </h1>
-                    </div>
-                    <h2
-                        ref={subTextRef}
-                        className='text-white/80 font-mono text-2xl mt-8 tracking-widest glitch-text'
-                    >
-                        CTRL-Z: Reality's Undo Button
-                    </h2>
-                    <div className='absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center space-y-4'>
-                        <span className='text-white/40 font-mono text-sm tracking-wider'>
-                            Scroll to explore
-                        </span>
-                        <div className='w-6 h-10 border-2 border-white/20 rounded-full flex items-start p-1'>
-                            <div className='w-1 h-2 bg-white/40 rounded-full animate-scroll-hint mx-auto' />
-                        </div>
-                    </div>
-                </section>
-
-                {/* Horizontal Scroll Section */}
-                <section
-                    id='horizontalSection'
-                    className='relative h-screen w-screen overflow-hidden'
+            <div className='relative'>
+                {/* Canvas Container */}
+                <div
+                    ref={canvasContainerRef}
+                    className='fixed inset-0 w-full h-full overflow-hidden bg-gradient-to-b from-black via-purple-900/20 to-black pointer-events-none'
                 >
-                    {/* Grid Container */}
-                    <div className='horizontal-grid-container'>
-                        {Array.from({length: 4}).map((_, index) => (
-                            <div
-                                key={index}
-                                className='technical-grid'
-                                style={{left: `${index * 100}vw`}}
-                            />
-                        ))}
-                        <div className='hud-scan-line' />
-                        <div className='hud-corner hud-corner-tl' />
-                        <div className='hud-corner hud-corner-tr' />
-                        <div className='hud-corner hud-corner-bl' />
-                        <div className='hud-corner hud-corner-br' />
-                    </div>
+                    {dimensions.width > 0 && (
+                        <Canvas
+                            shadows
+                            camera={{ position: [0, 1, 4], fov: 35 }}
+                            style={{
+                                position: "absolute",
+                                width: `${dimensions.width}px`,
+                                height: `${dimensions.height}px`,
+                                imageRendering: "pixelated",
+                            }}
+                            gl={{
+                                antialias: false,
+                                powerPreference: "high-performance",
+                                alpha: true,
+                            }}
+                        >
+                            <color attach='background' args={["#000000"]} />
+                            <fog attach='fog' args={["#000000", 5, 15]} />
+                            <Suspense fallback={null}>
+                                <SceneContent />
+                            </Suspense>
+                        </Canvas>
+                    )}
+                </div>
 
-                    <div className='absolute top-0 left-0 h-full flex'>
-                        {/* Update panel content with parallax containers */}
-                        <div className='panel w-screen h-screen flex-shrink-0 p-16 grid grid-rows-6 grid-cols-12 gap-8 relative'>
-                            <div className='col-span-8 col-start-2 row-start-2 row-span-4 grid grid-rows-[auto_1fr] gap-16'>
-                                <div className='parallax-layer-front'>
-                                    <h2 className='panel-text text-white/95 font-editorial text-[3.5vw] tracking-[-0.02em] leading-[1.1] max-w-[24ch] mix-blend-difference'>
-                                        You've been there. That moment when
-                                        everything goes sideways.
-                                    </h2>
+                {/* Main Content */}
+                <div ref={containerRef} className='relative w-full'>
+                    {/* Hero Section */}
+                    <section className='relative h-screen flex flex-col items-center justify-center overflow-hidden'>
+                        {/* Background Elements */}
+                        <InteractiveGrid />
+                        <div className='absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/50'></div>
+
+                        {/* Main Content Container */}
+                        <div className='relative z-10 flex flex-col items-center max-w-[90vw] mx-auto px-8'>
+                            {/* Status Bar */}
+                            <div className='hero-status-bar fixed top-8 left-8 right-8 flex justify-between items-center text-[10px] font-mono tracking-[0.3em] text-white/40'>
+                                <div className='flex items-center gap-8'>
+                                    <div className='status-item'>SYSTEM: ONLINE</div>
+                                    <div className='status-item'>QUANTUM FIELD: STABLE</div>
+                                    <div className='status-item'>TIMELINE: ALPHA-7</div>
                                 </div>
-                                <div className='self-end space-y-6'>
-                                    <p className='technical-readout mb-4'>
-                                        System Status: Active
-                                    </p>
-                                    <div className='grid grid-cols-3 gap-4 text-xs font-mono text-white/40'>
-                                        <div>CPU: 98.2%</div>
-                                        <div>MEM: 64.7%</div>
-                                        <div>TEMP: 42°C</div>
-                                    </div>
-                                    <div className='w-16 h-[1px] bg-white/20'></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Panel 2 */}
-                        <div className='panel w-screen h-screen flex-shrink-0'>
-                            {/* Main Grid Container */}
-                            <div className='w-full h-full grid grid-cols-12 grid-rows-6 p-16 gap-8'>
-                                {/* Technical Details Top */}
-                                <div className='col-span-12 row-span-1 flex justify-between items-start'>
-                                    <div className='technical-readout'>
-                                        <div className='text-xs opacity-60'>
-                                            SYSTEM STATUS
-                                        </div>
-                                        <div className='text-sm mt-1'>
-                                            QUANTUM FIELD: STABLE
-                                        </div>
-                                    </div>
-                                    <div className='technical-readout text-right'>
-                                        <div className='text-xs opacity-60'>
-                                            TIMELINE
-                                        </div>
-                                        <div className='text-sm mt-1'>
-                                            BRANCH: ALPHA-7
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Main Content Grid */}
-                                <div className='col-span-12 row-span-4 grid grid-cols-2 gap-x-32 content-center'>
-                                    {/* Left Column */}
-                                    <div className='space-y-24'>
-                                        <div className='panel-text feature-block group relative overflow-hidden'>
-                                            <div className='absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
-                                            <div className='relative z-10'>
-                                                <p className='technical-readout mb-4 text-sm'>
-                                                    <span className='inline-block w-2 h-2 bg-white/20 group-hover:bg-white/40 transition-colors mr-2'></span>
-                                                    Core Technology
-                                                </p>
-                                                <h3 className='text-white/95 font-editorial text-[1.5vw] leading-[1.1] mb-4 transform group-hover:translate-x-2 transition-transform duration-500'>
-                                                    TIMESTREAM™ NAVIGATION
-                                                </h3>
-                                                <p className='text-white/70 font-mono text-sm leading-relaxed max-w-[40ch] group-hover:text-white/90 transition-colors duration-300'>
-                                                    Proprietary quantum
-                                                    tunneling allows seamless
-                                                    timeline transitions with
-                                                    zero temporal artifacts.
-                                                </p>
-                                                <div className='mt-6 grid grid-cols-2 gap-4 text-xs font-mono text-white/30'>
-                                                    <div className='group-hover:text-white/50 transition-colors duration-300'>
-                                                        Latency: 0.0042ms
-                                                    </div>
-                                                    <div className='group-hover:text-white/50 transition-colors duration-300'>
-                                                        Quantum State: Stable
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className='absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent transform translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000'></div>
-                                        </div>
-
-                                        <div className='panel-text feature-block group relative overflow-hidden'>
-                                            <div className='absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
-                                            <div className='relative z-10'>
-                                                <h3 className='text-white/95 font-editorial text-[4vw] leading-[0.9] mb-8 transform group-hover:translate-x-2 transition-transform duration-500'>
-                                                    NEURAL-SYNC
-                                                    <br />
-                                                    INTERFACE
-                                                </h3>
-                                                <p className='text-white/70 font-mono text-base leading-relaxed max-w-[40ch] transition-opacity duration-300 group-hover:text-white/90'>
-                                                    Memory preservation across
-                                                    realities, ensuring
-                                                    cognitive continuity.
-                                                </p>
-                                            </div>
-                                            <div className='absolute top-0 right-0 w-[1px] h-full bg-gradient-to-b from-transparent via-white/20 to-transparent transform translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-1000'></div>
-                                        </div>
-                                    </div>
-
-                                    {/* Right Column */}
-                                    <div className='space-y-32 mt-48'>
-                                        <div className='panel-text feature-block group relative overflow-hidden'>
-                                            <div className='absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
-                                            <div className='relative z-10'>
-                                                <h3 className='text-white/95 font-editorial text-[4vw] leading-[0.9] mb-8 transform group-hover:translate-x-2 transition-transform duration-500'>
-                                                    QUANTUM
-                                                    <br />
-                                                    STABILIZERS
-                                                </h3>
-                                                <p className='text-white/70 font-mono text-base leading-relaxed max-w-[40ch] transition-opacity duration-300 group-hover:text-white/90'>
-                                                    Reality-grade containment
-                                                    field prevents unwanted
-                                                    timeline bleed.
-                                                </p>
-                                                <div className='mt-6 grid grid-cols-3 gap-2'>
-                                                    {Array.from({
-                                                        length: 3,
-                                                    }).map((_, i) => (
-                                                        <div
-                                                            key={i}
-                                                            className='h-[2px] bg-white/20 group-hover:bg-white/40 transition-colors duration-300 delay-[${i * 100}ms]'
-                                                        ></div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className='panel-text feature-block group relative overflow-hidden'>
-                                            <div className='absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
-                                            <div className='relative z-10'>
-                                                <h3 className='text-white/95 font-editorial text-[4vw] leading-[0.9] mb-8 transform group-hover:translate-x-2 transition-transform duration-500'>
-                                                    INSTANT
-                                                    <br />
-                                                    ACCESS
-                                                </h3>
-                                                <p className='text-white/70 font-mono text-base leading-relaxed max-w-[40ch] transition-opacity duration-300 group-hover:text-white/90'>
-                                                    Zero latency between
-                                                    decision and implementation.
-                                                </p>
-                                                <div className='absolute bottom-4 right-4 opacity-20 group-hover:opacity-40 transition-opacity duration-300'>
-                                                    <div className='font-mono text-[10px] tracking-wider'>
-                                                        ACCESS_POINT_01
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Technical Details Bottom */}
-                                <div className='col-span-12 row-span-1 flex justify-between items-end font-mono text-xs text-white/40'>
-                                    <div className='grid grid-cols-3 gap-8'>
-                                        <div>MEMORY: 87.2%</div>
-                                        <div>UPTIME: 847:23:12</div>
-                                        <div>TEMP: 42.3°C</div>
-                                    </div>
-                                    <div className='text-right'>
-                                        <div>LOC: 37.7749° N, 122.4194° W</div>
-                                        <div className='mt-1'>
-                                            TIME: {new Date().toISOString()}
-                                        </div>
-                                    </div>
+                                <div className='flex items-center gap-8'>
+                                    <div className='status-item'>LAT: 37.7749° N</div>
+                                    <div className='status-item'>LONG: 122.4194° W</div>
                                 </div>
                             </div>
 
-                            {/* Background Elements */}
-                            <div className='absolute inset-0 pointer-events-none'>
-                                <div className='absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent'></div>
-                                <div className='absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent'></div>
-                                <div className='absolute top-8 right-8 flex items-center space-x-2'>
-                                    <div className='w-2 h-2 bg-white/20'></div>
-                                    <div className='w-2 h-2 bg-white/30'></div>
-                                    <div className='w-2 h-2 bg-white/40'></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Panel 3 */}
-                        <div className='panel w-screen h-screen flex-shrink-0 p-16 grid grid-rows-6 grid-cols-12 gap-8'>
-                            <div className='col-span-10 col-start-2 row-span-full grid grid-cols-[1fr_auto] items-center gap-32'>
-                                <div className='panel-text max-w-[32ch] fade-up'>
-                                    <h2 className='text-white/95 font-editorial text-[4vw] tracking-[-0.03em] leading-[0.95] mb-8'>
-                                        Until now, you lived with it.
-                                    </h2>
-                                    <p className='text-white/70 font-mono text-sm leading-relaxed mb-6'>
-                                        Every decision point creates infinite
-                                        branches. We just help you find the
-                                        right one.
-                                    </p>
-                                    <div className='grid grid-cols-2 gap-4 text-xs font-mono text-white/40 mt-8'>
-                                        <div>Branch Count: ∞</div>
-                                        <div>Success Rate: 99.99%</div>
+                            {/* Main Title Group */}
+                            <div className='glitch-container relative mb-16 mt-24'>
+                                {/* Interface Label */}
+                                <div className='hero-interface-label overflow-hidden mb-12'>
+                                    <div className='technical-readout text-[10px] tracking-[0.5em] text-white/40 flex items-center justify-center gap-4'>
+                                        <span className='inline-block'>QUANTUM</span>
+                                        <span className='inline-block'>REALITY</span>
+                                        <span className='inline-block'>INTERFACE</span>
                                     </div>
                                 </div>
-                                <div className='panel-text w-[360px] border-l border-white/10 pl-16 tech-specs'>
-                                    <p className='text-white/40 font-mono text-sm tracking-[0.2em] uppercase mb-12'>
-                                        Technical Specifications
-                                    </p>
-                                    <div className='space-y-12'>
-                                        <div className='spec-item group'>
-                                            <p className='text-white/40 font-mono text-xs tracking-[0.15em] uppercase mb-2 transition-colors duration-300 group-hover:text-white/60'>
-                                                MODEL
-                                            </p>
-                                            <p className='text-white/90 font-mono text-xl transition-transform duration-500 group-hover:translate-x-2'>
-                                                QUANTUM CORE RT-749
-                                            </p>
-                                        </div>
-                                        <div className='spec-item group'>
-                                            <p className='text-white/40 font-mono text-xs tracking-[0.15em] uppercase mb-2 transition-colors duration-300 group-hover:text-white/60'>
-                                                SERIES
-                                            </p>
-                                            <p className='text-white/90 font-mono text-xl transition-transform duration-500 group-hover:translate-x-2'>
-                                                SHIFT-X
-                                            </p>
-                                        </div>
-                                        <div className='spec-item group'>
-                                            <p className='text-white/40 font-mono text-xs tracking-[0.15em] uppercase mb-2 transition-colors duration-300 group-hover:text-white/60'>
-                                                ESTABLISHED
-                                            </p>
-                                            <p className='text-white/90 font-mono text-xl transition-transform duration-500 group-hover:translate-x-2'>
-                                                2038
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
-                        {/* Panel 4 */}
-                        <div className='panel w-screen h-screen flex-shrink-0 p-16 grid grid-rows-6 grid-cols-12 gap-8'>
-                            <div className='col-span-full row-span-full flex flex-col items-center justify-center text-center'>
-                                <p className='panel-text text-white/40 font-mono text-base tracking-[0.5em] uppercase mb-8 fade-up'>
-                                    Introducing
-                                </p>
-                                <h2 className='panel-text text-white/95 font-editorial text-[10vw] tracking-[-0.03em] leading-[0.9] mb-12 fade-up'>
-                                    Now you can fix it.
+                                {/* Main Title */}
+                                <div className='hero-title-wrapper overflow-hidden px-16'>
+                                    <h1 ref={heroTextRef}
+                                        className='text-white/90 font-editorial text-[5vw] text-center leading-tight tracking-tight mix-blend-difference'
+                                        data-splitting
+                                    >
+                                        For those moments when you need a different version of now.
+                                    </h1>
+                                </div>
+
+                                {/* Decorative Lines */}
+                                <div className='absolute -left-8 top-1/2 w-6 h-[1px] bg-white/20 opacity-0 transform -translate-y-1/2 hero-line-left transition-opacity duration-300'></div>
+                                <div className='absolute -right-8 top-1/2 w-6 h-[1px] bg-white/20 opacity-0 transform -translate-y-1/2 hero-line-right transition-opacity duration-300'></div>
+                            </div>
+
+                            {/* Subtitle */}
+                            <div className='hero-subtitle-wrapper overflow-hidden mb-48 px-8'>
+                                <h2 ref={subTextRef}
+                                    className='technical-readout text-white/80 font-mono text-xl tracking-[0.5em] glitch-text'
+                                    data-text="CTRL-Z: Reality's Undo Button"
+                                >
+                                    CTRL-Z: Reality's Undo Button
                                 </h2>
-                                <div className='panel-text mt-12 flex items-center gap-8 fade-up'>
-                                    <div className='w-12 h-[1px] bg-white/20'></div>
-                                    <p className='text-white/60 font-mono text-sm tracking-[0.2em] uppercase'>
-                                        Continue to experience
+                            </div>
+
+                            {/* Scroll Indicator */}
+                            <div className='hero-scroll fixed bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center space-y-4'>
+                                <span className='technical-readout text-[10px] tracking-[0.5em] text-white/40 overflow-hidden'>
+                                    <span className='inline-block'>SCROLL TO INITIALIZE</span>
+                                </span>
+                                <div className='scroll-indicator w-6 h-10 border-2 border-white/20 rounded-full flex items-start p-1'>
+                                    <div className='w-1 h-2 bg-white/40 rounded-full animate-scroll-hint mx-auto'></div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Horizontal Scroll Section */}
+                    <section
+                        id='horizontalSection'
+                        className='relative h-screen w-screen overflow-hidden'
+                    >
+                        {/* Grid Container */}
+                        <div className='horizontal-grid-container'>
+                            {Array.from({ length: 4 }).map((_, index) => (
+                                <div
+                                    key={index}
+                                    className='technical-grid'
+                                    style={{ left: `${index * 100}vw` }}
+                                />
+                            ))}
+                            <div className='hud-scan-line' />
+                            <div className='hud-corner hud-corner-tl' />
+                            <div className='hud-corner hud-corner-tr' />
+                            <div className='hud-corner hud-corner-bl' />
+                            <div className='hud-corner hud-corner-br' />
+                        </div>
+
+                        <div className='absolute top-0 left-0 h-full flex'>
+                            {/* Update panel content with parallax containers */}
+                            <div className='panel w-screen h-screen flex-shrink-0 p-16 grid grid-rows-6 grid-cols-12 gap-8 relative'>
+                                <div className='col-span-8 col-start-2 row-start-2 row-span-4 grid grid-rows-[auto_1fr] gap-16'>
+                                    <div className='parallax-layer-front'>
+                                        <h2 className='panel-text text-white/95 font-editorial text-[3.5vw] tracking-[-0.02em] leading-[1.1] max-w-[24ch] mix-blend-difference'>
+                                            You've been there. That moment when
+                                            everything goes sideways.
+                                        </h2>
+                                    </div>
+                                    <div className='self-end space-y-6'>
+                                        <p className='technical-readout mb-4'>
+                                            System Status: Active
+                                        </p>
+                                        <div className='grid grid-cols-3 gap-4 text-xs font-mono text-white/40'>
+                                            <div>CPU: 98.2%</div>
+                                            <div>MEM: 64.7%</div>
+                                            <div>TEMP: 42°C</div>
+                                        </div>
+                                        <div className='w-16 h-[1px] bg-white/20'></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Panel 2 */}
+                            <div className='panel w-screen h-screen flex-shrink-0'>
+                                {/* Main Grid Container */}
+                                <div className='w-full h-full grid grid-cols-12 grid-rows-6 p-16 gap-8'>
+                                    {/* Technical Details Top */}
+                                    <div className='col-span-12 row-span-1 flex justify-between items-start'>
+                                        <div className='technical-readout'>
+                                            <div className='text-xs opacity-60'>
+                                                SYSTEM STATUS
+                                            </div>
+                                            <div className='text-sm mt-1'>
+                                                QUANTUM FIELD: STABLE
+                                            </div>
+                                        </div>
+                                        <div className='technical-readout text-right'>
+                                            <div className='text-xs opacity-60'>
+                                                TIMELINE
+                                            </div>
+                                            <div className='text-sm mt-1'>
+                                                BRANCH: ALPHA-7
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Main Content Grid */}
+                                    <div className='col-span-12 row-span-4 grid grid-cols-2 gap-x-32 content-center'>
+                                        {/* Left Column */}
+                                        <div className='space-y-24'>
+                                            <div className='panel-text feature-block group relative overflow-hidden'>
+                                                <div className='absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
+                                                <div className='relative z-10'>
+                                                    <p className='technical-readout mb-4 text-sm'>
+                                                        <span className='inline-block w-2 h-2 bg-white/20 group-hover:bg-white/40 transition-colors mr-2'></span>
+                                                        Core Technology
+                                                    </p>
+                                                    <h3 className='text-white/95 font-editorial text-[1.5vw] leading-[1.1] mb-4 transform group-hover:translate-x-2 transition-transform duration-500'>
+                                                        TIMESTREAM™ NAVIGATION
+                                                    </h3>
+                                                    <p className='text-white/70 font-mono text-sm leading-relaxed max-w-[40ch] group-hover:text-white/90 transition-colors duration-300'>
+                                                        Proprietary quantum
+                                                        tunneling allows seamless
+                                                        timeline transitions with
+                                                        zero temporal artifacts.
+                                                    </p>
+                                                    <div className='mt-6 grid grid-cols-2 gap-4 text-xs font-mono text-white/30'>
+                                                        <div className='group-hover:text-white/50 transition-colors duration-300'>
+                                                            Latency: 0.0042ms
+                                                        </div>
+                                                        <div className='group-hover:text-white/50 transition-colors duration-300'>
+                                                            Quantum State: Stable
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className='absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent transform translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000'></div>
+                                            </div>
+
+                                            <div className='panel-text feature-block group relative overflow-hidden'>
+                                                <div className='absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
+                                                <div className='relative z-10'>
+                                                    <h3 className='text-white/95 font-editorial text-[4vw] leading-[0.9] mb-8 transform group-hover:translate-x-2 transition-transform duration-500'>
+                                                        NEURAL-SYNC
+                                                        <br />
+                                                        INTERFACE
+                                                    </h3>
+                                                    <p className='text-white/70 font-mono text-base leading-relaxed max-w-[40ch] transition-opacity duration-300 group-hover:text-white/90'>
+                                                        Memory preservation across
+                                                        realities, ensuring
+                                                        cognitive continuity.
+                                                    </p>
+                                                </div>
+                                                <div className='absolute top-0 right-0 w-[1px] h-full bg-gradient-to-b from-transparent via-white/20 to-transparent transform translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-1000'></div>
+                                            </div>
+                                        </div>
+
+                                        {/* Right Column */}
+                                        <div className='space-y-32 mt-48'>
+                                            <div className='panel-text feature-block group relative overflow-hidden'>
+                                                <div className='absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
+                                                <div className='relative z-10'>
+                                                    <h3 className='text-white/95 font-editorial text-[4vw] leading-[0.9] mb-8 transform group-hover:translate-x-2 transition-transform duration-500'>
+                                                        QUANTUM
+                                                        <br />
+                                                        STABILIZERS
+                                                    </h3>
+                                                    <p className='text-white/70 font-mono text-base leading-relaxed max-w-[40ch] transition-opacity duration-300 group-hover:text-white/90'>
+                                                        Reality-grade containment
+                                                        field prevents unwanted
+                                                        timeline bleed.
+                                                    </p>
+                                                    <div className='mt-6 grid grid-cols-3 gap-2'>
+                                                        {Array.from({
+                                                            length: 3,
+                                                        }).map((_, i) => (
+                                                            <div
+                                                                key={i}
+                                                                className='h-[2px] bg-white/20 group-hover:bg-white/40 transition-colors duration-300 delay-[${i * 100}ms]'
+                                                            ></div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className='panel-text feature-block group relative overflow-hidden'>
+                                                <div className='absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
+                                                <div className='relative z-10'>
+                                                    <h3 className='text-white/95 font-editorial text-[4vw] leading-[0.9] mb-8 transform group-hover:translate-x-2 transition-transform duration-500'>
+                                                        INSTANT
+                                                        <br />
+                                                        ACCESS
+                                                    </h3>
+                                                    <p className='text-white/70 font-mono text-base leading-relaxed max-w-[40ch] transition-opacity duration-300 group-hover:text-white/90'>
+                                                        Zero latency between
+                                                        decision and implementation.
+                                                    </p>
+                                                    <div className='absolute bottom-4 right-4 opacity-20 group-hover:opacity-40 transition-opacity duration-300'>
+                                                        <div className='font-mono text-[10px] tracking-wider'>
+                                                            ACCESS_POINT_01
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Technical Details Bottom */}
+                                    <div className='col-span-12 row-span-1 flex justify-between items-end font-mono text-xs text-white/40'>
+                                        <div className='grid grid-cols-3 gap-8'>
+                                            <div>MEMORY: 87.2%</div>
+                                            <div>UPTIME: 847:23:12</div>
+                                            <div>TEMP: 42.3°C</div>
+                                        </div>
+                                        <div className='text-right'>
+                                            <div>LOC: 37.7749° N, 122.4194° W</div>
+                                            <div className='mt-1'>
+                                                TIME: {new Date().toISOString()}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Background Elements */}
+                                <div className='absolute inset-0 pointer-events-none'>
+                                    <div className='absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent'></div>
+                                    <div className='absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent'></div>
+                                    <div className='absolute top-8 right-8 flex items-center space-x-2'>
+                                        <div className='w-2 h-2 bg-white/20'></div>
+                                        <div className='w-2 h-2 bg-white/30'></div>
+                                        <div className='w-2 h-2 bg-white/40'></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Panel 3 */}
+                            <div className='panel w-screen h-screen flex-shrink-0 p-16 grid grid-rows-6 grid-cols-12 gap-8'>
+                                <div className='col-span-10 col-start-2 row-span-full grid grid-cols-[1fr_auto] items-center gap-32'>
+                                    <div className='panel-text max-w-[50vw]'>
+                                        <div className='technical-readout text-[10px] tracking-[0.5em] text-white/40 mb-8'>SYSTEM ANALYSIS</div>
+                                        <h2 className='text-white/95 font-editorial text-[4vw] tracking-[-0.03em] leading-[0.95] mb-8'>
+                                            Until now, you lived with it.
+                                        </h2>
+                                        <p className='technical-readout text-white/70 font-mono text-sm leading-relaxed mb-6'>
+                                            Every decision point creates infinite branches. We just help you find the right one.
+                                        </p>
+                                        <div className='grid grid-cols-2 gap-4 text-[10px] font-mono text-white/40 tracking-[0.3em] mt-8'>
+                                            <div className='technical-readout'>BRANCH COUNT: ∞</div>
+                                            <div className='technical-readout'>SUCCESS RATE: 99.99%</div>
+                                        </div>
+                                    </div>
+                                    <div className='panel-text w-[360px] border-l border-white/10 pl-16 tech-specs'>
+                                        <p className='text-white/40 font-mono text-sm tracking-[0.2em] uppercase mb-12'>
+                                            Technical Specifications
+                                        </p>
+                                        <div className='space-y-12'>
+                                            <div className='spec-item group'>
+                                                <p className='text-white/40 font-mono text-xs tracking-[0.15em] uppercase mb-2 transition-colors duration-300 group-hover:text-white/60'>
+                                                    MODEL
+                                                </p>
+                                                <p className='text-white/90 font-mono text-xl transition-transform duration-500 group-hover:translate-x-2'>
+                                                    QUANTUM CORE RT-749
+                                                </p>
+                                            </div>
+                                            <div className='spec-item group'>
+                                                <p className='text-white/40 font-mono text-xs tracking-[0.15em] uppercase mb-2 transition-colors duration-300 group-hover:text-white/60'>
+                                                    SERIES
+                                                </p>
+                                                <p className='text-white/90 font-mono text-xl transition-transform duration-500 group-hover:translate-x-2'>
+                                                    SHIFT-X
+                                                </p>
+                                            </div>
+                                            <div className='spec-item group'>
+                                                <p className='text-white/40 font-mono text-xs tracking-[0.15em] uppercase mb-2 transition-colors duration-300 group-hover:text-white/60'>
+                                                    ESTABLISHED
+                                                </p>
+                                                <p className='text-white/90 font-mono text-xl transition-transform duration-500 group-hover:translate-x-2'>
+                                                    2038
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Panel 4 */}
+                            <div className='panel w-screen h-screen flex-shrink-0 p-16 grid grid-rows-6 grid-cols-12 gap-8'>
+                                <div className='col-span-full row-span-full flex flex-col items-center justify-center text-center'>
+                                    <p className='panel-text text-white/40 font-mono text-base tracking-[0.5em] uppercase mb-8 fade-up'>
+                                        Introducing
                                     </p>
-                                    <div className='w-12 h-[1px] bg-white/20'></div>
+                                    <h2 className='panel-text text-white/95 font-editorial text-[10vw] tracking-[-0.03em] leading-[0.9] mb-12 fade-up'>
+                                        Now you can fix it.
+                                    </h2>
+                                    <div className='panel-text mt-12 flex items-center gap-8 fade-up'>
+                                        <div className='w-12 h-[1px] bg-white/20'></div>
+                                        <p className='text-white/60 font-mono text-sm tracking-[0.2em] uppercase'>
+                                            Continue to experience
+                                        </p>
+                                        <div className='w-12 h-[1px] bg-white/20'></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </section>
+                    </section>
 
-                {/* Testimonial Section */}
-                <section className='relative min-h-screen bg-black/90 flex items-center justify-center py-24'>
-                    <div className='container mx-auto grid grid-cols-12 gap-8 px-8'>
-                        <div className='col-span-6'>
-                            <h2 className='text-white font-editorial text-6xl leading-tight mb-16'>
-                                When we first announced
-                                <br />
-                                a beverage that could alter
-                                <br />
-                                reality, they called us mad.
-                                <br />
-                                <br />
-                                88 billion successful
-                                <br />
-                                reality shifts later, they
-                                <br />
-                                call us the future.
-                            </h2>
-                        </div>
-                        <div className='col-span-5 col-start-8 space-y-12'>
-                            <div className='space-y-6'>
-                                <div className='flex'>
-                                    {Array.from({length: 5}, (_, index) => (
-                                        <span
-                                            key={index}
-                                            className='text-white text-xl'
-                                        >
-                                            ★
-                                        </span>
-                                    ))}
-                                </div>
-                                <p className='text-white/90 font-mono text-lg leading-relaxed'>
-                                    "Yesterday, I made the worst presentation of
-                                    my career. Or I would have, if ctrl-z hadn't
-                                    helped me find the timeline where I
-                                    remembered to actually save my slides. The
-                                    look on my alternate self's face was
-                                    priceless."
-                                </p>
+                    {/* Testimonial Section */}
+                    <section className='relative min-h-screen bg-black/90 flex items-center justify-center py-24'>
+                        <div className='container mx-auto grid grid-cols-12 gap-8 px-8'>
+                            <div className='col-span-6'>
+                                <div className='technical-readout text-[10px] tracking-[0.5em] text-white/40 mb-8'>FIELD REPORTS</div>
+                                <h2 className='text-white/95 font-editorial text-5xl leading-tight mb-16'>
+                                    When we first announced
+                                    <br />
+                                    a beverage that could alter
+                                    <br />
+                                    reality, they called us mad.
+                                    <br />
+                                    <br />
+                                    <span className='text-white/70'>88 billion successful
+                                        <br />
+                                        reality shifts later, they
+                                        <br />
+                                        call us the future.</span>
+                                </h2>
                             </div>
-                            <div className='space-y-6'>
-                                <div className='flex'>
-                                    {Array.from({length: 5}, (_, index) => (
-                                        <span
-                                            key={index}
-                                            className='text-white text-xl'
-                                        >
-                                            ★
-                                        </span>
-                                    ))}
+                            <div className='col-span-5 col-start-8 space-y-12'>
+                                <div className='space-y-6'>
+                                    <div className='technical-readout text-[10px] tracking-[0.5em] text-white/40 mb-4'>USER TESTIMONIAL_01</div>
+                                    <div className='flex mb-4'>
+                                        {Array.from({ length: 5 }, (_, index) => (
+                                            <span key={index} className='text-white/80 text-xl'>★</span>
+                                        ))}
+                                    </div>
+                                    <p className='technical-readout text-white/90 font-mono text-lg leading-relaxed'>
+                                        "Yesterday, I made the worst presentation of my career. Or I would have, if ctrl-z hadn't helped me find the timeline where I remembered to actually save my slides."
+                                    </p>
                                 </div>
-                                <p className='text-white/90 font-mono text-lg leading-relaxed'>
-                                    "Used to spend hours overthinking my
-                                    decisions. Now I just ctrl-z through a few
-                                    realities until I find the one that clicks.
-                                    Though I should mention - don't try it
-                                    during a job interview."
-                                </p>
                             </div>
                         </div>
-                    </div>
-                </section>
+                    </section>
 
-                {/* Final CTA Section */}
-                <section className='relative min-h-screen bg-black flex items-center justify-center overflow-hidden'>
-                    {/* Technical Grid Background */}
-                    <div className='technical-grid opacity-20'></div>
-                    <div className='hud-scan-line'></div>
+                    {/* Final CTA Section */}
+                    <section className='relative min-h-screen bg-black flex items-center justify-center overflow-hidden'>
+                        {/* Technical Grid Background */}
+                        <div className='technical-grid absolute inset-0 w-full h-full'>
+                            {/* Primary Grid */}
+                            <div className='absolute inset-0 bg-[length:24px_24px] [mask-image:linear-gradient(to_bottom,transparent,black,transparent)]'
+                                style={{
+                                    backgroundImage: `
+                                    linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+                                    linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px)
+                                `
+                                }}
+                            />
 
-                    {/* Corner Brackets */}
-                    <div className='hud-corner hud-corner-tl'></div>
-                    <div className='hud-corner hud-corner-tr'></div>
-                    <div className='hud-corner hud-corner-bl'></div>
-                    <div className='hud-corner hud-corner-br'></div>
+                            {/* Secondary Grid */}
+                            <div className='absolute inset-0 bg-[length:96px_96px]'
+                                style={{
+                                    backgroundImage: `
+                                    linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
+                                    linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px)
+                                `
+                                }}
+                            />
 
-                    {/* Main Content */}
-                    <div className='text-center px-4 relative z-10 max-w-6xl mx-auto'>
-                        {/* Technical Readout Header */}
-                        <div className='technical-readout text-sm mb-8 tracking-[0.3em]'>
-                            QUANTUM SHIFT PROTOCOL: READY
-                        </div>
+                            {/* Radial Points */}
+                            <div className='absolute inset-0 bg-[length:48px_48px] opacity-30'
+                                style={{
+                                    backgroundImage: `radial-gradient(circle at center, rgba(255,255,255,0.1) 1px, transparent 1px)`
+                                }}
+                            />
 
-                        {/* Main Title */}
-                        <h2 className='panel-text text-white/90 font-editorial text-8xl mb-12 leading-[0.9]'>
-                            Begin Your
-                            <br />
-                            Quantum Journey
-                        </h2>
-
-                        {/* Technical Stats */}
-                        <div className='grid grid-cols-3 gap-8 mb-16 font-mono'>
-                            <div className='technical-readout text-left'>
-                                <div className='text-xs mb-2 opacity-60'>
-                                    REALITY SHIFTS
-                                </div>
-                                <div className='text-2xl'>88.2B+</div>
-                            </div>
-                            <div className='technical-readout text-center'>
-                                <div className='text-xs mb-2 opacity-60'>
-                                    SUCCESS RATE
-                                </div>
-                                <div className='text-2xl'>99.99%</div>
-                            </div>
-                            <div className='technical-readout text-right'>
-                                <div className='text-xs mb-2 opacity-60'>
-                                    QUANTUM STABILITY
-                                </div>
-                                <div className='text-2xl'>100%</div>
+                            {/* Scanning Line Effect */}
+                            <div className='absolute inset-0 overflow-hidden'>
+                                <div className='absolute w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent animate-scan-y' />
+                                <div className='absolute w-[1px] h-full bg-gradient-to-b from-transparent via-white/10 to-transparent animate-scan-x' />
                             </div>
                         </div>
 
-                        {/* Description */}
-                        <p className='text-white/70 font-mono text-lg max-w-2xl mx-auto mb-16 leading-relaxed'>
-                            Step into a future where every possibility is within
-                            reach. Your perfect timeline awaits.
-                        </p>
+                        {/* Main Content */}
+                        <div className='text-center relative z-10 max-w-6xl mx-auto flex flex-col items-center'>
+                            {/* Technical Readout Header */}
+                            <div className='technical-readout text-[10px] tracking-[0.5em] text-white/40 mb-32'>
+                                QUANTUM SHIFT PROTOCOL: READY
+                            </div>
 
-                        {/* CTA Buttons */}
-                        <div className='space-x-8'>
-                            <button className='cta-button group relative px-12 py-5 bg-white/5 hover:bg-white/10'>
-                                <div className='absolute inset-0 border border-white/20 group-hover:border-white/40 transition-colors'></div>
-                                <div className='absolute top-0 left-0 w-2 h-2 border-l-2 border-t-2 border-white/40 group-hover:border-white/60 transition-colors'></div>
-                                <div className='absolute top-0 right-0 w-2 h-2 border-r-2 border-t-2 border-white/40 group-hover:border-white/60 transition-colors'></div>
-                                <div className='absolute bottom-0 left-0 w-2 h-2 border-l-2 border-b-2 border-white/40 group-hover:border-white/60 transition-colors'></div>
-                                <div className='absolute bottom-0 right-0 w-2 h-2 border-r-2 border-b-2 border-white/40 group-hover:border-white/60 transition-colors'></div>
-                                <span className='text-white/90 font-mono text-lg tracking-wider relative z-10'>
-                                    INITIATE SHIFT
-                                </span>
-                            </button>
-                            <button className='cta-button group relative px-12 py-5'>
-                                <div className='absolute inset-0 border border-white/10 group-hover:border-white/20 transition-colors'></div>
-                                <span className='text-white/70 font-mono text-lg tracking-wider relative z-10'>
-                                    LEARN MORE
-                                </span>
-                            </button>
+                            {/* Technical Stats */}
+                            <div className='grid grid-cols-3 gap-32 mb-32 font-mono w-full max-w-2xl'>
+                                <DataReadout label="REALITY SHIFTS" value="88.2B+" />
+                                <DataReadout label="SUCCESS RATE" value="99.99%" />
+                                <DataReadout label="QUANTUM STABILITY" value="100%" />
+                            </div>
+
+                            {/* Description */}
+                            <p className='text-white/60 font-mono text-md max-w-2xl mx-auto mb-8 leading-relaxed tracking-wider'>
+                                Step into a future where every possibility is within reach. Your perfect timeline awaits.
+                            </p>
+
+                            {/* CTA Buttons */}
+                            <div className='space-x-8'>
+                                <button className='cta-button hover-highlight group relative px-12 py-4 bg-transparent'>
+                                    <div className='absolute inset-0 border border-white/20'></div>
+                                    <div className='absolute top-0 left-0 w-2 h-2 border-l border-t border-white/40'></div>
+                                    <div className='absolute top-0 right-0 w-2 h-2 border-r border-t border-white/40'></div>
+                                    <div className='absolute bottom-0 left-0 w-2 h-2 border-l border-b border-white/40'></div>
+                                    <div className='absolute bottom-0 right-0 w-2 h-2 border-r border-b border-white/40'></div>
+                                    <span className='text-white/90 font-mono text-sm tracking-[0.3em] relative z-10'>
+                                        INITIATE SHIFT
+                                    </span>
+                                </button>
+                                <button className='cta-button group relative px-12 py-4'>
+                                    <div className='absolute inset-0 border border-white/10'></div>
+                                    <span className='text-white/40 font-mono text-sm tracking-[0.3em] relative z-10'>
+                                        LEARN MORE
+                                    </span>
+                                </button>
+                            </div>
+
+                            {/* Technical Details */}
+                            <div className=' font-mono text-[10px] text-white/40 tracking-[0.2em]'>
+                                <div>MODEL: QS-749-X</div>
+                                <div>BUILD: 2038.12.1</div>
+                            </div>
+                            <div className=' font-mono text-[10px] text-white/40 tracking-[0.2em] text-right'>
+                                <div>LAT: 37.7749° N</div>
+                                <div>LONG: 122.4194° W</div>
+                            </div>
                         </div>
 
-                        {/* Technical Details */}
-                        <div className='absolute bottom-8 left-8 font-mono text-xs text-white/40 tracking-wider'>
-                            <div>MODEL: QS-749-X</div>
-                            <div>BUILD: 2038.12.1</div>
-                        </div>
-                        <div className='absolute bottom-8 right-8 font-mono text-xs text-white/40 tracking-wider text-right'>
-                            <div>LAT: 37.7749° N</div>
-                            <div>LONG: 122.4194° W</div>
-                        </div>
-                    </div>
+                        {/* Background Gradient */}
+                        <div className='absolute inset-0 bg-gradient-to-t from-black via-transparent to-black opacity-70'></div>
+                    </section>
 
-                    {/* Background Gradient */}
-                    <div className='absolute inset-0 bg-gradient-to-t from-black via-purple-900/10 to-black opacity-70'></div>
-                </section>
-
-                {/* Add this CSS to your global styles or a CSS module */}
-                <style
-                    dangerouslySetInnerHTML={{
-                        __html: `
+                    {/* Add this CSS to your global styles or a CSS module */}
+                    <style
+                        dangerouslySetInnerHTML={{
+                            __html: `
                         @keyframes glitch {
                             0% {
                                 transform: translate(0);
@@ -1573,11 +1651,417 @@ const QuantumPage = () => {
                             opacity: 1;
                             transform: translateY(0);
                         }
+
+                        @keyframes scan-y {
+                            from { transform: translateY(-100%); }
+                            to { transform: translateY(100%); }
+                        }
+
+                        @keyframes scan-x {
+                            from { transform: translateX(-100%); }
+                            to { transform: translateX(100%); }
+                        }
+
+                        .animate-scan-y {
+                            animation: scan-y 8s linear infinite;
+                        }
+
+                        .animate-scan-x {
+                            animation: scan-x 12s linear infinite;
+                        }
+
+                        .technical-grid {
+                            mask-image: linear-gradient(to bottom, 
+                                transparent,
+                                rgba(0,0,0,0.8) 15%,
+                                rgba(0,0,0,0.8) 85%,
+                                transparent
+                            );
+                            opacity: 0.6;
+                            pointer-events: none;
+                        }
+
+                        /* Add responsive scaling */
+                        @media (max-width: 768px) {
+                            .technical-grid div {
+                                background-size: 16px 16px, 16px 16px;
+                            }
+                            .technical-grid div:nth-child(2) {
+                                background-size: 64px 64px, 64px 64px;
+                            }
+                            .technical-grid div:nth-child(3) {
+                                background-size: 32px 32px;
+                            }
+                        }
+                        .technical-readout {
+                            font-family: 'JetBrains Mono', monospace;
+                            position: relative;
+                            display: inline-block;
+                            text-transform: uppercase;
+                            letter-spacing: 0.5em;
+                            opacity: 0.8;
+                            transition: opacity 0.3s ease;
+                        }
+
+                        .technical-readout::before {
+                            content: '[';
+                            position: absolute;
+                            left: -1em;
+                            opacity: 0.4;
+                        }
+
+                        .technical-readout::after {
+                            content: ']';
+                            position: absolute;
+                            right: -1em;
+                            opacity: 0.4;
+                        }
+
+                        .technical-readout:hover {
+                            opacity: 1;
+                        }
+
+                        h1, h2, h3, h4 {
+                            position: relative;
+                        }
+
+                        h1::after, h2::after, h3::after, h4::after {
+                            content: '';
+                            position: absolute;
+                            bottom: -0.5em;
+                            left: 0;
+                            width: 2em;
+                            height: 1px;
+                            background: linear-gradient(to right, rgba(255,255,255,0.2), transparent);
+                        }
+
+                        .panel-text {
+                            position: relative;
+                            padding: 2rem;
+                        }
+
+                        .panel-text::before {
+                            content: '';
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 2px;
+                            height: 1em;
+                            background: rgba(255,255,255,0.2);
+                        }
+
+                        .feature-block {
+                            position: relative;
+                            padding: 2rem;
+                            border: 1px solid rgba(255,255,255,0.05);
+                            transition: all 0.3s ease;
+                        }
+
+                        .feature-block:hover {
+                            border-color: rgba(255,255,255,0.1);
+                            transform: translateX(4px);
+                        }
+
+                        .feature-block::before {
+                            content: '';
+                            position: absolute;
+                            top: -1px;
+                            left: -1px;
+                            width: 8px;
+                            height: 8px;
+                            border-top: 1px solid rgba(255,255,255,0.2);
+                            border-left: 1px solid rgba(255,255,255,0.2);
+                        }
+
+                        .technical-readout {
+                            position: relative;
+                            padding-left: 1em;
+                            padding-right: 1em;
+                        }
+
+                        .technical-readout::before,
+                        .technical-readout::after {
+                            font-family: monospace;
+                            position: absolute;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            opacity: 0.4;
+                            transition: opacity 0.3s ease;
+                        }
+
+                        .technical-readout::before {
+                            content: '[';
+                            left: 0;
+                            transform-origin: left center;
+                        }
+
+                        .technical-readout::after {
+                            content: ']';
+                            right: 0;
+                            transform-origin: right center;
+                        }
+
+                        .technical-readout:hover::before {
+                            transform: translateY(-50%) translateX(-2px);
+                            opacity: 0.8;
+                        }
+
+                        .technical-readout:hover::after {
+                            transform: translateY(-50%) translateX(2px);
+                            opacity: 0.8;
+                        }
+
+                        .feature-block {
+                            position: relative;
+                            background: linear-gradient(
+                                to bottom,
+                                rgba(255,255,255,0.02),
+                                transparent
+                            );
+                        }
+
+                        .feature-block::before,
+                        .feature-block::after {
+                            content: '';
+                            position: absolute;
+                            width: 1px;
+                            height: 40px;
+                            background: linear-gradient(
+                                to bottom,
+                                rgba(255,255,255,0.2),
+                                transparent
+                            );
+                        }
+
+                        .feature-block::before {
+                            top: 0;
+                            left: 0;
+                        }
+
+                        .feature-block::after {
+                            top: 0;
+                            right: 0;
+                        }
+
+                        .feature-block:hover {
+                            background: linear-gradient(
+                                to bottom,
+                                rgba(255,255,255,0.03),
+                                transparent
+                            );
+                        }
+
+                        /* Enhanced heading decorations */
+                        h1::before, h2::before, h3::before {
+                            content: '';
+                            position: absolute;
+                            top: -0.5em;
+                            left: 0;
+                            width: 40px;
+                            height: 1px;
+                            background: linear-gradient(to right, rgba(255,255,255,0.2), transparent);
+                        }
+
+                        /* Technical corner decorations */
+                        .technical-corner {
+                            position: absolute;
+                            width: 8px;
+                            height: 8px;
+                            border: 1px solid rgba(255,255,255,0.2);
+                        }
+
+                        .technical-corner-tl {
+                            top: 0;
+                            left: 0;
+                            border-right: none;
+                            border-bottom: none;
+                        }
+
+                        .technical-corner-tr {
+                            top: 0;
+                            right: 0;
+                            border-left: none;
+                            border-bottom: none;
+                        }
+
+                        .technical-corner-bl {
+                            bottom: 0;
+                            left: 0;
+                            border-right: none;
+                            border-top: none;
+                        }
+
+                        .technical-corner-br {
+                            bottom: 0;
+                            right: 0;
+                            border-left: none;
+                            border-top: none;
+                        }
+
+                        /* Scanning effect */
+                        @keyframes scan {
+                            0% { transform: translateY(-100%); opacity: 0; }
+                            50% { opacity: 1; }
+                            100% { transform: translateY(100%); opacity: 0; }
+                        }
+
+                        .scan-line {
+                            position: absolute;
+                            left: 0;
+                            width: 100%;
+                            height: 1px;
+                            background: linear-gradient(
+                                90deg,
+                                transparent,
+                                rgba(255,255,255,0.1),
+                                transparent
+                            );
+                            animation: scan 4s linear infinite;
+                            pointer-events: none;
+                        }
+
+                        /* Glitch effect */
+                        @keyframes glitch-1 {
+                            0% { clip-path: inset(40% 0 61% 0); }
+                            20% { clip-path: inset(92% 0 1% 0); }
+                            40% { clip-path: inset(43% 0 1% 0); }
+                            60% { clip-path: inset(25% 0 58% 0); }
+                            80% { clip-path: inset(54% 0 7% 0); }
+                            100% { clip-path: inset(58% 0 43% 0); }
+                        }
+
+                        .glitch-text {
+                            position: relative;
+                        }
+
+                        .glitch-text::before,
+                        .glitch-text::after {
+                            content: attr(data-text);
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            opacity: 0.8;
+                        }
+
+                        .glitch-text::before {
+                            animation: glitch-1 0.3s infinite;
+                            color: #0ff;
+                            transform: translateX(-2px);
+                        }
+
+                        .glitch-text::after {
+                            animation: glitch-1 0.3s infinite reverse;
+                            color: #f0f;
+                            transform: translateX(2px);
+                        }
+
+                        /* Pulse effect */
+                        @keyframes pulse {
+                            0% { transform: scale(1); opacity: 0.5; }
+                            50% { transform: scale(1.05); opacity: 0.8; }
+                            100% { transform: scale(1); opacity: 0.5; }
+                        }
+
+                        .pulse {
+                            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+                        }
+
+                        /* Loading bar */
+                        @keyframes loading {
+                            from { width: 0; }
+                            to { width: 100%; }
+                        }
+
+                        .loading-bar {
+                            position: relative;
+                            height: 1px;
+                            background: rgba(255,255,255,0.1);
+                            overflow: hidden;
+                        }
+
+                        .loading-bar::after {
+                            content: '';
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            height: 100%;
+                            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+                            animation: loading 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+                        }
+
+                        /* Enhanced corner decorations */
+                        .corner-decoration {
+                            position: absolute;
+                            width: 6px;
+                            height: 6px;
+                            border: 1px solid rgba(255,255,255,0.2);
+                            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        }
+
+                        .corner-tl { top: 0; left: 0; border-right: none; border-bottom: none; }
+                        .corner-tr { top: 0; right: 0; border-left: none; border-bottom: none; }
+                        .corner-bl { bottom: 0; left: 0; border-right: none; border-top: none; }
+                        .corner-br { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+                        *:hover > .corner-decoration {
+                            width: 12px;
+                            height: 12px;
+                            border-color: rgba(255,255,255,0.4);
+                        }
+
+                        /* Data stream effect */
+                        @keyframes data-stream {
+                            0% { transform: translateY(-100%); }
+                            100% { transform: translateY(100%); }
+                        }
+
+                        .data-stream {
+                            position: absolute;
+                            top: 0;
+                            width: 1px;
+                            height: 100px;
+                            background: linear-gradient(
+                                to bottom,
+                                transparent,
+                                rgba(255,255,255,0.2),
+                                transparent
+                            );
+                            animation: data-stream 3s linear infinite;
+                        }
+
+                        /* Hover highlight */
+                        .hover-highlight {
+                            position: relative;
+                            overflow: hidden;
+                        }
+
+                        .hover-highlight::after {
+                            content: '';
+                            position: absolute;
+                            top: 0;
+                            left: -100%;
+                            width: 100%;
+                            height: 100%;
+                            background: linear-gradient(
+                                90deg,
+                                transparent,
+                                rgba(255,255,255,0.1),
+                                transparent
+                            );
+                            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                        }
+
+                        .hover-highlight:hover::after {
+                            transform: translateX(200%);
+                        }
                     `,
-                    }}
-                />
+                        }}
+                    />
+                </div>
+                <style dangerouslySetInnerHTML={{ __html: cyberStyles }} />
             </div>
-            <style dangerouslySetInnerHTML={{__html: cyberStyles}} />
         </ScrollContext.Provider>
     )
 }
