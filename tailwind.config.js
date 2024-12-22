@@ -6,8 +6,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        mono: ['JetBrains Mono', 'monospace'],
-        editorial: ['Editorial New', 'serif'],
+        'editorial': ['PPEditorialOld', 'serif'],
       },
       animation: {
         'scan-y': 'scan-y 8s linear infinite',

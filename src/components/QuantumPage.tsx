@@ -76,6 +76,23 @@ function SpaceBackground() {
     )
 }
 
+// First, let's create a reusable lerp utility
+const lerp = (start: number, end: number, factor: number) => {
+    return start + (end - start) * factor;
+};
+
+// Vector3 lerp utility
+const lerpV3 = (current: THREE.Vector3, target: THREE.Vector3, factor: number) => {
+    current.x = lerp(current.x, target.x, factor);
+    current.y = lerp(current.y, target.y, factor);
+    current.z = lerp(current.z, target.z, factor);
+};
+
+// Quaternion slerp utility
+const slerpQ = (current: THREE.Quaternion, target: THREE.Quaternion, factor: number) => {
+    current.slerp(target, factor);
+};
+
 function QuantumGroup() {
     const groupRef = useRef<THREE.Group>(null)
     const canRef = useRef<THREE.Group>(null)
@@ -88,6 +105,7 @@ function QuantumGroup() {
         startY: -8,
         targetY: -4,
         progress: 0,
+        hasAppeared: false  // Add this to track if sphere has appeared
     })
     const atmosphereMaterialRef = useRef<PS1MaterialType>(null)
     const coreMaterialRef = useRef<PS1MaterialType>(null)
@@ -215,81 +233,192 @@ function QuantumGroup() {
         });
     }, [isReady]);
 
+    // Add state for transition targets
+    const [transitionState] = useState({
+        position: new THREE.Vector3(),
+        rotation: new THREE.Euler(),
+        scale: new THREE.Vector3(1, 1, 1),
+        quaternion: new THREE.Quaternion(),
+        targetPosition: new THREE.Vector3(),
+        targetRotation: new THREE.Euler(),
+        targetScale: new THREE.Vector3(1, 1, 1),
+        targetQuaternion: new THREE.Quaternion(),
+        velocity: new THREE.Vector3(),
+        springVelocity: 0,
+        dampedProgress: 0
+    });
+
+    // Add a ref to track the previous state
+    const prevState = useRef({
+        isHorizontalSection: false,
+        position: new THREE.Vector3(),
+        rotation: new THREE.Euler(),
+        scale: new THREE.Vector3(1, 1, 1)
+    });
+
     useFrame((state) => {
-        if (!groupRef.current || !canRef.current || !isReady) return;
+        if (!canRef.current || !groupRef.current || !isReady) return;
 
-        // Update material uniforms
-        [atmosphereMaterialRef, coreMaterialRef, glowMaterialRef].forEach((ref) => {
-            if (ref.current) {
-                ref.current.uniforms.uTime.value = state.clock.elapsedTime;
-                ref.current.uniforms.uGlitchIntensity.value = values.glitchIntensity;
-                ref.current.uniforms.uScrollProgress.value = scrollProgress * values.scrollEffect;
+        const deltaTime = state.clock.getDelta();
+        const lerpFactor = deltaTime * 2.0; // Increased for more responsive movement
+        const time = state.clock.elapsedTime;
+
+        // Store previous position before any updates
+        prevState.current.position.copy(canRef.current.position);
+        prevState.current.rotation.copy(canRef.current.rotation);
+        prevState.current.scale.copy(canRef.current.scale);
+
+        const stateChanged = prevState.current.isHorizontalSection !== isHorizontalSection;
+        if (stateChanged) {
+            console.log('State transition:', {
+                from: prevState.current.isHorizontalSection,
+                to: isHorizontalSection,
+                currentPos: canRef.current.position.toArray(),
+                prevPos: prevState.current.position.toArray(),
+                scrollProgress,
+                time: state.clock.elapsedTime
+            });
+
+            // Show sphere when entering horizontal section and keep it visible
+            if (isHorizontalSection) {
+                setSphereVisible(true);
             }
-        });
+        }
+        prevState.current.isHorizontalSection = isHorizontalSection;
 
-        // Enhanced can animations based on scroll progress
         if (isHorizontalSection) {
-            // First panel: Can floats up and rotates with a slight wobble
-            if (scrollProgress < 0.33) {
-                const progress = scrollProgress / 0.33;
-                const wobble = Math.sin(state.clock.elapsedTime * 2) * 0.02;
+            const totalProgress = scrollProgress;
+            const section1Progress = Math.min(1, totalProgress / 0.33);
+            const section2Progress = Math.max(0, Math.min(1, (totalProgress - 0.28) / 0.33));
+            const section3Progress = Math.max(0, Math.min(1, (totalProgress - 0.61) / 0.34));
 
-                canRef.current.position.y = THREE.MathUtils.lerp(-0.8, 0, progress) + wobble;
-                canRef.current.rotation.y = THREE.MathUtils.lerp(0, Math.PI * 2, progress);
-                canRef.current.rotation.z = wobble * 0.5;
-            }
-            // Second panel: Can splits into multiple versions with dynamic rotation
-            else if (scrollProgress < 0.66) {
-                const progress = (scrollProgress - 0.33) / 0.33;
-                const dynamicRotation = Math.sin(state.clock.elapsedTime * 3) * 0.1;
+            // More dynamic position calculations
+            let targetX = 0;
+            let targetY = 0;
+            let targetZ = 0;
 
-                groupRef.current.position.x = THREE.MathUtils.lerp(0, -0.5, progress);
-                canRef.current.rotation.z = THREE.MathUtils.lerp(0, Math.PI * 0.1, progress) + dynamicRotation;
-                canRef.current.rotation.y += 0.01;
+            // Section 1: Dramatic rise and spin
+            if (section1Progress > 0) {
+                targetY = THREE.MathUtils.lerp(0, 1.5, section1Progress);
+                targetZ = THREE.MathUtils.lerp(0, -1, section1Progress);
+                // Add wave motion
+                targetY += Math.sin(time * 3) * 0.1 * (1 - section1Progress);
             }
-            // Third panel: Can transforms into sphere with smooth transition
-            else {
-                const progress = (scrollProgress - 0.66) / 0.34;
-                if (progress > 0.8 && !sphereVisible) {
-                    setSphereVisible(true);
-                }
-                if (sphereVisible) {
-                    const scale = Math.max(0.01, 1 - progress);
-                    canRef.current.scale.setScalar(scale);
-                    canRef.current.rotation.y += 0.02 * (1 - progress);
-                    canRef.current.position.y = progress * 0.5;
+
+            // Section 2: Sweeping side movement
+            if (section2Progress > 0) {
+                targetX = THREE.MathUtils.lerp(0, -3.0, section2Progress);
+                // Arc motion during side movement
+                targetY = THREE.MathUtils.lerp(targetY, 0.8, section2Progress) + 
+                         Math.sin(section2Progress * Math.PI) * 0.5;
+                targetZ = THREE.MathUtils.lerp(targetZ, 0.5, section2Progress) + 
+                         Math.cos(section2Progress * Math.PI) * 0.3;
+            }
+
+            // Section 3: Dynamic final positioning
+            if (section3Progress > 0) {
+                targetX = THREE.MathUtils.lerp(targetX, -1.5, section3Progress);
+                targetY = THREE.MathUtils.lerp(targetY, 1.2, section3Progress);
+                targetZ = THREE.MathUtils.lerp(targetZ, -0.5, section3Progress);
+                // Add floating motion in final position
+                targetY += Math.sin(time * 2) * 0.1 * section3Progress;
+                targetX += Math.sin(time * 1.5) * 0.1 * section3Progress;
+            }
+
+            // Add continuous motion
+            targetY += Math.sin(time * 2) * 0.05;
+            targetZ += Math.sin(time * 1.5) * 0.05;
+
+            // Wider position ranges but still clamped
+            targetX = THREE.MathUtils.clamp(targetX, -3.5, 1);
+            targetY = THREE.MathUtils.clamp(targetY, -0.5, 2);
+            targetZ = THREE.MathUtils.clamp(targetZ, -1.5, 1);
+
+            transitionState.targetPosition.set(targetX, targetY, targetZ);
+
+            // More dramatic rotation
+            const targetEuler = new THREE.Euler(
+                Math.sin(time) * 0.2 + section2Progress * Math.PI * 0.2,
+                THREE.MathUtils.lerp(0, Math.PI * 3, section1Progress) +
+                Math.sin(time * 0.5) * 0.3,
+                Math.sin(time * 0.7) * 0.15 * (1 - section3Progress)
+            );
+            transitionState.targetQuaternion.setFromEuler(targetEuler);
+
+            // Dynamic scale pulsing
+            const baseScale = 1 - section3Progress * 0.15;
+            const pulseScale = 1 + Math.sin(time * 2) * 0.1 * (1 - section3Progress);
+            transitionState.targetScale.setScalar(baseScale * pulseScale);
+
+            // Faster transitions for more dynamic movement
+            const transitionSpeed = stateChanged ? 0.1 : 0.3;
+
+            // Apply transitions
+            lerpV3(canRef.current.position, transitionState.targetPosition, lerpFactor * transitionSpeed);
+            
+            const currentQuat = new THREE.Quaternion();
+            currentQuat.setFromEuler(canRef.current.rotation);
+            slerpQ(currentQuat, transitionState.targetQuaternion, lerpFactor * transitionSpeed);
+            canRef.current.setRotationFromQuaternion(currentQuat);
+
+            lerpV3(canRef.current.scale, transitionState.targetScale, lerpFactor * transitionSpeed);
+
+            // Update sphere animation
+            if (sphereRef.current && sphereVisible) {
+                // Animate sphere position based on scroll progress
+                const sphereY = THREE.MathUtils.lerp(-8, -4, scrollProgress);
+                sphereRef.current.position.y = sphereY;
+                
+                // Update sphere material uniforms
+                if (atmosphereMaterialRef.current) {
+                    atmosphereMaterialRef.current.uniforms.uTime.value = state.clock.elapsedTime;
+                    atmosphereMaterialRef.current.uniforms.uScrollProgress.value = scrollProgress;
                 }
             }
+
         } else {
-            // Idle animation when not in horizontal section
-            const idleFloat = Math.sin(state.clock.elapsedTime) * 0.05;
-            const idleRotation = Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
+            // More dynamic idle animation
+            const idlePosition = new THREE.Vector3(
+                Math.sin(time * 0.5) * 0.1,
+                Math.sin(time) * 0.15 + Math.sin(time * 0.5) * 0.1,
+                Math.sin(time * 0.7) * 0.1
+            );
+            const idleRotation = new THREE.Euler(
+                Math.sin(time * 0.5) * 0.1,
+                time * 0.2 + Math.sin(time * 0.3) * 0.1,
+                Math.sin(time * 0.7) * 0.05
+            );
+            const idleScale = new THREE.Vector3().setScalar(
+                1 + Math.sin(time * 0.8) * 0.05
+            );
 
-            canRef.current.position.y = idleFloat;
-            canRef.current.rotation.z = idleRotation * 0.2;
+            const transitionSpeed = stateChanged ? 0.1 : 0.2;
+            lerpV3(canRef.current.position, idlePosition, lerpFactor * transitionSpeed);
+
+            const idleQuat = new THREE.Quaternion().setFromEuler(idleRotation);
+            const currentQuat = new THREE.Quaternion();
+            currentQuat.setFromEuler(canRef.current.rotation);
+            slerpQ(currentQuat, idleQuat, lerpFactor * transitionSpeed);
+            canRef.current.setRotationFromQuaternion(currentQuat);
+
+            lerpV3(canRef.current.scale, idleScale, lerpFactor * transitionSpeed);
         }
 
-        // Animate sphere when visible
-        if (sphereVisible && sphereRef.current) {
-            setSphereAnimation((prev) => ({
-                ...prev,
-                progress: Math.min(prev.progress + 0.003, 1)
-            }));
-
-            const eased = 1 - Math.pow(1 - sphereAnimation.progress, 3);
-            sphereRef.current.position.y = THREE.MathUtils.lerp(
-                sphereAnimation.startY,
-                sphereAnimation.targetY,
-                eased
-            );
-            sphereRef.current.rotation.y += 0.01;
+        // Smoother position clamping
+        const maxDelta = 0.2; // Increased for more dynamic movement
+        const positionDelta = canRef.current.position.clone().sub(prevState.current.position);
+        const deltaLength = positionDelta.length();
+        
+        if (deltaLength > maxDelta) {
+            positionDelta.multiplyScalar(maxDelta / deltaLength);
+            canRef.current.position.copy(prevState.current.position).add(positionDelta);
         }
     });
 
     return (
         <group
             ref={groupRef}
-            position={[0, -2, 0]}
+            position={[0, -1, 0]}
         >
             <Float
                 speed={1.5}
@@ -415,26 +544,32 @@ function QuantumGroup() {
 // Update SceneContent to include space background
 function SceneContent() {
     const { scrollProgress, isHorizontalSection } = useScrollContext()
+    const cameraState = useRef({
+        position: new THREE.Vector3(0, 1.5, 4),
+        lookAt: new THREE.Vector3(0, -0.5, 0),
+        velocity: new THREE.Vector3()
+    });
 
     useFrame(({ camera }) => {
-        if (!isHorizontalSection) return
+        const lerpFactor = 0.1; // Adjust for camera smoothness
 
-        const radius = 4
-        const cameraHeight = 1.5
-        const rotationAngle = THREE.MathUtils.lerp(
-            0,
-            Math.PI / 2,
-            scrollProgress
-        )
-        const newX = radius * Math.sin(rotationAngle)
-        const newZ = radius * Math.cos(rotationAngle)
+        if (isHorizontalSection) {
+            const radius = 4;
+            const rotationAngle = THREE.MathUtils.lerp(0, Math.PI / 2, scrollProgress);
+            const targetX = radius * Math.sin(rotationAngle);
+            const targetZ = radius * Math.cos(rotationAngle);
 
-        camera.position.x = newX
-        camera.position.y = cameraHeight
-        camera.position.z = newZ
+            // Smooth camera position transition
+            cameraState.current.position.set(targetX, 1.5, targetZ);
+            lerpV3(camera.position, cameraState.current.position, lerpFactor);
+        } else {
+            // Transition back to initial position
+            cameraState.current.position.set(0, 1.5, 4);
+            lerpV3(camera.position, cameraState.current.position, lerpFactor);
+        }
 
-        const lookAtPoint = new THREE.Vector3(0, -0.5, 0)
-        camera.lookAt(lookAtPoint)
+        // Smooth lookAt transition
+        camera.lookAt(cameraState.current.lookAt);
         camera.updateProjectionMatrix()
     })
 
@@ -899,15 +1034,25 @@ const QuantumPage = () => {
                 pin: true,
                 scrub: 0.8,
                 onUpdate: (self) => {
-                    setScrollState({
+                    const newState = {
                         scrollProgress: self.progress,
                         isHorizontalSection: self.isActive,
-                    })
+                    };
+
+                    // Log state changes
+                    console.log('Scroll State Update:', {
+                        progress: self.progress,
+                        isActive: self.isActive,
+                        direction: self.direction,
+                        velocity: self.getVelocity(),
+                        scrollTop: window.scrollY
+                    });
+
+                    setScrollState(newState);
 
                     // Update grid visibility based on scroll progress
                     grids.forEach((grid, index) => {
-                        const gridProgress =
-                            self.progress * panels.length - index
+                        const gridProgress = self.progress * panels.length - index
                         if (gridProgress > 0 && gridProgress < 1) {
                             grid.classList.add("is-visible")
                         } else {
@@ -915,6 +1060,10 @@ const QuantumPage = () => {
                         }
                     })
                 },
+                onEnter: () => console.log('Entered horizontal section'),
+                onLeave: () => console.log('Left horizontal section'),
+                onEnterBack: () => console.log('Entered horizontal section (backwards)'),
+                onLeaveBack: () => console.log('Left horizontal section (backwards)'),
             },
         })
 
@@ -996,7 +1145,7 @@ const QuantumPage = () => {
                                 {/* Main Title */}
                                 <div className='hero-title-wrapper overflow-visible px-16 mb-24'>
                                     <h1 ref={heroTextRef}
-                                        className='text-white/90 font-editorial text-[4vw] md:text-[3.5vw] lg:text-[3vw] text-center leading-[1.2] tracking-tight mix-blend-difference max-w-[24ch] mx-auto'
+                                        className='font-[PPEditorialOld] text-white/90 text-[4vw] md:text-[3.5vw] lg:text-[3vw] text-center leading-[1.2] tracking-tight mix-blend-difference max-w-[24ch] mx-auto'
                                         data-splitting
                                     >
                                         For those moments when you need a different version of now.
@@ -1092,7 +1241,7 @@ const QuantumPage = () => {
                                             <div className='feature-block group relative overflow-visible p-8 md:p-12'>
                                                 <div className='absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
                                                 <div className='relative z-10 space-y-6'>
-                                                    <h3 className='text-white/95 font-editorial text-[3vw] md:text-[2.5vw] lg:text-[2vw] leading-[1.1] transform group-hover:translate-x-2 transition-transform duration-500'>
+                                                    <h3 className='font-[PPEditorialOld] text-white/95 text-[3vw] md:text-[2.5vw] lg:text-[2vw] leading-[1.1] transform group-hover:translate-x-2 transition-transform duration-500'>
                                                         NEURAL-SYNC
                                                         <br />
                                                         INTERFACE
@@ -1108,7 +1257,7 @@ const QuantumPage = () => {
                                             <div className='feature-block group relative overflow-hidden'>
                                                 <div className='absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
                                                 <div className='relative z-10'>
-                                                    <h3 className='text-white/95 font-editorial text-[4vw] leading-[0.9] mb-8 transform group-hover:translate-x-2 transition-transform duration-500'>
+                                                    <h3 className='font-[PPEditorialOld] text-white/95 text-[4vw] leading-[0.9] mb-8 transform group-hover:translate-x-2 transition-transform duration-500'>
                                                         QUANTUM
                                                         <br />
                                                         STABILIZERS
@@ -1137,7 +1286,7 @@ const QuantumPage = () => {
                                             <div className='feature-block group relative overflow-hidden'>
                                                 <div className='absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
                                                 <div className='relative z-10'>
-                                                    <h3 className='text-white/95 font-editorial text-[4vw] leading-[0.9] mb-8 transform group-hover:translate-x-2 transition-transform duration-500'>
+                                                    <h3 className='font-[PPEditorialOld] text-white/95 text-[4vw] leading-[0.9] mb-8 transform group-hover:translate-x-2 transition-transform duration-500'>
                                                         INSTANT
                                                         <br />
                                                         ACCESS
@@ -1189,7 +1338,7 @@ const QuantumPage = () => {
                                 <div className='col-span-10 col-start-2 row-span-full grid grid-cols-[1fr_auto] items-center gap-32'>
                                     <div className='max-w-[50vw]'>
                                         <div className='technical-readout text-[10px] tracking-[0.5em] text-white/40 mb-8'>SYSTEM ANALYSIS</div>
-                                        <h2 className='text-white/95 font-editorial text-[4vw] tracking-[-0.03em] leading-[0.95] mb-8'>
+                                        <h2 className='font-[PPEditorialOld] text-white/95 text-[4vw] tracking-[-0.03em] leading-[0.95] mb-8'>
                                             Until now, you lived with it.
                                         </h2>
                                         <p className='technical-readout text-white/70 font-mono text-sm leading-relaxed mb-6'>
@@ -1240,7 +1389,7 @@ const QuantumPage = () => {
                                     <p className='text-white/40 font-mono text-base tracking-[0.5em] uppercase mb-8 fade-up'>
                                         CRTL-Z
                                     </p>
-                                    <h2 className='text-white/95 font-editorial text-[10vw] tracking-[-0.03em] leading-[0.9]  fade-up'>
+                                    <h2 className='font-[PPEditorialOld] text-white/95 text-[10vw] tracking-[-0.03em] leading-[0.9]  fade-up'>
                                         Now you can fix it.
                                     </h2>
                                     <div className='mt-12 flex items-center gap-8 fade-up'>
@@ -1260,7 +1409,7 @@ const QuantumPage = () => {
                         <div className='container mx-auto grid grid-cols-12 gap-8 px-8'>
                             <div className='col-span-6'>
                                 <div className='technical-readout text-[10px] tracking-[0.5em] text-white/40 mb-8'>FIELD REPORTS</div>
-                                <h2 className='text-white/95 font-editorial text-5xl leading-tight mb-16'>
+                                <h2 className='font-[PPEditorialOld] text-white/95 text-5xl leading-tight mb-16'>
                                     When we first announced
                                     <br />
                                     a beverage that could alter
@@ -1439,6 +1588,7 @@ const QuantumPage = () => {
                         @keyframes scroll-hint {
                             0%, 100% { transform: translateY(0); }
                             50% { transform: translateY(5px); }
+                        }
                         }
 
                         .animate-scroll-hint {
