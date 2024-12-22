@@ -153,37 +153,44 @@ export function SceneContent() {
     return (
         <>
             <Environment preset="studio" />
-            <ambientLight intensity={0.5} />
+            <ambientLight intensity={0.3} />
+            
+            {/* Key light */}
             <SpotLight
-                position={[5, 5, 2]}
+                position={[3, 2, 2]}
                 angle={0.4}
                 penumbra={0.8}
-                intensity={1}
+                intensity={1.5}
                 distance={6}
                 castShadow
                 shadow-bias={-0.0001}
                 shadow-mapSize={[2048, 2048]}
                 color="#ffffff"
             />
+            
+            {/* Fill light */}
             <SpotLight
-                position={[-5, 3, 2]}
+                position={[-2, 1, -1]}
                 angle={0.5}
                 penumbra={1}
-                intensity={0.5}
+                intensity={0.8}
                 distance={6}
                 color="#b1e1ff"
             />
+            
+            {/* Rim light */}
             <SpotLight
-                position={[0, 2, -5]}
+                position={[-1, 3, 3]}
                 angle={0.5}
                 penumbra={0.8}
-                intensity={0.8}
+                intensity={1.2}
                 distance={6}
                 color="#ffffff"
             />
+
             <ContactShadows
                 position={[0, -3, 0]}
-                opacity={0.4}
+                opacity={0.5}
                 scale={20}
                 blur={2}
                 far={4}

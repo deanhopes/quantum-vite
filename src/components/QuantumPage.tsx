@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useContext } from "react"
-import { Canvas, useFrame, extend, Object3DNode } from "@react-three/fiber"
+import { Canvas, useFrame, extend } from "@react-three/fiber"
 import { Suspense } from "react"
 import * as THREE from "three"
 import gsap from "gsap"
@@ -10,158 +10,28 @@ import {
     ContactShadows,
     Environment,
     Preload,
-    shaderMaterial,
     Stars,
     Cylinder,
 } from "@react-three/drei"
-
-// Import SplitType with proper type declarations
-import SplitType from "split-type"
-
-// Extend SplitType types
-type SplitTypeResult = {
-    chars: HTMLElement[]
-    words: HTMLElement[]
-    lines: HTMLElement[]
-    revert: () => void
-}
+import { PS1Material, PS1MaterialType } from "@/shaders/PS1Material"
+import { DataReadout } from "./ui/DataReadout"
+import { TechnicalHeader } from "./ui/TechnicalHeader"
+import { InteractiveGrid } from "./ui/InteractiveGrid"
+import "../styles/animations.css"
+import "../styles/technical.css"
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger)
-
-// Define the material type
-type PS1MaterialType = THREE.ShaderMaterial & {
-    uniforms: {
-        uTime: { value: number }
-        uResolution: { value: THREE.Vector2 }
-        uGlitchIntensity: { value: number }
-        uScrollProgress: { value: number }
-    }
-}
-
-// PS1 Style Material with proper uniform types
-const PS1Material = shaderMaterial(
-    // Uniforms
-    {
-        uTime: 0,
-        uResolution: new THREE.Vector2(320, 240),
-        uGlitchIntensity: 0.0,
-        uScrollProgress: 0.0,
-    },
-    // Vertex shader with PS1-style vertex snapping
-    `
-        uniform float uTime;
-        uniform float uGlitchIntensity;
-        uniform float uScrollProgress;
-        uniform vec2 uResolution;
-        varying vec2 vUv;
-        varying vec3 vPosition;
-        varying vec3 vNormal;
-
-        // PS1-style vertex snapping
-        vec4 getPS1Snap(vec4 vertex) {
-            vec4 snapped = vertex;
-            snapped.xyz = vertex.xyz / vertex.w;
-            // Adjust the quantization factor for more/less jitter
-            snapped.xyz = floor(snapped.xyz * 32.0) / 32.0;
-            snapped.xyz *= vertex.w;
-            return snapped;
-        }
-
-        void main() {
-            vUv = uv;
-            vPosition = position;
-            vNormal = normalize(normalMatrix * normal);
-
-            // Apply glitch effect
-            vec3 pos = position;
-            float glitchOffset = sin(uTime * 10.0 + position.y * 20.0) * uGlitchIntensity;
-            pos.x += glitchOffset * (1.0 + uScrollProgress);
-
-            // Transform and snap vertices
-            vec4 modelPosition = modelMatrix * vec4(pos, 1.0);
-            vec4 viewPosition = viewMatrix * modelPosition;
-            vec4 ps1Position = getPS1Snap(viewPosition);
-            
-            gl_Position = projectionMatrix * ps1Position;
-        }
-    `,
-    // Fragment shader with CRT and glitch effects
-    `
-        uniform float uTime;
-        uniform vec2 uResolution;
-        uniform float uGlitchIntensity;
-        uniform float uScrollProgress;
-        varying vec2 vUv;
-        varying vec3 vPosition;
-        varying vec3 vNormal;
-
-        float random(vec2 st) {
-            return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
-        }
-
-        float scanline(vec2 uv) {
-            return sin(uv.y * 400.0) * 0.05;
-        }
-
-        void main() {
-            vec2 uv = vUv;
-            
-            // Gentler CRT distortion
-            vec2 crtUv = uv;
-            float distortAmount = sin(uTime * 0.2) * 0.0005 + 0.0005;
-            crtUv.x += sin(uv.y * 10.0 + uTime) * distortAmount;
-            
-            // Softer glitch effect
-            float glitchNoise = random(vec2(floor(uTime * 5.0), floor(vUv.y * 5.0)));
-            vec2 glitchOffset = vec2(
-                glitchNoise * 0.01 * uGlitchIntensity * uScrollProgress,
-                0.0
-            );
-            uv += glitchOffset;
-
-            // Dreamy base color with PS1-style lighting
-            vec3 lightDir = normalize(vec3(1.0, 1.0, 1.0));
-            float diff = max(dot(vNormal, lightDir), 0.0);
-            
-            // Create a more ethereal color palette
-            vec3 baseColor = mix(
-                vec3(0.2, 0.4, 0.8),
-                vec3(0.8, 0.9, 1.0),
-                0.5 + 0.5 * sin(vPosition.y * 0.5 + uTime * 0.2)
-            );
-            
-            // Gentler color quantization
-            vec3 color = floor(baseColor * diff * 16.0) / 16.0;
-
-            // Subtle scanlines
-            color += vec3(scanline(crtUv));
-
-            // Softer vignette
-            float vignette = length(vec2(0.5) - uv);
-            color *= 1.0 - vignette * 0.3;
-
-            // Very subtle color bleeding
-            float bleed = sin(uTime) * 0.005;
-            color.r += bleed;
-            color.b -= bleed;
-
-            // Gentle noise
-            float noise = random(uv + uTime * 0.05) * 0.02;
-            color += noise;
-
-            gl_FragColor = vec4(color, 0.9);
-        }
-    `
-)
 
 // Extend Three.js with our custom material
 extend({ PS1Material })
 
 // Add proper type declarations
-declare module "@react-three/fiber" {
-    interface ThreeElements {
-        pS1Material: Object3DNode<PS1MaterialType, typeof PS1Material>
+declare global {
+    namespace JSX {
+        interface IntrinsicElements {
+            pS1Material: any
+        }
     }
 }
 
@@ -219,6 +89,22 @@ function QuantumGroup() {
         progress: 0,
     })
 
+    // Debug mounting
+    useEffect(() => {
+        console.log('QuantumGroup mounted');
+        return () => console.log('QuantumGroup unmounted');
+    }, []);
+
+    // Debug refs
+    useEffect(() => {
+        console.log('Refs status:', {
+            groupRef: !!groupRef.current,
+            canRef: !!canRef.current,
+            materialRef: !!materialRef.current,
+            isReady
+        });
+    }, [isReady]);
+
     // Initial animation timeline
     useEffect(() => {
         if (!canRef.current || !groupRef.current) return
@@ -249,7 +135,14 @@ function QuantumGroup() {
     }, [])
 
     useFrame((state) => {
-        if (!groupRef.current || !canRef.current || !isReady) return
+        if (!groupRef.current || !canRef.current || !isReady) {
+            console.log('Frame skip - refs not ready:', {
+                group: !!groupRef.current,
+                can: !!canRef.current,
+                ready: isReady
+            });
+            return;
+        }
 
         if (materialRef.current) {
             materialRef.current.uniforms.uTime.value = state.clock.elapsedTime
@@ -257,48 +150,50 @@ function QuantumGroup() {
                 Math.max(0, Math.sin(state.clock.elapsedTime * 2)) * 0.2 +
                 (scrollProgress > 0.1 ? scrollProgress * 0.3 : 0)
             materialRef.current.uniforms.uScrollProgress.value = scrollProgress
+        } else {
+            console.log('Material ref not ready');
         }
 
         // Enhanced can animations based on scroll progress
         if (isHorizontalSection) {
-            // First panel: Can floats up and rotates
+            // First panel: Can floats up and rotates with a slight wobble
             if (scrollProgress < 0.33) {
-                const progress = scrollProgress / 0.33
-                canRef.current.position.y = THREE.MathUtils.lerp(
-                    -0.8,
-                    0,
-                    progress
-                )
-                canRef.current.rotation.y = THREE.MathUtils.lerp(
-                    0,
-                    Math.PI * 2,
-                    progress
-                )
+                const progress = scrollProgress / 0.33;
+                const wobble = Math.sin(state.clock.elapsedTime * 2) * 0.02;
+
+                canRef.current.position.y = THREE.MathUtils.lerp(-0.8, 0, progress) + wobble;
+                canRef.current.rotation.y = THREE.MathUtils.lerp(0, Math.PI * 2, progress);
+                canRef.current.rotation.z = wobble * 0.5;
             }
-            // Second panel: Can splits into multiple versions
+            // Second panel: Can splits into multiple versions with dynamic rotation
             else if (scrollProgress < 0.66) {
-                const progress = (scrollProgress - 0.33) / 0.33
-                groupRef.current.position.x = THREE.MathUtils.lerp(
-                    0,
-                    -0.5,
-                    progress
-                )
-                canRef.current.rotation.z = THREE.MathUtils.lerp(
-                    0,
-                    Math.PI * 0.1,
-                    progress
-                )
+                const progress = (scrollProgress - 0.33) / 0.33;
+                const dynamicRotation = Math.sin(state.clock.elapsedTime * 3) * 0.1;
+
+                groupRef.current.position.x = THREE.MathUtils.lerp(0, -0.5, progress);
+                canRef.current.rotation.z = THREE.MathUtils.lerp(0, Math.PI * 0.1, progress) + dynamicRotation;
+                canRef.current.rotation.y += 0.01; // Constant slow rotation
             }
-            // Third panel: Can transforms into sphere
+            // Third panel: Can transforms into sphere with smooth transition
             else {
-                const progress = (scrollProgress - 0.66) / 0.34
+                const progress = (scrollProgress - 0.66) / 0.34;
                 if (progress > 0.8 && !sphereVisible) {
-                    setSphereVisible(true)
+                    setSphereVisible(true);
                 }
                 if (sphereVisible) {
-                    canRef.current.scale.setScalar(1 - progress)
+                    const scale = 1 - progress;
+                    canRef.current.scale.setScalar(scale);
+                    canRef.current.rotation.y += 0.02 * (1 - progress); // Faster rotation as it shrinks
+                    canRef.current.position.y = progress * 0.5; // Slight upward movement
                 }
             }
+        } else {
+            // Idle animation when not in horizontal section
+            const idleFloat = Math.sin(state.clock.elapsedTime) * 0.05;
+            const idleRotation = Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
+
+            canRef.current.position.y = idleFloat;
+            canRef.current.rotation.z = idleRotation * 0.2;
         }
 
         // Animate sphere when visible
@@ -306,15 +201,15 @@ function QuantumGroup() {
             setSphereAnimation((prev) => ({
                 ...prev,
                 progress: Math.min(prev.progress + 0.003, 1),
-            }))
+            }));
 
-            const eased = 1 - Math.pow(1 - sphereAnimation.progress, 3)
+            const eased = 1 - Math.pow(1 - sphereAnimation.progress, 3);
             sphereRef.current.position.y = THREE.MathUtils.lerp(
                 sphereAnimation.startY,
                 sphereAnimation.targetY,
                 eased
-            )
-            sphereRef.current.rotation.y += 0.01
+            );
+            sphereRef.current.rotation.y += 0.01;
         }
     })
 
@@ -329,20 +224,72 @@ function QuantumGroup() {
                 floatIntensity={0.3}
                 floatingRange={[-0.05, 0.05]}
             >
-                <Cylinder
-                    ref={canRef}
-                    args={[0.3, 0.3, 1.2, 32]}
-                    scale={[0, 0, 0]}
-                    castShadow
-                    receiveShadow
-                >
-                    <pS1Material
-                        ref={materialRef}
-                        transparent={true}
-                        depthWrite={true}
-                        side={THREE.DoubleSide}
-                    />
-                </Cylinder>
+                {/* Main can body */}
+                <group ref={canRef}>
+                    {/* Can body */}
+                    <Cylinder
+                        args={[0.3, 0.3, 1.2, 32]}
+                        castShadow
+                        receiveShadow
+                    >
+                        <meshPhysicalMaterial
+                            color="#303040"
+                            metalness={0.9}
+                            roughness={0.1}
+                            clearcoat={1}
+                            clearcoatRoughness={0.1}
+                            reflectivity={1}
+                        />
+                    </Cylinder>
+
+                    {/* Top rim */}
+                    <Cylinder
+                        args={[0.31, 0.31, 0.05, 32]}
+                        position={[0, 0.6, 0]}
+                    >
+                        <meshStandardMaterial
+                            color="#505060"
+                            metalness={0.8}
+                            roughness={0.2}
+                        />
+                    </Cylinder>
+
+                    {/* Bottom rim */}
+                    <Cylinder
+                        args={[0.31, 0.31, 0.05, 32]}
+                        position={[0, -0.6, 0]}
+                    >
+                        <meshStandardMaterial
+                            color="#505060"
+                            metalness={0.8}
+                            roughness={0.2}
+                        />
+                    </Cylinder>
+
+                    {/* Top lid detail */}
+                    <Cylinder
+                        args={[0.28, 0.28, 0.02, 32]}
+                        position={[0, 0.62, 0]}
+                    >
+                        <meshStandardMaterial
+                            color="#404050"
+                            metalness={0.9}
+                            roughness={0.1}
+                        />
+                    </Cylinder>
+
+                    {/* Bottom indent */}
+                    <Cylinder
+                        args={[0.28, 0.28, 0.02, 32]}
+                        position={[0, -0.62, 0]}
+                    >
+                        <meshStandardMaterial
+                            color="#404050"
+                            metalness={0.9}
+                            roughness={0.1}
+                        />
+                    </Cylinder>
+                </group>
             </Float>
 
             <group
@@ -430,43 +377,6 @@ function SceneContent() {
 }
 
 // Move component definitions outside the main component
-const DataReadout = ({ label, value }: { label: string; value: string }) => (
-    <div className='technical-readout text-center group'>
-        <div className='relative'>
-            <div className='absolute -top-1 -left-1 w-2 h-2 border-t border-l border-white/20 transform scale-0 group-hover:scale-100 transition-transform duration-300'></div>
-            <div className='absolute -top-1 -right-1 w-2 h-2 border-t border-r border-white/20 transform scale-0 group-hover:scale-100 transition-transform duration-300'></div>
-            <div className='text-[10px] mb-2 opacity-60 tracking-[0.3em] uppercase relative'>
-                {label}
-                <div className='absolute left-0 bottom-0 w-0 h-[1px] bg-white/20 group-hover:w-full transition-all duration-500'></div>
-            </div>
-        </div>
-        <div className='text-xl tracking-widest relative overflow-hidden group-hover:text-white/90 transition-colors duration-300'>
-            {value}
-            <div className='absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000'></div>
-        </div>
-    </div>
-);
-
-const TechnicalHeader = ({ text }: { text: string }) => (
-    <div className='technical-readout text-[10px] tracking-[0.5em] text-white/40 mb-8 group relative px-8'>
-        <div className='absolute -left-2 top-1/2 w-2 h-[1px] bg-white/20 transform -translate-y-1/2 scale-x-0 opacity-0 group-hover:scale-x-100 group-hover:opacity-100 transition-all duration-300'></div>
-        <span className='relative'>
-            {text}
-            <div className='absolute left-0 bottom-0 w-0 h-[1px] bg-white/20 opacity-0 group-hover:w-full group-hover:opacity-100 transition-all duration-500 delay-200'></div>
-        </span>
-    </div>
-);
-
-const InteractiveGrid = () => (
-    <div className='interactive-grid absolute inset-0'>
-        <div className='grid-lines'></div>
-        <div className='grid-points'></div>
-        <div className='grid-scan'></div>
-        <div className='grid-noise'></div>
-        <div className='data-particles'></div>
-    </div>
-);
-
 const QuantumPage = () => {
     const containerRef = useRef<HTMLDivElement>(null)
     const canvasContainerRef = useRef<HTMLDivElement>(null)
@@ -752,7 +662,7 @@ const QuantumPage = () => {
             text-transform: uppercase;
             letter-spacing: 0.5em;
             opacity: 0.8;
-            transition: all 0.3s ease;
+            transition: opacity 0.3s ease;
         }
 
         .technical-readout::before,
@@ -930,6 +840,9 @@ const QuantumPage = () => {
                         <Canvas
                             shadows
                             camera={{ position: [0, 1, 4], fov: 35 }}
+                            onCreated={state => {
+                                console.log('Canvas created', state);
+                            }}
                             style={{
                                 position: "absolute",
                                 width: `${dimensions.width}px`,
@@ -944,7 +857,12 @@ const QuantumPage = () => {
                         >
                             <color attach='background' args={["#000000"]} />
                             <fog attach='fog' args={["#000000", 5, 15]} />
-                            <Suspense fallback={null}>
+                            <Suspense fallback={
+                                <mesh>
+                                    <boxGeometry args={[1, 1, 1]} />
+                                    <meshBasicMaterial color="red" wireframe />
+                                </mesh>
+                            }>
                                 <SceneContent />
                             </Suspense>
                         </Canvas>
@@ -1495,7 +1413,7 @@ const QuantumPage = () => {
                             content: '';
                             position: absolute;
                             inset: 0;
-                            border: 1px solid rgba(255, 255, 255, 0.05);
+                            border: 1px solid rgba(255,255,255,0.05);
                             opacity: 0;
                             transition: all 0.5s ease;
                         }
