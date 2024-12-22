@@ -261,8 +261,15 @@ function QuantumGroup() {
         if (!canRef.current || !groupRef.current || !isReady) return;
 
         const deltaTime = state.clock.getDelta();
-        const lerpFactor = deltaTime * 1.0;
         const time = state.clock.elapsedTime;
+
+        // Update atmosphere material uniforms
+        if (atmosphereMaterialRef.current) {
+            atmosphereMaterialRef.current.uniforms.uTime.value = time;
+            atmosphereMaterialRef.current.uniforms.uScrollProgress.value = scrollProgress * values.scrollEffect;
+        }
+
+        const lerpFactor = deltaTime * 1.0;
 
         // Store previous position before any updates
         prevState.current.position.copy(canRef.current.position);
