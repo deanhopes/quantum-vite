@@ -545,7 +545,7 @@ function SceneContent() {
     const { scrollProgress, isHorizontalSection } = useScrollContext()
     const cameraState = useRef({
         position: new THREE.Vector3(0, 1.5, 4),
-        lookAt: new THREE.Vector3(0, -0.5, 0),
+        lookAt: new THREE.Vector3(0, -0, 0),
         velocity: new THREE.Vector3()
     });
 
@@ -561,21 +561,10 @@ function SceneContent() {
             // Smooth camera position transition
             cameraState.current.position.set(targetX, 1.5, targetZ);
             lerpV3(camera.position, cameraState.current.position, lerpFactor);
-
-            // Rotate camera based on scroll progress
-            const targetRotation = new THREE.Euler(0, -rotationAngle, 0);
-            camera.rotation.x = THREE.MathUtils.lerp(camera.rotation.x, targetRotation.x, lerpFactor);
-            camera.rotation.y = THREE.MathUtils.lerp(camera.rotation.y, targetRotation.y, lerpFactor);
-            camera.rotation.z = THREE.MathUtils.lerp(camera.rotation.z, targetRotation.z, lerpFactor);
         } else {
-            // Transition back to initial position and rotation
+            // Transition back to initial position
             cameraState.current.position.set(0, 1.5, 4);
             lerpV3(camera.position, cameraState.current.position, lerpFactor);
-
-            const targetRotation = new THREE.Euler(0, 0, 0);
-            camera.rotation.x = THREE.MathUtils.lerp(camera.rotation.x, targetRotation.x, lerpFactor);
-            camera.rotation.y = THREE.MathUtils.lerp(camera.rotation.y, targetRotation.y, lerpFactor);
-            camera.rotation.z = THREE.MathUtils.lerp(camera.rotation.z, targetRotation.z, lerpFactor);
         }
 
         // Smooth lookAt transition
