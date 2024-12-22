@@ -105,7 +105,6 @@ function QuantumGroup() {
         startY: -8,
         targetY: -4,
         progress: 0,
-        hasAppeared: false  // Add this to track if sphere has appeared
     })
     const atmosphereMaterialRef = useRef<PS1MaterialType>(null)
     const coreMaterialRef = useRef<PS1MaterialType>(null)
@@ -217,6 +216,8 @@ function QuantumGroup() {
             "-=1.2"
         );
 
+        // Show sphere initially
+        setSphereVisible(true);
         setIsReady(true);
 
         return () => {
@@ -260,7 +261,7 @@ function QuantumGroup() {
         if (!canRef.current || !groupRef.current || !isReady) return;
 
         const deltaTime = state.clock.getDelta();
-        const lerpFactor = deltaTime * 2.0; // Increased for more responsive movement
+        const lerpFactor = deltaTime * 1.0;
         const time = state.clock.elapsedTime;
 
         // Store previous position before any updates
@@ -286,6 +287,19 @@ function QuantumGroup() {
         }
         prevState.current.isHorizontalSection = isHorizontalSection;
 
+        // Update sphere animation regardless of section
+        if (sphereRef.current && sphereVisible) {
+            // Animate sphere position based on scroll progress
+            const sphereY = THREE.MathUtils.lerp(-8, -4, scrollProgress);
+            sphereRef.current.position.y = sphereY;
+            
+            // Update sphere material uniforms
+            if (atmosphereMaterialRef.current) {
+                atmosphereMaterialRef.current.uniforms.uTime.value = state.clock.elapsedTime;
+                atmosphereMaterialRef.current.uniforms.uScrollProgress.value = scrollProgress;
+            }
+        }
+
         if (isHorizontalSection) {
             const totalProgress = scrollProgress;
             const section1Progress = Math.min(1, totalProgress / 0.33);
@@ -301,14 +315,12 @@ function QuantumGroup() {
             if (section1Progress > 0) {
                 targetY = THREE.MathUtils.lerp(0, 1.5, section1Progress);
                 targetZ = THREE.MathUtils.lerp(0, -1, section1Progress);
-                // Add wave motion
                 targetY += Math.sin(time * 3) * 0.1 * (1 - section1Progress);
             }
 
             // Section 2: Sweeping side movement
             if (section2Progress > 0) {
                 targetX = THREE.MathUtils.lerp(0, -3.0, section2Progress);
-                // Arc motion during side movement
                 targetY = THREE.MathUtils.lerp(targetY, 0.8, section2Progress) + 
                          Math.sin(section2Progress * Math.PI) * 0.5;
                 targetZ = THREE.MathUtils.lerp(targetZ, 0.5, section2Progress) + 
@@ -362,19 +374,6 @@ function QuantumGroup() {
             canRef.current.setRotationFromQuaternion(currentQuat);
 
             lerpV3(canRef.current.scale, transitionState.targetScale, lerpFactor * transitionSpeed);
-
-            // Update sphere animation
-            if (sphereRef.current && sphereVisible) {
-                // Animate sphere position based on scroll progress
-                const sphereY = THREE.MathUtils.lerp(-8, -4, scrollProgress);
-                sphereRef.current.position.y = sphereY;
-                
-                // Update sphere material uniforms
-                if (atmosphereMaterialRef.current) {
-                    atmosphereMaterialRef.current.uniforms.uTime.value = state.clock.elapsedTime;
-                    atmosphereMaterialRef.current.uniforms.uScrollProgress.value = scrollProgress;
-                }
-            }
 
         } else {
             // More dynamic idle animation
