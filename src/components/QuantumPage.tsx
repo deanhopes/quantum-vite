@@ -292,7 +292,7 @@ function QuantumGroup() {
             // Animate sphere position based on scroll progress
             const sphereY = THREE.MathUtils.lerp(-8, -4, scrollProgress);
             sphereRef.current.position.y = sphereY;
-            
+
             // Update sphere material uniforms
             if (atmosphereMaterialRef.current) {
                 atmosphereMaterialRef.current.uniforms.uTime.value = state.clock.elapsedTime;
@@ -321,10 +321,10 @@ function QuantumGroup() {
             // Section 2: Sweeping side movement
             if (section2Progress > 0) {
                 targetX = THREE.MathUtils.lerp(0, -3.0, section2Progress);
-                targetY = THREE.MathUtils.lerp(targetY, 0.8, section2Progress) + 
-                         Math.sin(section2Progress * Math.PI) * 0.5;
-                targetZ = THREE.MathUtils.lerp(targetZ, 0.5, section2Progress) + 
-                         Math.cos(section2Progress * Math.PI) * 0.3;
+                targetY = THREE.MathUtils.lerp(targetY, 0.8, section2Progress) +
+                    Math.sin(section2Progress * Math.PI) * 0.5;
+                targetZ = THREE.MathUtils.lerp(targetZ, 0.5, section2Progress) +
+                    Math.cos(section2Progress * Math.PI) * 0.3;
             }
 
             // Section 3: Dynamic final positioning
@@ -367,7 +367,7 @@ function QuantumGroup() {
 
             // Apply transitions
             lerpV3(canRef.current.position, transitionState.targetPosition, lerpFactor * transitionSpeed);
-            
+
             const currentQuat = new THREE.Quaternion();
             currentQuat.setFromEuler(canRef.current.rotation);
             slerpQ(currentQuat, transitionState.targetQuaternion, lerpFactor * transitionSpeed);
@@ -407,7 +407,7 @@ function QuantumGroup() {
         const maxDelta = 0.2; // Increased for more dynamic movement
         const positionDelta = canRef.current.position.clone().sub(prevState.current.position);
         const deltaLength = positionDelta.length();
-        
+
         if (deltaLength > maxDelta) {
             positionDelta.multiplyScalar(maxDelta / deltaLength);
             canRef.current.position.copy(prevState.current.position).add(positionDelta);
@@ -550,10 +550,10 @@ function SceneContent() {
     });
 
     useFrame(({ camera }) => {
-        const lerpFactor = 0.1; // Adjust for camera smoothness
+        const lerpFactor = 0.008; // Adjust for camera smoothness
 
         if (isHorizontalSection) {
-            const radius = 4;
+            const radius = 12;
             const rotationAngle = THREE.MathUtils.lerp(0, Math.PI / 2, scrollProgress);
             const targetX = radius * Math.sin(rotationAngle);
             const targetZ = radius * Math.cos(rotationAngle);
@@ -561,10 +561,21 @@ function SceneContent() {
             // Smooth camera position transition
             cameraState.current.position.set(targetX, 1.5, targetZ);
             lerpV3(camera.position, cameraState.current.position, lerpFactor);
+
+            // Rotate camera based on scroll progress
+            const targetRotation = new THREE.Euler(0, -rotationAngle, 0);
+            camera.rotation.x = THREE.MathUtils.lerp(camera.rotation.x, targetRotation.x, lerpFactor);
+            camera.rotation.y = THREE.MathUtils.lerp(camera.rotation.y, targetRotation.y, lerpFactor);
+            camera.rotation.z = THREE.MathUtils.lerp(camera.rotation.z, targetRotation.z, lerpFactor);
         } else {
-            // Transition back to initial position
+            // Transition back to initial position and rotation
             cameraState.current.position.set(0, 1.5, 4);
             lerpV3(camera.position, cameraState.current.position, lerpFactor);
+
+            const targetRotation = new THREE.Euler(0, 0, 0);
+            camera.rotation.x = THREE.MathUtils.lerp(camera.rotation.x, targetRotation.x, lerpFactor);
+            camera.rotation.y = THREE.MathUtils.lerp(camera.rotation.y, targetRotation.y, lerpFactor);
+            camera.rotation.z = THREE.MathUtils.lerp(camera.rotation.z, targetRotation.z, lerpFactor);
         }
 
         // Smooth lookAt transition
