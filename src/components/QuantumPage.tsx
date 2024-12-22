@@ -296,7 +296,7 @@ function QuantumGroup() {
             // Update sphere material uniforms
             if (atmosphereMaterialRef.current) {
                 atmosphereMaterialRef.current.uniforms.uTime.value = state.clock.elapsedTime;
-                atmosphereMaterialRef.current.uniforms.uScrollProgress.value = scrollProgress;
+                atmosphereMaterialRef.current.uniforms.uScrollProgress.value = scrollProgress * values.scrollEffect;
             }
         }
 
@@ -434,12 +434,13 @@ function QuantumGroup() {
                         receiveShadow
                     >
                         <meshPhysicalMaterial
-                            color="#303040"
-                            metalness={0.9}
-                            roughness={0.1}
+                            color="#4a4a5a"  // Lighter base color
+                            metalness={0.95}  // Increased metalness
+                            roughness={0.05}  // Decreased roughness for more shine
                             clearcoat={1}
                             clearcoatRoughness={0.1}
                             reflectivity={1}
+                            envMapIntensity={2}  // Increased environment map intensity
                         />
                     </Cylinder>
 
@@ -449,9 +450,9 @@ function QuantumGroup() {
                         position={[0, 0.6, 0]}
                     >
                         <meshStandardMaterial
-                            color="#505060"
-                            metalness={0.8}
-                            roughness={0.2}
+                            color="#6a6a7a"  // Lighter rim color
+                            metalness={0.9}
+                            roughness={0.1}  // Decreased roughness
                         />
                     </Cylinder>
 
@@ -461,9 +462,9 @@ function QuantumGroup() {
                         position={[0, -0.6, 0]}
                     >
                         <meshStandardMaterial
-                            color="#505060"
-                            metalness={0.8}
-                            roughness={0.2}
+                            color="#6a6a7a"  // Lighter rim color
+                            metalness={0.9}
+                            roughness={0.1}  // Decreased roughness
                         />
                     </Cylinder>
 
@@ -473,9 +474,9 @@ function QuantumGroup() {
                         position={[0, 0.62, 0]}
                     >
                         <meshStandardMaterial
-                            color="#404050"
-                            metalness={0.9}
-                            roughness={0.1}
+                            color="#5a5a6a"  // Lighter detail color
+                            metalness={0.95}
+                            roughness={0.05}  // Decreased roughness
                         />
                     </Cylinder>
 
