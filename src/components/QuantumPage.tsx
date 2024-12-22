@@ -13,12 +13,13 @@ import {
     Stars,
     Cylinder,
 } from "@react-three/drei"
-import { PS1Material, PS1MaterialType } from "@/shaders/PS1Material"
 import { DataReadout } from "./ui/DataReadout"
+import { PS1Material, PS1MaterialType } from "../shaders/PS1Material"
 import { TechnicalHeader } from "./ui/TechnicalHeader"
 import { InteractiveGrid } from "./ui/InteractiveGrid"
 import "../styles/animations.css"
 import "../styles/technical.css"
+import { useControls, folder } from 'leva';
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger)
@@ -77,7 +78,7 @@ function SpaceBackground() {
 
 function QuantumGroup() {
     const groupRef = useRef<THREE.Group>(null)
-    const canRef = useRef<THREE.Mesh>(null)
+    const canRef = useRef<THREE.Group>(null)
     const [isReady, setIsReady] = useState(false)
     const { scrollProgress, isHorizontalSection } = useScrollContext()
     const materialRef = useRef<PS1MaterialType>(null)
@@ -88,6 +89,93 @@ function QuantumGroup() {
         targetY: -4,
         progress: 0,
     })
+    const atmosphereMaterialRef = useRef<PS1MaterialType>(null)
+    const coreMaterialRef = useRef<PS1MaterialType>(null)
+    const glowMaterialRef = useRef<PS1MaterialType>(null)
+
+    const values = useControls({
+        glitchIntensity: {
+            value: 0.72,
+            min: 0,
+            max: 1,
+            step: 0.01,
+            label: 'Glitch'
+        },
+        scrollEffect: {
+            value: 0.30,
+            min: 0,
+            max: 1,
+            step: 0.01,
+            label: 'Scroll Effect'
+        },
+        ambientIntensity: {
+            value: 0.20,
+            min: 0,
+            max: 1,
+            step: 0.01,
+            label: 'Ambient'
+        },
+        spot1Intensity: {
+            value: 2.0,
+            min: 0,
+            max: 5,
+            step: 0.1,
+            label: 'Light 1 Intensity'
+        },
+        spot1Position: {
+            value: [5.0, 5.0, 2.0],
+            step: 0.1,
+            label: 'Light 1 Position'
+        },
+        spot1Angle: {
+            value: 0.10,
+            min: 0,
+            max: Math.PI / 2,
+            step: 0.01,
+            label: 'Light 1 Angle'
+        },
+        spot1Penumbra: {
+            value: 0.81,
+            min: 0,
+            max: 1,
+            step: 0.01,
+            label: 'Light 1 Penumbra'
+        },
+        spot1Color: {
+            value: '#b1e1ff',
+            label: 'Light 1 Color'
+        },
+        spot2Intensity: {
+            value: 5.0,
+            min: 0,
+            max: 5,
+            step: 0.1,
+            label: 'Light 2 Intensity'
+        },
+        spot2Position: {
+            value: [-5.0, 3.0, 2.0],
+            step: 0.1,
+            label: 'Light 2 Position'
+        },
+        spot2Angle: {
+            value: 0.06,
+            min: 0,
+            max: Math.PI / 2,
+            step: 0.01,
+            label: 'Light 2 Angle'
+        },
+        spot2Penumbra: {
+            value: 1.00,
+            min: 0,
+            max: 1,
+            step: 0.01,
+            label: 'Light 2 Penumbra'
+        },
+        spot2Color: {
+            value: '#4499ff',
+            label: 'Light 2 Color'
+        }
+    });
 
     // Debug mounting
     useEffect(() => {
@@ -95,64 +183,49 @@ function QuantumGroup() {
         return () => console.log('QuantumGroup unmounted');
     }, []);
 
+    // Initial animation timeline
+    useEffect(() => {
+        if (!canRef.current || !groupRef.current) return;
+
+        const tl = gsap.timeline();
+        tl.fromTo(groupRef.current.position,
+            { y: -2 },
+            { y: 0, duration: 1.5, ease: "power2.out" }
+        );
+        tl.fromTo(
+            canRef.current.scale,
+            { x: 0, y: 0, z: 0 },
+            { x: 1, y: 1, z: 1, duration: 1.2, ease: "back.out(1.7)" },
+            "-=1.2"
+        );
+
+        setIsReady(true);
+
+        return () => {
+            tl.kill();
+        };
+    }, []);
+
     // Debug refs
     useEffect(() => {
         console.log('Refs status:', {
             groupRef: !!groupRef.current,
             canRef: !!canRef.current,
-            materialRef: !!materialRef.current,
             isReady
         });
     }, [isReady]);
 
-    // Initial animation timeline
-    useEffect(() => {
-        if (!canRef.current || !groupRef.current) return
-
-        const tl = gsap.timeline()
-        tl.to(groupRef.current.position, {
-            y: 0,
-            duration: 1.5,
-            ease: "power2.out",
-        })
-        tl.to(
-            canRef.current.scale,
-            {
-                x: 1,
-                y: 1,
-                z: 1,
-                duration: 1.2,
-                ease: "back.out(1.7)",
-            },
-            "-=1.2"
-        )
-
-        setIsReady(true)
-
-        return () => {
-            tl.kill()
-        }
-    }, [])
-
     useFrame((state) => {
-        if (!groupRef.current || !canRef.current || !isReady) {
-            console.log('Frame skip - refs not ready:', {
-                group: !!groupRef.current,
-                can: !!canRef.current,
-                ready: isReady
-            });
-            return;
-        }
+        if (!groupRef.current || !canRef.current || !isReady) return;
 
-        if (materialRef.current) {
-            materialRef.current.uniforms.uTime.value = state.clock.elapsedTime
-            materialRef.current.uniforms.uGlitchIntensity.value =
-                Math.max(0, Math.sin(state.clock.elapsedTime * 2)) * 0.2 +
-                (scrollProgress > 0.1 ? scrollProgress * 0.3 : 0)
-            materialRef.current.uniforms.uScrollProgress.value = scrollProgress
-        } else {
-            console.log('Material ref not ready');
-        }
+        // Update material uniforms
+        [atmosphereMaterialRef, coreMaterialRef, glowMaterialRef].forEach((ref) => {
+            if (ref.current) {
+                ref.current.uniforms.uTime.value = state.clock.elapsedTime;
+                ref.current.uniforms.uGlitchIntensity.value = values.glitchIntensity;
+                ref.current.uniforms.uScrollProgress.value = scrollProgress * values.scrollEffect;
+            }
+        });
 
         // Enhanced can animations based on scroll progress
         if (isHorizontalSection) {
@@ -172,7 +245,7 @@ function QuantumGroup() {
 
                 groupRef.current.position.x = THREE.MathUtils.lerp(0, -0.5, progress);
                 canRef.current.rotation.z = THREE.MathUtils.lerp(0, Math.PI * 0.1, progress) + dynamicRotation;
-                canRef.current.rotation.y += 0.01; // Constant slow rotation
+                canRef.current.rotation.y += 0.01;
             }
             // Third panel: Can transforms into sphere with smooth transition
             else {
@@ -181,10 +254,10 @@ function QuantumGroup() {
                     setSphereVisible(true);
                 }
                 if (sphereVisible) {
-                    const scale = 1 - progress;
+                    const scale = Math.max(0.01, 1 - progress);
                     canRef.current.scale.setScalar(scale);
-                    canRef.current.rotation.y += 0.02 * (1 - progress); // Faster rotation as it shrinks
-                    canRef.current.position.y = progress * 0.5; // Slight upward movement
+                    canRef.current.rotation.y += 0.02 * (1 - progress);
+                    canRef.current.position.y = progress * 0.5;
                 }
             }
         } else {
@@ -200,7 +273,7 @@ function QuantumGroup() {
         if (sphereVisible && sphereRef.current) {
             setSphereAnimation((prev) => ({
                 ...prev,
-                progress: Math.min(prev.progress + 0.003, 1),
+                progress: Math.min(prev.progress + 0.003, 1)
             }));
 
             const eased = 1 - Math.pow(1 - sphereAnimation.progress, 3);
@@ -211,7 +284,7 @@ function QuantumGroup() {
             );
             sphereRef.current.rotation.y += 0.01;
         }
-    })
+    });
 
     return (
         <group
@@ -297,16 +370,44 @@ function QuantumGroup() {
                 position={[0, sphereAnimation.startY, 0]}
                 visible={sphereVisible}
             >
-                <mesh scale={3}>
-                    <sphereGeometry args={[1, 32, 32]} />
+                {/* Main atmospheric sphere */}
+                <mesh scale={1.2}>
+                    <sphereGeometry args={[2, 128, 128]} />
                     <pS1Material
-                        ref={materialRef}
+                        ref={atmosphereMaterialRef}
                         transparent={true}
                         depthWrite={false}
-                        side={THREE.DoubleSide}
+                        depthTest={true}
+                        blending={THREE.AdditiveBlending}
+                        uniforms={{
+                            uTime: { value: 0 },
+                            uGlitchIntensity: { value: values.glitchIntensity },
+                            uScrollProgress: { value: scrollProgress * values.scrollEffect }
+                        }}
                     />
                 </mesh>
             </group>
+
+            <ambientLight intensity={values.ambientIntensity} />
+            <SpotLight
+                position={values.spot1Position}
+                angle={values.spot1Angle}
+                penumbra={values.spot1Penumbra}
+                intensity={values.spot1Intensity}
+                distance={6}
+                castShadow
+                shadow-bias={-0.0001}
+                shadow-mapSize={[2048, 2048]}
+                color={values.spot1Color}
+            />
+            <SpotLight
+                position={values.spot2Position}
+                angle={values.spot2Angle}
+                penumbra={values.spot2Penumbra}
+                intensity={values.spot2Intensity}
+                distance={6}
+                color={values.spot2Color}
+            />
         </group>
     )
 }
@@ -346,7 +447,7 @@ function SceneContent() {
                 position={[5, 5, 2]}
                 angle={0.4}
                 penumbra={0.8}
-                intensity={0.7}
+                intensity={2}
                 distance={6}
                 castShadow
                 shadow-bias={-0.0001}

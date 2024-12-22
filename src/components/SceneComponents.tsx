@@ -4,8 +4,9 @@ import { useSpring, useTransform } from 'framer-motion';
 import * as THREE from 'three';
 import { useScrollContext } from '../context/ScrollContext';
 import { useFrame } from '@react-three/fiber';
+import { useControls, folder } from 'leva';
 
-export function AnimatedCan() {
+export function AnimatedCan({ material }) {
     const canRef = useRef<THREE.Mesh>(null);
     const [isReady, setIsReady] = useState(false);
     const { scrollProgress, isHorizontalSection } = useScrollContext();
@@ -87,14 +88,14 @@ export function AnimatedCan() {
         if (!canRef.current || !isReady) return;
 
         const currentRotation = smoothRotation.get();
-        
+
         // Log rotation updates (debounced)
         logRotationUpdate(currentRotation);
 
         // Only apply rotation when in horizontal section
         if (isHorizontalSection) {
             canRef.current.rotation.y = currentRotation;
-            
+
             // Add subtle tilt based on rotation speed
             const rotationSpeed = Math.abs(currentRotation - prevScrollState.current.progress);
             canRef.current.rotation.z = Math.sin(currentRotation) * 0.1 * rotationSpeed;
@@ -104,10 +105,10 @@ export function AnimatedCan() {
         canRef.current.position.y = initialY.get();
         const scale = initialScale.get();
         canRef.current.scale.set(scale, scale, scale);
-        
+
         if (floatRef.current) {
-            floatRef.current.position.y = isHorizontalSection 
-                ? -0.5 + Math.sin(currentRotation) * 0.1 
+            floatRef.current.position.y = isHorizontalSection
+                ? -0.5 + Math.sin(currentRotation) * 0.1
                 : 0;
         }
     });
@@ -130,19 +131,19 @@ export function AnimatedCan() {
                 <MeshTransmissionMaterial
                     backside
                     samples={4}
-                    thickness={0.5}
-                    chromaticAberration={0.2}
-                    anisotropy={0.1}
-                    distortion={0.2}
+                    thickness={material.thickness}
+                    chromaticAberration={material.chromaticAberration}
+                    anisotropy={material.anisotropy}
+                    distortion={material.distortion}
                     distortionScale={0.1}
                     temporalDistortion={0.1}
-                    metalness={0.9}
-                    roughness={0.1}
+                    metalness={material.metalness}
+                    roughness={material.roughness}
                     envMapIntensity={1}
-                    clearcoat={1}
+                    clearcoat={material.clearcoat}
                     clearcoatRoughness={0.1}
-                    ior={1.5}
-                    color="#ffffff"
+                    ior={material.ior}
+                    color={material.color}
                 />
             </Box>
         </Float>
@@ -150,54 +151,93 @@ export function AnimatedCan() {
 }
 
 export function SceneContent() {
+    const {
+        keyLight,
+        fillLight,
+        rimLight,
+        shadows,
+        material
+    } = useControls({
+        keyLight: folder({
+            keyPosition: { value: [3, 2, 2], step: 0.1 },
+            keyIntensity: { value: 1.5, min: 0, max: 5, step: 0.1 },
+            keyColor: '#ffffff',
+            keyAngle: { value: 0.4, min: 0, max: Math.PI / 2 },
+            keyPenumbra: { value: 0.8, min: 0, max: 1 },
+        }),
+        fillLight: folder({
+            fillPosition: { value: [-2, 1, -1], step: 0.1 },
+            fillIntensity: { value: 0.8, min: 0, max: 5, step: 0.1 },
+            fillColor: '#b1e1ff',
+        }),
+        rimLight: folder({
+            rimPosition: { value: [-1, 3, 3], step: 0.1 },
+            rimIntensity: { value: 1.2, min: 0, max: 5, step: 0.1 },
+            rimColor: '#ffffff',
+        }),
+        shadows: folder({
+            shadowOpacity: { value: 0.5, min: 0, max: 1, step: 0.1 },
+            shadowBlur: { value: 2, min: 0, max: 10, step: 0.1 },
+            shadowFar: { value: 4, min: 1, max: 10, step: 0.1 },
+        }),
+        material: folder({
+            thickness: { value: 0.5, min: 0, max: 2, step: 0.1 },
+            chromaticAberration: { value: 0.2, min: 0, max: 1, step: 0.1 },
+            anisotropy: { value: 0.1, min: 0, max: 1, step: 0.1 },
+            distortion: { value: 0.2, min: 0, max: 1, step: 0.1 },
+            metalness: { value: 0.9, min: 0, max: 1, step: 0.1 },
+            roughness: { value: 0.1, min: 0, max: 1, step: 0.1 },
+            clearcoat: { value: 1, min: 0, max: 1, step: 0.1 },
+            ior: { value: 1.5, min: 1, max: 2.5, step: 0.1 },
+            color: '#ffffff',
+        })
+    });
+
     return (
         <>
-            <Environment preset="studio" />
+            <Environment preset="night" />
             <ambientLight intensity={0.3} />
-            
-            {/* Key light */}
+
             <SpotLight
-                position={[3, 2, 2]}
-                angle={0.4}
-                penumbra={0.8}
-                intensity={1.5}
+                position={keyLight.keyPosition}
+                angle={keyLight.keyAngle}
+                penumbra={keyLight.keyPenumbra}
+                intensity={keyLight.keyIntensity}
                 distance={6}
                 castShadow
                 shadow-bias={-0.0001}
                 shadow-mapSize={[2048, 2048]}
-                color="#ffffff"
+                color={keyLight.keyColor}
             />
-            
-            {/* Fill light */}
+
             <SpotLight
-                position={[-2, 1, -1]}
+                position={fillLight.fillPosition}
                 angle={0.5}
                 penumbra={1}
-                intensity={0.8}
+                intensity={fillLight.fillIntensity}
                 distance={6}
-                color="#b1e1ff"
+                color={fillLight.fillColor}
             />
-            
-            {/* Rim light */}
+
             <SpotLight
-                position={[-1, 3, 3]}
+                position={rimLight.rimPosition}
                 angle={0.5}
                 penumbra={0.8}
-                intensity={1.2}
+                intensity={rimLight.rimIntensity}
                 distance={6}
-                color="#ffffff"
+                color={rimLight.rimColor}
             />
 
             <ContactShadows
                 position={[0, -3, 0]}
-                opacity={0.5}
+                opacity={shadows.shadowOpacity}
                 scale={20}
-                blur={2}
-                far={4}
+                blur={shadows.shadowBlur}
+                far={shadows.shadowFar}
                 resolution={512}
                 color="#000000"
             />
-            <AnimatedCan />
+            <AnimatedCan material={material} />
             <Preload all />
         </>
     );

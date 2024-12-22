@@ -1,10 +1,14 @@
 import QuantumPage from "./components/QuantumPage"
+import { Leva } from 'leva'
 
 function App() {
     return (
-        <main className='relative'>
-            <QuantumPage />
-        </main>
+        <>
+            <Leva />
+            <main className='relative'>
+                <QuantumPage />
+            </main>
+        </>
     )
 }
 
