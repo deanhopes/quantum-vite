@@ -15,10 +15,8 @@ import {
 } from "@react-three/drei"
 import { DataReadout } from "./ui/DataReadout"
 import { PS1Material, PS1MaterialType } from "../shaders/PS1Material"
-import { TechnicalHeader } from "./ui/TechnicalHeader"
 import { InteractiveGrid } from "./ui/InteractiveGrid"
-import "../styles/animations.css"
-import "../styles/technical.css"
+
 import { useControls, folder } from 'leva';
 
 // Register GSAP plugins
