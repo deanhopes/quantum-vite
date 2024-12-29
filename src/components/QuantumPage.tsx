@@ -20,6 +20,10 @@ const QuantumPage = () => {
     const canvasContainerRef = useRef<HTMLDivElement>(null);
     const heroTextRef = useRef<HTMLHeadingElement>(null);
     const subTextRef = useRef<HTMLHeadingElement>(null);
+    const logoRef = useRef<HTMLDivElement>(null);
+    const magneticBtnRef = useRef<HTMLDivElement>(null);
+    const initiateBtnRef = useRef<HTMLDivElement>(null);
+    const learnMoreBtnRef = useRef<HTMLDivElement>(null);
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
     const [scrollState, setScrollState] = useState<ScrollContextType>({
         scrollProgress: 0,
@@ -107,6 +111,66 @@ const QuantumPage = () => {
         };
     }, []);
 
+    useEffect(() => {
+        const buttons = [initiateBtnRef.current, learnMoreBtnRef.current, magneticBtnRef.current];
+
+        const handleMouseMove = (e: MouseEvent, btn: HTMLElement) => {
+            const rect = btn.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            const distanceX = e.clientX - centerX;
+            const distanceY = e.clientY - centerY;
+
+            const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+            const radius = 100;
+
+            if (distance < radius) {
+                const pull = (radius - distance) / radius;
+                const moveX = (distanceX * pull) * 0.5;
+                const moveY = (distanceY * pull) * 0.5;
+
+                gsap.to(btn, {
+                    x: moveX,
+                    y: moveY,
+                    duration: 0.3,
+                    ease: "power2.out"
+                });
+            } else {
+                gsap.to(btn, {
+                    x: 0,
+                    y: 0,
+                    duration: 0.3,
+                    ease: "power2.out"
+                });
+            }
+        };
+
+        const handleMouseLeave = (btn: HTMLElement) => {
+            gsap.to(btn, {
+                x: 0,
+                y: 0,
+                duration: 0.3,
+                ease: "power2.out"
+            });
+        };
+
+        buttons.forEach(btn => {
+            if (!btn) return;
+
+            const moveHandler = (e: MouseEvent) => handleMouseMove(e, btn);
+            const leaveHandler = () => handleMouseLeave(btn);
+
+            document.addEventListener('mousemove', moveHandler);
+            btn.addEventListener('mouseleave', leaveHandler);
+
+            return () => {
+                document.removeEventListener('mousemove', moveHandler);
+                btn.removeEventListener('mouseleave', leaveHandler);
+            };
+        });
+    }, []);
+
     return (
         <ScrollContext.Provider value={scrollState}>
             <div className='relative'>
@@ -148,43 +212,56 @@ const QuantumPage = () => {
                     )}
                 </div>
 
+                {/* Navbar */}
+                <nav className='fixed top-0 left-0 w-full h-16 flex items-center justify-between px-8 z-50'>
+                    <div className='w-16'></div> {/* Spacer for centering */}
+                    <div ref={logoRef} className='w-[8rem] origin-bottom'>
+                        <img
+                            src='/src/assets/ctrlz-logo.svg'
+                            alt='CTRL-Z'
+                            className='w-full object-contain'
+                        />
+                    </div>
+                    <div ref={magneticBtnRef} className='w-16 h-16 flex items-center justify-center cursor-pointer'>
+                        <button className='cta-button hover-highlight group relative px-4 py-2'>
+                            <div className='corner corner-tl'></div>
+                            <div className='corner corner-tr'></div>
+                            <div className='corner corner-bl'></div>
+                            <div className='corner corner-br'></div>
+                            <span className='technical-readout text-white/60 hover:text-white/90 transition-colors'>
+                                MENU
+                            </span>
+                        </button>
+                    </div>
+                </nav>
+
                 {/* Main Content */}
                 <div ref={containerRef} className='relative w-full'>
                     {/* Hero Section */}
                     <section className='relative h-screen flex flex-col overflow-hidden p-8'>
-                        {/* Top Bar */}
-                        <div className='flex justify-between items-start'>
-                            <div className='technical-readout'>
-                                11.07+
-                                <br />
-                                SSM24
-                            </div>
-                            <div className='technical-readout text-right'>
-                                QMO2040
-                                <br />
-                                355⟩CTRL-Z
-                            </div>
-                        </div>
+
+
 
                         {/* Main Content */}
                         <div className='flex-1 flex'>
                             {/* Left Side */}
                             <div className='flex flex-col justify-start mt-24'>
-                                <div className='text-[4vw] leading-none font-[PPEditorialOld] tracking-tighter'>
-                                    20//
-                                    <br />
-                                    40
-                                </div>
-                                <div className='technical-readout mt-48'>
+                                <div className='technical-readout '>
                                     12QT × 8QT
                                     <br />
                                     ⟨MAINTAIN NEURAL INTERFACE STABILITY⟩
                                 </div>
+                                <div className='text-[4vw] mt-48 leading-none font-[PPEditorialOld] tracking-tighter'>
+                                    20//
+                                    <br />
+                                    40
+                                </div>
+
                             </div>
 
                             {/* Right Side */}
                             <div className='flex-1 flex flex-col justify-center items-end'>
-                                <div className='max-w-[40vw] '>
+                                <div className='max-w-[40vw]'>
                                     <h1 className='text-[3vw] leading-[1.1] font-[PPEditorialOld] tracking-[-0.02em] mb-8 text-justify'>
                                         Manipulate each reality with
                                         <br />
@@ -204,10 +281,19 @@ const QuantumPage = () => {
                             </div>
                         </div>
 
-                        {/* CTRL-Z Logo */}
-                        <div className='absolute bottom-0 left-0 w-full flex items-end'>
-                            <img src='/src/assets/ctrlz-logo.svg' alt='CTRL-Z' className='w-full object-contain opacity-10' />
+                        <div className='flex justify-between items-end'>
+                            <div className='technical-readout'>
+                                11.07+
+                                <br />
+                                SSM24
+                            </div>
+                            <div className='technical-readout text-right'>
+                                QMO2040
+                                <br />
+                                355⟩CTRL-Z
+                            </div>
                         </div>
+
                     </section>
 
                     {/* Horizontal Scroll Section */}
@@ -418,37 +504,51 @@ const QuantumPage = () => {
                             </div>
 
                             {/* Description */}
-                            <p className='text-white/60 font-mono text-md max-w-2xl mx-auto mb-8 leading-relaxed tracking-wider'>
+                            <p className='text-white/60 font-mono text-md max-w-2xl mx-auto mb-16 leading-relaxed tracking-wider'>
                                 Step into a future where every possibility is within reach. Your perfect timeline awaits.
                             </p>
 
                             {/* CTA Buttons */}
-                            <div className='space-x-8'>
-                                <button className='cta-button hover-highlight group relative px-12 py-4 bg-transparent'>
-                                    <div className='corner corner-tl'></div>
-                                    <div className='corner corner-tr'></div>
-                                    <div className='corner corner-bl'></div>
-                                    <div className='corner corner-br'></div>
-                                    <span className='text-white/90 font-mono text-sm tracking-[0.3em] relative z-10'>
-                                        INITIATE SHIFT
-                                    </span>
-                                </button>
-                                <button className='cta-button group relative px-12 py-4'>
-                                    <div className='absolute inset-0 border border-white/10'></div>
-                                    <span className='text-white/40 font-mono text-sm tracking-[0.3em] relative z-10'>
-                                        LEARN MORE
-                                    </span>
-                                </button>
+                            <div className='flex gap-8 mb-32'>
+                                <div ref={initiateBtnRef} className='relative'>
+                                    <button className='cta-button hover-highlight group relative px-12 py-4'>
+                                        <div className='corner corner-tl'></div>
+                                        <div className='corner corner-tr'></div>
+                                        <div className='corner corner-bl'></div>
+                                        <div className='corner corner-br'></div>
+                                        <span className='text-white/90 font-mono text-sm tracking-[0.3em] relative z-10'>
+                                            INITIATE SHIFT
+                                        </span>
+                                    </button>
+                                </div>
+
+                                <div ref={learnMoreBtnRef} className='relative'>
+                                    <button className='cta-button group relative px-12 py-4'>
+                                        <div className='corner corner-tl'></div>
+                                        <div className='corner corner-tr'></div>
+                                        <div className='corner corner-bl'></div>
+                                        <div className='corner corner-br'></div>
+                                        <span className='text-white/40 font-mono text-sm tracking-[0.3em] relative z-10'>
+                                            LEARN MORE
+                                        </span>
+                                    </button>
+                                </div>
                             </div>
 
                             {/* Technical Details */}
-                            <div className='font-mono text-[10px] text-white/40 tracking-[0.2em]'>
-                                <div>MODEL: QS-749-X</div>
-                                <div>BUILD: 2038.12.1</div>
-                            </div>
-                            <div className='font-mono text-[10px] text-white/40 tracking-[0.2em] text-right'>
-                                <div>LAT: 37.7749° N</div>
-                                <div>LONG: 122.4194° W</div>
+                            <div className='grid grid-cols-2 gap-8 w-full max-w-2xl'>
+                                <div className='text-left'>
+                                    <div className='font-mono text-[10px] text-white/40 tracking-[0.2em]'>
+                                        <div>MODEL: QS-749-X</div>
+                                        <div>BUILD: 2038.12.1</div>
+                                    </div>
+                                </div>
+                                <div className='text-right'>
+                                    <div className='font-mono text-[10px] text-white/40 tracking-[0.2em]'>
+                                        <div>LAT: 37.7749° N</div>
+                                        <div>LONG: 122.4194° W</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

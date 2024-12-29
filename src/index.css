@@ -236,36 +236,177 @@ body {
 
 /* Enhanced CTA Button Styles */
 .cta-button {
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
-  overflow: visible;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: scale(1);
+  overflow: hidden;
 }
 
+.cta-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.05);
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: -1;
+}
+
+.cta-button:hover {
+  transform: scale(0.97);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+}
+
+.cta-button:hover::before {
+  opacity: 1;
+}
+
+/* Corner base */
+.corner {
+  position: absolute;
+  pointer-events: none;
+  z-index: 2;
+  width: 10px;
+  height: 10px;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Corner lines */
+.corner::before,
+.corner::after {
+  content: '';
+  position: absolute;
+  background: rgba(255, 255, 255, 0.6);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Horizontal lines */
+.corner::before {
+  height: 1px;
+  width: 100%;
+}
+
+/* Vertical lines */
+.corner::after {
+  width: 1px;
+  height: 100%;
+}
+
+/* Top left */
+.corner-tl {
+  top: 0;
+  left: 0;
+}
+
+.corner-tl::before {
+  right: 0;
+  top: 0;
+}
+
+.corner-tl::after {
+  left: 0;
+  bottom: 0;
+}
+
+/* Top right */
+.corner-tr {
+  top: 0;
+  right: 0;
+}
+
+.corner-tr::before {
+  left: 0;
+  top: 0;
+}
+
+.corner-tr::after {
+  right: 0;
+  bottom: 0;
+}
+
+/* Bottom left */
+.corner-bl {
+  bottom: 0;
+  left: 0;
+}
+
+.corner-bl::before {
+  right: 0;
+  bottom: 0;
+}
+
+.corner-bl::after {
+  left: 0;
+  top: 0;
+}
+
+/* Bottom right */
+.corner-br {
+  bottom: 0;
+  right: 0;
+}
+
+.corner-br::before {
+  left: 0;
+  bottom: 0;
+}
+
+.corner-br::after {
+  right: 0;
+  top: 0;
+}
+
+/* Hover states */
+.cta-button:hover .corner {
+  width: 6px;
+  height: 6px;
+  opacity: 1;
+}
+
+/* Button content */
+.cta-button span {
+  position: relative;
+  z-index: 1;
+  transition: all 0.3s ease;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.8),
+    rgba(255, 255, 255, 1)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
+}
+
+.cta-button:hover span {
+  transform: scale(0.97);
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
+}
+
+/* Scan line effect */
 .cta-button::before {
   content: "";
   position: absolute;
   inset: 0;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.cta-button .corner {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  border-color: rgba(255, 255, 255, 0.4);
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0));
-}
-
-.cta-button:hover .corner {
-  border-color: rgba(255, 255, 255, 0.8);
-  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent
+  );
+  opacity: 0;
+  transform: translateY(-100%);
+  transition: opacity 0.3s;
+  pointer-events: none;
 }
 
 .cta-button:hover::before {
-  border-color: rgba(255, 255, 255, 0.4);
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  opacity: 1;
+  animation: scan-y 1.5s linear infinite;
 }
 
 /* Animations */
