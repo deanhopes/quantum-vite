@@ -113,7 +113,7 @@ const QuantumPage = () => {
                 {/* Canvas Container */}
                 <div
                     ref={canvasContainerRef}
-                    className='fixed inset-0 w-full h-full overflow-hidden bg-gradient-to-b from-black via-purple-900/20 to-black pointer-events-none'
+                    className='fixed inset-0 w-full h-full overflow-hidden bg-gradient-to-b from-black via-purple-900/20 to-black'
                 >
                     {dimensions.width > 0 && (
                         <Canvas
@@ -222,7 +222,7 @@ const QuantumPage = () => {
                             <div className='panel w-screen h-screen flex-shrink-0'>
                                 <div className='absolute top-0 left-0 w-full h-full' style={{ padding: '96px' }}>
                                     <div className='relative' style={{ marginTop: '96px', marginLeft: '96px' }}>
-                                        <h2 className='text-white/95 font-editorial text-[3.5vw] tracking-[-0.02em] leading-[96px] mix-blend-difference'>
+                                        <h2 className='text-white/95 font-[PPEditorialOld] text-[3.5vw] tracking-[-0.02em] leading-[96px] mix-blend-difference'>
                                             You've been there. That moment
                                             <br />
                                             when everything goes sideways.
@@ -243,76 +243,46 @@ const QuantumPage = () => {
                             </div>
 
                             {/* Panel 2 */}
-                            <div className='panel w-screen h-screen flex-shrink-0'>
-                                <div className='w-full h-full grid grid-cols-[repeat(24,1fr)] grid-rows-[repeat(24,1fr)] p-24'>
-                                    {/* Main Content Grid */}
-                                    <div className='col-span-20 col-start-3 row-start-6 row-span-14 grid grid-cols-2 gap-x-96 content-center'>
-                                        {/* Left Column */}
-                                        <div className='space-y-96'>
-                                            <div className='feature-block group relative overflow-visible p-24'>
-                                                <div className='absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
-                                                <div className='relative z-10 space-y-24'>
-                                                    <h3 className='font-[PPEditorialOld] text-white/95 text-[3vw] md:text-[2.5vw] lg:text-[2vw] leading-[1.1] transform group-hover:translate-x-2 transition-transform duration-500'>
-                                                        NEURAL-SYNC
-                                                        <br />
-                                                        INTERFACE
-                                                    </h3>
-                                                    <p className='text-white/70 font-mono text-base leading-relaxed max-w-[40ch] transition-opacity duration-300 group-hover:text-white/90'>
-                                                        Memory preservation across
-                                                        realities, ensuring
-                                                        cognitive continuity.
-                                                    </p>
-                                                </div>
-                                            </div>
-
-                                            <div className='feature-block group relative overflow-hidden'>
-                                                <div className='absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
-                                                <div className='relative z-10'>
-                                                    <h3 className='font-[PPEditorialOld] text-white/95 text-[4vw] leading-[0.9] mb-8 transform group-hover:translate-x-2 transition-transform duration-500'>
-                                                        QUANTUM
-                                                        <br />
-                                                        STABILIZERS
-                                                    </h3>
-                                                    <p className='text-white/70 font-mono text-base leading-relaxed max-w-[40ch] transition-opacity duration-300 group-hover:text-white/90'>
-                                                        Reality-grade containment
-                                                        field prevents unwanted
-                                                        timeline bleed.
-                                                    </p>
-                                                    <div className='mt-6 grid grid-cols-3 gap-2'>
-                                                        {Array.from({
-                                                            length: 3,
-                                                        }).map((_, i) => (
-                                                            <div
-                                                                key={i}
-                                                                className='h-[2px] bg-white/20 group-hover:bg-white/40 transition-colors duration-300 delay-[${i * 100}ms]'
-                                                            ></div>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            </div>
+                            <div className='panel w-screen h-screen'>
+                                <div className='w-full h-full grid grid-cols-[repeat(12,1fr)] grid-rows-[repeat(12,1fr)] gap-4 justify-items-center justify-between'>
+                                    {/* Feature Blocks */}
+                                    <div className='feature-block col-start-4 col-span-5 row-start-2'>
+                                        <div className='grid grid-cols-6 gap-4'>
+                                            <h3 className='font-[PPEditorialOld] text-white/95 text-[2.5vw] leading-[1.1] col-span-12'>
+                                                ⌬Neural-Sync
+                                                <br />
+                                                Interface
+                                            </h3>
+                                            <p className='text-white/50 font-mono text-sm col-start-2 col-span-4'>
+                                                Memory preservation across realities, ensuring cognitive continuity through quantum state preservation.
+                                            </p>
                                         </div>
+                                    </div>
 
-                                        {/* Right Column */}
-                                        <div className='space-y-16 md:space-y-32 mt-12 md:mt-48'>
-                                            <div className='feature-block group relative overflow-hidden'>
-                                                <div className='absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
-                                                <div className='relative z-10'>
-                                                    <h3 className='font-[PPEditorialOld] text-white/95 text-[4vw] leading-[0.9] mb-8 transform group-hover:translate-x-2 transition-transform duration-500'>
-                                                        INSTANT
-                                                        <br />
-                                                        ACCESS
-                                                    </h3>
-                                                    <p className='text-white/70 font-mono text-base leading-relaxed max-w-[40ch] transition-opacity duration-300 group-hover:text-white/90'>
-                                                        Zero latency between
-                                                        decision and implementation.
-                                                    </p>
-                                                    <div className='absolute bottom-4 right-4 opacity-20 group-hover:opacity-40 transition-opacity duration-300'>
-                                                        <div className='font-mono text-[10px] tracking-wider'>
-                                                            ACCESS_POINT_01
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                    <div className='feature-block col-start-9 col-span-12 row-start-8'>
+                                        <div className='grid grid-cols-8 gap-4'>
+                                            <h3 className='font-[PPEditorialOld] text-white/95 text-[2.5vw] leading-[1.1] col-span-12'>
+                                                ◈Quantum
+                                                <br />
+                                                Stabilization
+                                            </h3>
+                                            <p className='text-white/50 font-mono text-sm col-start-2 col-span-4'>
+                                                Reality-grade containment field prevents unwanted timeline bleed and maintains dimensional integrity.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className='feature-block col-start-1 col-span-5 row-start-9'>
+                                        <div className='grid grid-cols-8 gap-4'>
+                                            <h3 className='font-[PPEditorialOld] text-white/95 text-[2.5vw] leading-[1.1] col-span-12'>
+                                                ⎔Interface
+                                                <br />
+                                                Alignment
+                                                Delta
+                                            </h3>
+                                            <p className='text-white/50 font-mono text-sm col-start-2 col-span-4'>
+                                                Zero latency between decision and implementation through quantum entanglement protocols.
+                                            </p>
                                         </div>
                                     </div>
                                 </div>

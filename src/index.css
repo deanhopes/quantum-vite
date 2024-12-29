@@ -34,13 +34,11 @@ body {
 /* Text animation helpers */
 .char {
   @apply inline-block relative text-white;
-  will-change: transform, opacity, filter;
   mix-blend-mode: screen;
 }
 
 .word {
   @apply inline-block relative;
-  will-change: transform;
 }
 
 /* Panel text styles */
@@ -53,48 +51,13 @@ body {
   @apply overflow-hidden;
 }
 
-/* RGB split effect */
-.rgb-split {
-  position: relative;
-}
-
-.rgb-split::before,
-.rgb-split::after {
-  @apply absolute inset-0 opacity-50;
-  content: attr(data-text);
-  mix-blend-mode: screen;
-}
-
-.rgb-split::before {
-  @apply text-[#ff0000] left-[0.5px];
-  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
-}
-
-.rgb-split::after {
-  @apply text-[#00ff00] -left-[0.5px];
-  clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
-}
-
 /* Feature blocks */
 .feature-block {
-  @apply relative p-8;
   position: relative;
+}
+
+.feature-block > div {
   padding: 2rem;
-  transition: all 0.3s ease;
-}
-
-.feature-block::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border: 1px solid rgba(255,255,255,0);
-  opacity: 0;
-  transition: all 0.5s ease;
-}
-
-.feature-block:hover::before {
-  border-color: rgba(255,255,255,0.1);
-  opacity: 1;
 }
 
 /* Tech specs */
@@ -117,7 +80,6 @@ body {
     rgba(255, 255, 255, 0.1),
     transparent
   );
-  animation: scanline 4s ease-in-out infinite;
 }
 
 /* Technical text styles */
@@ -232,7 +194,7 @@ body {
 /* Enhanced HUD elements */
 .hud-element {
   position: absolute;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: "JetBrains Mono", monospace;
   font-size: 0.65rem;
   color: rgba(255, 255, 255, 0.4);
   pointer-events: none;
@@ -282,7 +244,7 @@ body {
 }
 
 .cta-button::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -310,57 +272,115 @@ body {
 
 /* Animations */
 @keyframes scan-y {
-  from { transform: translateY(-100%); }
-  to { transform: translateY(100%); }
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(100%);
+  }
 }
 
 @keyframes scan-x {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(100%); }
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
 }
 
 @keyframes data-stream {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100%); }
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
 }
 
 @keyframes glitch {
-  0% { transform: translate(0); }
-  20% { transform: translate(-2px, 2px); }
-  40% { transform: translate(-2px, -2px); }
-  60% { transform: translate(2px, 2px); }
-  80% { transform: translate(2px, -2px); }
-  100% { transform: translate(0); }
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+  100% {
+    transform: translate(0);
+  }
 }
 
 @keyframes glitch-anim {
-  0% { clip: rect(44px, 450px, 56px, 0); }
-  20% { clip: rect(12px, 450px, 92px, 0); }
-  40% { clip: rect(76px, 450px, 24px, 0); }
-  60% { clip: rect(33px, 450px, 77px, 0); }
-  80% { clip: rect(89px, 450px, 11px, 0); }
-  100% { clip: rect(21px, 450px, 88px, 0); }
+  0% {
+    clip: rect(44px, 450px, 56px, 0);
+  }
+  20% {
+    clip: rect(12px, 450px, 92px, 0);
+  }
+  40% {
+    clip: rect(76px, 450px, 24px, 0);
+  }
+  60% {
+    clip: rect(33px, 450px, 77px, 0);
+  }
+  80% {
+    clip: rect(89px, 450px, 11px, 0);
+  }
+  100% {
+    clip: rect(21px, 450px, 88px, 0);
+  }
 }
 
 @keyframes scroll-hint {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(5px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(5px);
+  }
 }
 
 @keyframes scanline {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100%); }
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); opacity: 0.5; }
-  50% { transform: scale(1.05); opacity: 0.8; }
-  100% { transform: scale(1); opacity: 0.5; }
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
 }
 
 @keyframes loading {
-  from { width: 0; }
-  to { width: 100%; }
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
 }
 
 /* Animation classes */
