@@ -169,13 +169,13 @@ const QuantumPage = () => {
                         {/* Main Content */}
                         <div className='flex-1 flex'>
                             {/* Left Side */}
-                            <div className='flex flex-col justify-between py-64'>
+                            <div className='flex flex-col justify-start mt-24'>
                                 <div className='text-[4vw] leading-none font-[PPEditorialOld] tracking-tighter'>
                                     20//
                                     <br />
                                     40
                                 </div>
-                                <div className='technical-readout'>
+                                <div className='technical-readout mt-48'>
                                     12QT × 8QT
                                     <br />
                                     ⟨MAINTAIN NEURAL INTERFACE STABILITY⟩
@@ -184,7 +184,7 @@ const QuantumPage = () => {
 
                             {/* Right Side */}
                             <div className='flex-1 flex flex-col justify-center items-end'>
-                                <div className='text-right max-w-[40vw] ml-auto'>
+                                <div className='max-w-[40vw] '>
                                     <h1 className='text-[3vw] leading-[1.1] font-[PPEditorialOld] tracking-[-0.02em] mb-8 text-justify'>
                                         Manipulate each reality with
                                         <br />
@@ -194,7 +194,7 @@ const QuantumPage = () => {
                                         Experience every timeline.
                                     </h2>
                                 </div>
-                                <div className='technical-readout text-right mt-8'>
+                                <div className='technical-readout text-right mt-12'>
                                     ⟨14.40×23.40⟩
                                     <br />
                                     ⟨NEURAL-SYNC_REQUIRED⟩
@@ -204,11 +204,9 @@ const QuantumPage = () => {
                             </div>
                         </div>
 
-                        {/* Placeholder for CTRL-Z SVG */}
-                        <div className='absolute bottom-0 left-0 w-full h-[40vh] flex items-end'>
-                            <div className='w-full h-[20vh] text-[20vh] font-[PPEditorialOld] tracking-tighter text-white'>
-                                CTRL-Z
-                            </div>
+                        {/* CTRL-Z Logo */}
+                        <div className='absolute bottom-0 left-0 w-full flex items-end'>
+                            <img src='/src/assets/ctrlz-logo.svg' alt='CTRL-Z' className='w-full object-contain opacity-10' />
                         </div>
                     </section>
 

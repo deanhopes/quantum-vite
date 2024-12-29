@@ -16,7 +16,7 @@ export function SceneContent() {
     });
 
     useFrame(({ camera }) => {
-        const lerpFactor = 0.008; // Adjust for camera smoothness
+        const lerpFactor = 0.02; // Adjust for camera smoothness
 
         if (isHorizontalSection) {
             const radius = 12;
@@ -42,7 +42,7 @@ export function SceneContent() {
         <>
             <SpaceBackground />
             <Environment preset='night' />
-            <ambientLight intensity={0.2} />
+            <ambientLight intensity={1} />
             <SpotLight
                 position={[5, 5, 2]}
                 angle={0.4}
