@@ -4,7 +4,7 @@ import { Leva } from 'leva'
 function App() {
     return (
         <>
-            <Leva />
+            {/* <Leva /> */}
             <main className='relative'>
                 <QuantumPage />
             </main>

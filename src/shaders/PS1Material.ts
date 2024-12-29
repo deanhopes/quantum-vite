@@ -1,51 +1,41 @@
 import * as THREE from "three";
-import { extend, Object3DNode } from "@react-three/fiber";
-import { shaderMaterial } from "@react-three/drei";
 
-// Define proper types for the shader uniforms
-interface PS1MaterialUniforms {
-  uTime: { value: number };
-  uResolution: { value: THREE.Vector2 };
-  uGlitchIntensity: { value: number };
-  uScrollProgress: { value: number };
+export interface PS1MaterialUniforms {
+    uTime: { value: number };
+    uResolution: { value: THREE.Vector2 };
+    uGlitchIntensity: { value: number };
+    uScrollProgress: { value: number };
 }
 
-// Create the shader material with proper typing
-const PS1MaterialImpl = shaderMaterial<PS1MaterialUniforms>(
-  {
-    uTime: { value: 0 },
-    uResolution: { value: new THREE.Vector2(320, 240) },
-    uGlitchIntensity: { value: 0.0 },
-    uScrollProgress: { value: 0.0 },
-  },
-  // Vertex shader
-  /* glsl */ `
+const vertexShader = `
     uniform float uTime;
     uniform float uGlitchIntensity;
     uniform float uScrollProgress;
     uniform vec2 uResolution;
+
     varying vec2 vUv;
     varying vec3 vPosition;
     varying vec3 vNormal;
     varying vec3 vViewPosition;
 
     void main() {
-      vUv = uv;
-      vPosition = position;
-      vNormal = normalize(normalMatrix * normal);
+        vUv = uv;
+        vPosition = position;
+        vNormal = normalize(normalMatrix * normal);
 
-      vec4 modelPosition = modelMatrix * vec4(position, 1.0);
-      vec4 viewPosition = viewMatrix * modelPosition;
-      vViewPosition = -viewPosition.xyz;
-      gl_Position = projectionMatrix * viewPosition;
+        vec4 modelPosition = modelMatrix * vec4(position, 1.0);
+        vec4 viewPosition = viewMatrix * modelPosition;
+        vViewPosition = -viewPosition.xyz;
+        gl_Position = projectionMatrix * viewPosition;
     }
-  `,
-  // Fragment shader
-  /* glsl */ `
+`;
+
+const fragmentShader = `
     uniform float uTime;
     uniform vec2 uResolution;
     uniform float uGlitchIntensity;
     uniform float uScrollProgress;
+
     varying vec2 vUv;
     varying vec3 vPosition;
     varying vec3 vNormal;
@@ -138,106 +128,87 @@ const PS1MaterialImpl = shaderMaterial<PS1MaterialUniforms>(
         return value;
     }
 
-    // Raymarching setup
-    float sphereDistance(vec3 p, float radius) {
-        return length(p) - radius;
-    }
-
-    float sceneSDF(vec3 p) {
-        float sphere = sphereDistance(p, 1.0);
-        float noise = fbm(p * 2.0 + uTime * 0.2) * 0.5;
-        return sphere + noise;
-    }
-
-    vec3 calcNormal(vec3 p) {
-        const float h = 0.0001;
-        const vec2 k = vec2(1, -1);
-        return normalize(
-            k.xyy * sceneSDF(p + k.xyy * h) +
-            k.yyx * sceneSDF(p + k.yyx * h) +
-            k.yxy * sceneSDF(p + k.yxy * h) +
-            k.xxx * sceneSDF(p + k.xxx * h)
-        );
-    }
-
     void main() {
-      // Fresnel effect with enhanced edge glow
-      vec3 viewDirection = normalize(vViewPosition);
-      float fresnel = pow(1.0 - dot(vNormal, viewDirection), 3.0);
-      
-      // Fluid motion using multiple noise layers
-      vec3 noisePos = vPosition * 2.0 + vec3(uTime * 0.1);
-      float noise1 = fbm(noisePos);
-      float noise2 = fbm(noisePos * 1.5 - uTime * 0.15);
-      float noise3 = fbm(noisePos * 0.5 + uTime * 0.05);
-      
-      // Create fluid-like motion
-      float fluidMotion = noise1 * noise2 * noise3;
-      
-      // Swirling effect
-      float swirl = sin(vPosition.y * 3.0 + noise1 * 5.0 + uTime * 0.2) * 
-                   cos(vPosition.x * 2.0 + noise2 * 4.0 - uTime * 0.15);
-      
-      // Color palette for iridescent effect
-      vec3 deepBlue = vec3(0.0, 0.1, 0.3);
-      vec3 brightBlue = vec3(0.2, 0.5, 1.0);
-      vec3 highlight = vec3(0.7, 0.9, 1.0);
-      vec3 accent = vec3(0.4, 0.8, 1.0);
-      
-      // Mix colors based on noise and swirl
-      vec3 baseColor = mix(deepBlue, brightBlue, noise1 * 0.8 + 0.2);
-      baseColor = mix(baseColor, accent, swirl * 0.5 + 0.5);
-      
-      // Add iridescent highlights
-      float iridescence = sin(noise2 * 10.0 + uTime) * 0.5 + 0.5;
-      baseColor = mix(baseColor, highlight, iridescence * fresnel);
-      
-      // Add flowing energy effect
-      float energy = sin(noise3 * 8.0 - uTime * 2.0) * 0.5 + 0.5;
-      baseColor += highlight * energy * 0.2;
-      
-      // Edge highlighting
-      float edge = pow(1.0 - dot(vNormal, viewDirection), 4.0);
-      baseColor += highlight * edge * 0.5;
-      
-      // Add subtle color variations
-      float colorShift = sin(fluidMotion * 4.0 - uTime) * 0.5 + 0.5;
-      baseColor = mix(baseColor, accent, colorShift * 0.3);
-      
-      // Enhance brightness at the center
-      float center = 1.0 - length(vPosition.xy);
-      baseColor += highlight * center * 0.2;
-      
-      // Add scroll-based effects
-      float scrollEffect = uScrollProgress * 2.0;
-      baseColor += accent * scrollEffect * 0.3;
-      
-      // Final color adjustments
-      vec3 finalColor = baseColor;
-      finalColor *= 1.0 + fresnel * 0.5;  // Enhance edges
-      finalColor += highlight * fluidMotion * 0.1;  // Add subtle flowing highlights
-      
-      // Alpha
-      float alpha = 0.7 + fresnel * 0.2 + fluidMotion * 0.1;
-      alpha = mix(alpha, 1.0, center * 0.5);  // More solid at center
-      
-      gl_FragColor = vec4(finalColor, alpha);
+        // Fresnel effect with enhanced edge glow
+        vec3 viewDirection = normalize(vViewPosition);
+        float fresnel = pow(1.0 - dot(vNormal, viewDirection), 3.0);
+        
+        // Fluid motion using multiple noise layers
+        vec3 noisePos = vPosition * 2.0 + vec3(uTime * 0.1);
+        float noise1 = fbm(noisePos);
+        float noise2 = fbm(noisePos * 1.5 - uTime * 0.15);
+        float noise3 = fbm(noisePos * 0.5 + uTime * 0.05);
+        
+        // Create fluid-like motion
+        float fluidMotion = noise1 * noise2 * noise3;
+        
+        // Swirling effect
+        float swirl = sin(vPosition.y * 3.0 + noise1 * 5.0 + uTime * 0.2) * 
+                     cos(vPosition.x * 2.0 + noise2 * 4.0 - uTime * 0.15);
+        
+        // Color palette for iridescent effect
+        vec3 deepBlue = vec3(0.0, 0.1, 0.3);
+        vec3 brightBlue = vec3(0.2, 0.5, 1.0);
+        vec3 highlight = vec3(0.7, 0.9, 1.0);
+        vec3 accent = vec3(0.4, 0.8, 1.0);
+        
+        // Mix colors based on noise and swirl
+        vec3 baseColor = mix(deepBlue, brightBlue, noise1 * 0.8 + 0.2);
+        baseColor = mix(baseColor, accent, swirl * 0.5 + 0.5);
+        
+        // Add iridescent highlights
+        float iridescence = sin(noise2 * 10.0 + uTime) * 0.5 + 0.5;
+        baseColor = mix(baseColor, highlight, iridescence * fresnel);
+        
+        // Add flowing energy effect
+        float energy = sin(noise3 * 8.0 - uTime * 2.0) * 0.5 + 0.5;
+        baseColor += highlight * energy * 0.2;
+        
+        // Edge highlighting
+        float edge = pow(1.0 - dot(vNormal, viewDirection), 4.0);
+        baseColor += highlight * edge * 0.5;
+        
+        // Add subtle color variations
+        float colorShift = sin(fluidMotion * 4.0 - uTime) * 0.5 + 0.5;
+        baseColor = mix(baseColor, accent, colorShift * 0.3);
+        
+        // Enhance brightness at the center
+        float center = 1.0 - length(vPosition.xy);
+        baseColor += highlight * center * 0.2;
+        
+        // Add scroll-based effects
+        float scrollEffect = uScrollProgress * 2.0;
+        baseColor += accent * scrollEffect * 0.3;
+        
+        // Final color adjustments
+        vec3 finalColor = baseColor;
+        finalColor *= 1.0 + fresnel * 0.5;  // Enhance edges
+        finalColor += highlight * fluidMotion * 0.1;  // Add subtle flowing highlights
+        
+        // Alpha
+        float alpha = 0.7 + fresnel * 0.2 + fluidMotion * 0.1;
+        alpha = mix(alpha, 1.0, center * 0.5);  // More solid at center
+        
+        gl_FragColor = vec4(finalColor, alpha);
     }
-  `
-);
+`;
 
-// Create the material type
-export type PS1MaterialType = THREE.ShaderMaterial & {
-  uniforms: PS1MaterialUniforms;
-};
-
-// Create and extend the material
-export const PS1Material = PS1MaterialImpl as new () => PS1MaterialType;
-extend({ PS1Material });
-
-// Add proper type declarations
-declare module "@react-three/fiber" {
-  interface ThreeElements {
-    pS1Material: Object3DNode<PS1MaterialType, typeof PS1Material>;
-  }
+export class PS1Material extends THREE.ShaderMaterial {
+    constructor() {
+        super({
+            uniforms: {
+                uTime: { value: 0 },
+                uGlitchIntensity: { value: 0.5 },
+                uScrollProgress: { value: 0 },
+                uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
+            },
+            vertexShader,
+            fragmentShader,
+            transparent: true,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending
+        });
+    }
 }
+
+export type PS1MaterialType = PS1Material;

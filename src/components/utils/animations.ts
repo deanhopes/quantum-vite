@@ -15,4 +15,4 @@ export const lerpV3 = (current: THREE.Vector3, target: THREE.Vector3, factor: nu
 // Quaternion slerp utility
 export const slerpQ = (current: THREE.Quaternion, target: THREE.Quaternion, factor: number) => {
     current.slerp(target, factor);
-};
+}; 
