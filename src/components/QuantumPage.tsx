@@ -222,8 +222,8 @@ const QuantumPage = () => {
                             className='w-full object-contain'
                         />
                     </div>
-                    <div ref={magneticBtnRef} className='w-16 h-16 flex items-center justify-center cursor-pointer'>
-                        <button className='cta-button hover-highlight group relative px-4 py-2'>
+                    <div ref={magneticBtnRef} className='relative w-16 h-16 flex items-center justify-center'>
+                        <button className='cta-button hover-highlight group relative w-12 h-12 flex items-center justify-center'>
                             <div className='corner corner-tl'></div>
                             <div className='corner corner-tr'></div>
                             <div className='corner corner-bl'></div>
@@ -239,61 +239,113 @@ const QuantumPage = () => {
                 <div ref={containerRef} className='relative w-full'>
                     {/* Hero Section */}
                     <section className='relative h-screen flex flex-col overflow-hidden p-8'>
-
-
-
                         {/* Main Content */}
                         <div className='flex-1 flex'>
                             {/* Left Side */}
                             <div className='flex flex-col justify-start mt-24'>
-                                <div className='technical-readout '>
-                                    12QT × 8QT
-                                    <br />
-                                    ⟨MAINTAIN NEURAL INTERFACE STABILITY⟩
+                                <div className='border-l border-white/10 pl-8'>
+                                    <div className='flex items-center gap-4 mb-4'>
+                                        <div className='w-2 h-2 bg-white/20 rotate-45'></div>
+                                        <p className='technical-readout'>QUANTUM METRICS</p>
+                                        <div className='ml-auto text-[8px] font-mono text-green-500/60'>ACTIVE</div>
+                                    </div>
+                                    <div className='space-y-2'>
+                                        <div className='technical-readout'>12QT × 8QT</div>
+                                        <div className='technical-readout'>⟨MAINTAIN NEURAL INTERFACE STABILITY⟩</div>
+                                    </div>
+                                    <div className='w-12 h-[1px] bg-white/10 my-4'></div>
+                                    <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
+                                        <div>HASH: 0xA7D2</div>
+                                        <div className='ml-auto'>REV: 1.4.2</div>
+                                    </div>
                                 </div>
-                                <div className='text-[4vw] mt-48 leading-none font-[PPEditorialOld] tracking-tighter'>
-                                    20//
-                                    <br />
-                                    40
+                                <div className='mt-48 border-l border-white/10 pl-8'>
+                                    <div className='flex items-center gap-4 mb-4'>
+                                        <div className='w-2 h-2 bg-white/20 rotate-45'></div>
+                                        <p className='technical-readout'>TEMPORAL INDEX</p>
+                                        <div className='ml-auto text-[8px] font-mono text-white/40'>ID:TI-001</div>
+                                    </div>
+                                    <div className='text-[4vw] leading-none font-[PPEditorialOld] tracking-tighter'>
+                                        20//
+                                        <br />
+                                        40
+                                    </div>
+                                    <div className='w-12 h-[1px] bg-white/10 my-4'></div>
+                                    <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
+                                        <div>HASH: 0xB8E3</div>
+                                        <div className='ml-auto'>REV: 2.0.1</div>
+                                    </div>
                                 </div>
-
                             </div>
 
                             {/* Right Side */}
                             <div className='flex-1 flex flex-col justify-center items-end'>
-                                <div className='max-w-[40vw]'>
+                                <div className='max-w-[40vw] border-l border-white/10 pl-8'>
+                                    <div className='flex items-center gap-4 mb-4'>
+                                        <div className='w-2 h-2 bg-white/20 rotate-45'></div>
+                                        <p className='technical-readout'>SYSTEM DIRECTIVE</p>
+                                        <div className='ml-auto text-[8px] font-mono text-green-500/60'>VERIFIED</div>
+                                    </div>
                                     <h1 className='text-[3vw] leading-[1.1] font-[PPEditorialOld] tracking-[-0.02em] mb-8 text-justify'>
-                                        Manipulate each reality with
+                                        One sip to access
                                         <br />
-                                        quantum precision.
+                                        infinite timelines.
                                     </h1>
                                     <h2 className='text-[4vw] leading-[1.1] font-[PPEditorialOld] tracking-[-0.02em] text-white/80 text-justify'>
-                                        Experience every timeline.
+                                        Rewrite your reality.
                                     </h2>
-                                </div>
-                                <div className='technical-readout text-right mt-12'>
-                                    ⟨14.40×23.40⟩
-                                    <br />
-                                    ⟨NEURAL-SYNC_REQUIRED⟩
-                                    <br />
-                                    ⟨QUANTUM STABILIZATION_ACTIVE⟩
+                                    <div className='w-12 h-[1px] bg-white/10 my-4'></div>
+                                    <div className='technical-readout text-right mt-12'>
+                                        <div className='flex items-center gap-2 mb-2'>
+                                            <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                            <p className='technical-readout text-white/60'>SYSTEM STATUS</p>
+                                        </div>
+                                        <div className='space-y-2'>
+                                            <div className='technical-readout'>⟨14.40×23.40⟩</div>
+                                            <div className='technical-readout'>⟨NEURAL-SYNC_REQUIRED⟩</div>
+                                            <div className='technical-readout'>⟨QUANTUM STABILIZATION_ACTIVE⟩</div>
+                                        </div>
+                                    </div>
+                                    <div className='flex items-center gap-2 text-[8px] font-mono text-white/40 mt-6'>
+                                        <div>HASH: 0xC9F4</div>
+                                        <div className='ml-auto'>REV: 3.2.0</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <div className='flex justify-between items-end'>
-                            <div className='technical-readout'>
-                                11.07+
-                                <br />
-                                SSM24
+                            <div className='border-l border-white/10 pl-8'>
+                                <div className='flex items-center gap-2 mb-2'>
+                                    <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                    <p className='technical-readout text-white/60'>SESSION DATA</p>
+                                </div>
+                                <div className='technical-readout'>
+                                    11.07+
+                                    <br />
+                                    SSM24
+                                </div>
+                                <div className='flex items-center gap-2 text-[8px] font-mono text-white/40 mt-4'>
+                                    <div>HASH: 0xE5B6</div>
+                                    <div className='ml-auto'>REV: 1.1.3</div>
+                                </div>
                             </div>
-                            <div className='technical-readout text-right'>
-                                QMO2040
-                                <br />
-                                355⟩CTRL-Z
+                            <div className='border-l border-white/10 pl-8'>
+                                <div className='flex items-center gap-2 mb-2'>
+                                    <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                    <p className='technical-readout text-white/60'>INSTANCE ID</p>
+                                </div>
+                                <div className='technical-readout text-right'>
+                                    QMO2040
+                                    <br />
+                                    355⟩CTRL-Z
+                                </div>
+                                <div className='flex items-center gap-2 text-[8px] font-mono text-white/40 mt-4'>
+                                    <div>HASH: 0xF7A8</div>
+                                    <div className='ml-auto'>REV: 2.3.1</div>
+                                </div>
                             </div>
                         </div>
-
                     </section>
 
                     {/* Horizontal Scroll Section */}
@@ -311,23 +363,67 @@ const QuantumPage = () => {
                         <div className='absolute top-0 left-0 h-full flex horizontal-scroll-content'>
                             {/* Panel 1 */}
                             <div className='panel w-screen h-screen flex-shrink-0'>
-                                <div className='absolute top-0 left-0 w-full h-full' style={{ padding: '96px' }}>
-                                    <div className='relative' style={{ marginTop: '96px', marginLeft: '96px' }}>
-                                        <h2 className='text-white/95 font-[PPEditorialOld] text-[3.5vw] tracking-[-0.02em] leading-[96px] mix-blend-difference'>
-                                            You've been there. That moment
+                                <div className='absolute top-0 left-0 w-full h-full p-24'>
+                                    {/* Top Left - Quantum Analysis */}
+                                    <div className='border-l border-white/10 pl-16'>
+                                        <div className='flex items-center gap-4 mb-8'>
+                                            <div className='w-2 h-2 bg-white/20 rotate-45'></div>
+                                            <p className='technical-readout'>QUANTUM ANALYSIS</p>
+                                            <div className='ml-auto text-[8px] font-mono text-green-500/60'>PROCESSING</div>
+                                        </div>
+                                        <h2 className='text-white/95 font-[PPEditorialOld] text-[3.5vw] tracking-[-0.02em] leading-[1.1] mix-blend-difference mb-16'>
+                                            We all have those moments.
                                             <br />
-                                            when everything goes sideways.
+                                            The ones we wish we could undo.
                                         </h2>
-                                        <div style={{ marginTop: '96px' }}>
-                                            <p className='technical-readout' style={{ height: '24px', lineHeight: '24px' }}>
-                                                System Status: Active
-                                            </p>
-                                            <div style={{ marginTop: '24px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
-                                                <div style={{ height: '24px', lineHeight: '24px' }} className='text-xs font-mono text-white/40'>CPU: 98.2%</div>
-                                                <div style={{ height: '24px', lineHeight: '24px' }} className='text-xs font-mono text-white/40'>MEM: 64.7%</div>
-                                                <div style={{ height: '24px', lineHeight: '24px' }} className='text-xs font-mono text-white/40'>TEMP: 42°C</div>
+                                        <div className='w-12 h-[1px] bg-white/10 my-8'></div>
+                                    </div>
+
+                                    {/* Bottom Right - System Status */}
+                                    <div className='absolute bottom-24 right-24 w-[600px]'>
+                                        <div className='border-l border-white/10 pl-8'>
+                                            <div className='flex items-center gap-4 mb-4'>
+                                                <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                                <p className='technical-readout text-white/60'>SYSTEM STATUS</p>
+                                                <div className='ml-auto text-[8px] font-mono text-green-500/60'>ACTIVE</div>
                                             </div>
-                                            <div style={{ marginTop: '24px', width: '24px', height: '1px' }} className='bg-white/20'></div>
+                                            <div className='border border-white/5 bg-white/5 p-8'>
+                                                <div className='grid grid-cols-3 gap-12'>
+                                                    <div className='space-y-2'>
+                                                        <div className='flex items-center gap-2'>
+                                                            <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                                            <p className='technical-readout text-white/60'>CPU LOAD</p>
+                                                        </div>
+                                                        <p className='technical-readout'>98.2%</p>
+                                                        <div className='flex items-center gap-2 text-[8px] font-mono text-white/40 mt-4'>
+                                                            <div>HASH: 0xD2E4</div>
+                                                            <div className='ml-auto'>REV: 1.0.1</div>
+                                                        </div>
+                                                    </div>
+                                                    <div className='space-y-2'>
+                                                        <div className='flex items-center gap-2'>
+                                                            <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                                            <p className='technical-readout text-white/60'>MEMORY</p>
+                                                        </div>
+                                                        <p className='technical-readout'>64.7%</p>
+                                                        <div className='flex items-center gap-2 text-[8px] font-mono text-white/40 mt-4'>
+                                                            <div>HASH: 0xE3F5</div>
+                                                            <div className='ml-auto'>REV: 2.1.0</div>
+                                                        </div>
+                                                    </div>
+                                                    <div className='space-y-2'>
+                                                        <div className='flex items-center gap-2'>
+                                                            <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                                            <p className='technical-readout text-white/60'>TEMP</p>
+                                                        </div>
+                                                        <p className='technical-readout'>42°C</p>
+                                                        <div className='flex items-center gap-2 text-[8px] font-mono text-white/40 mt-4'>
+                                                            <div>HASH: 0xF4G6</div>
+                                                            <div className='ml-auto'>REV: 1.5.2</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -335,94 +431,237 @@ const QuantumPage = () => {
 
                             {/* Panel 2 */}
                             <div className='panel w-screen h-screen'>
-                                <div className='w-full h-full grid grid-cols-[repeat(12,1fr)] grid-rows-[repeat(12,1fr)] gap-4 justify-items-center justify-between'>
-                                    {/* Feature Blocks */}
-                                    <div className='feature-block col-start-4 col-span-5 row-start-2'>
-                                        <div className='grid grid-cols-6 gap-4'>
-                                            <h3 className='font-[PPEditorialOld] text-white/95 text-[2.5vw] leading-[1.1] col-span-12'>
-                                                ⌬Neural-Sync
-                                                <br />
-                                                Interface
-                                            </h3>
-                                            <p className='text-white/50 font-mono text-sm col-start-2 col-span-4'>
-                                                Memory preservation across realities, ensuring cognitive continuity through quantum state preservation.
-                                            </p>
+                                <div className='w-full h-full flex flex-col p-24'>
+                                    {/* Top Row - Interface and Alignment */}
+                                    <div className='grid grid-cols-2 gap-12 mb-auto'>
+                                        {/* Neural Sync */}
+                                        <div className='flex justify-center'>
+                                            <div className='feature-block max-w-[600px] w-full'>
+                                                <div className='panel-text border-l border-white/10 pl-16 tech-specs'>
+                                                    <div className='flex items-center gap-4 mb-4'>
+                                                        <div className='w-2 h-2 bg-white/20 rotate-45'></div>
+                                                        <p className='technical-readout'>NEURAL SYNC</p>
+                                                        <div className='ml-auto text-[8px] font-mono text-white/40'>ID:NS-001</div>
+                                                    </div>
+                                                    <p className='text-white/90 font-[PPEditorialOld] text-[1.5vw]'>
+                                                        Interface
+                                                    </p>
+                                                    <div className='w-12 h-[1px] bg-white/10 my-6'></div>
+                                                    <div className='space-y-4'>
+                                                        <div className='flex items-center gap-2'>
+                                                            <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                                            <p className='technical-readout text-white/60'>STATUS: ACTIVE</p>
+                                                            <div className='ml-auto text-[8px] font-mono text-green-500/60'>VERIFIED</div>
+                                                        </div>
+                                                        <div className='border border-white/5 bg-white/5 p-4'>
+                                                            <p className='technical-readout'>
+                                                                Advanced neural mapping ensures your consciousness remains stable across quantum transitions.
+                                                            </p>
+                                                        </div>
+                                                        <div className='grid grid-cols-2 gap-4'>
+                                                            <div className='flex items-center gap-2'>
+                                                                <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                                                <p className='technical-readout text-white/60'>SYNC RATE: 99.99%</p>
+                                                            </div>
+                                                            <div className='flex items-center gap-2'>
+                                                                <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                                                <p className='technical-readout text-white/60'>UPTIME: 100%</p>
+                                                            </div>
+                                                        </div>
+                                                        <div className='flex items-center gap-2 text-[8px] font-mono text-white/40 mt-6'>
+                                                            <div>HASH: 0xF7A9</div>
+                                                            <div className='ml-auto'>REV: 2.1.0</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Interface */}
+                                        <div className='flex justify-center'>
+                                            <div className='feature-block max-w-[600px] w-full'>
+                                                <div className='panel-text border-l border-white/10 pl-16 tech-specs'>
+                                                    <div className='flex items-center gap-4 mb-4'>
+                                                        <div className='w-2 h-2 bg-white/20 rotate-45'></div>
+                                                        <p className='technical-readout'>INTERFACE</p>
+                                                        <div className='ml-auto text-[8px] font-mono text-white/40'>ID:IF-003</div>
+                                                    </div>
+                                                    <p className='text-white/90 font-[PPEditorialOld] text-[1.5vw]'>
+                                                        Alignment Delta
+                                                    </p>
+                                                    <div className='w-12 h-[1px] bg-white/10 my-6'></div>
+                                                    <div className='space-y-4'>
+                                                        <div className='flex items-center gap-2'>
+                                                            <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                                            <p className='technical-readout text-white/60'>STATUS: ALIGNED</p>
+                                                            <div className='ml-auto text-[8px] font-mono text-green-500/60'>VERIFIED</div>
+                                                        </div>
+                                                        <div className='border border-white/5 bg-white/5 p-4'>
+                                                            <p className='technical-readout'>
+                                                                Seamless integration between thought and action, allowing precise timeline selection.
+                                                            </p>
+                                                        </div>
+                                                        <div className='grid grid-cols-2 gap-4'>
+                                                            <div className='flex items-center gap-2'>
+                                                                <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                                                <p className='technical-readout text-white/60'>LAT: 0ms</p>
+                                                            </div>
+                                                            <div className='flex items-center gap-2'>
+                                                                <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                                                <p className='technical-readout text-white/60'>QBits: 1024</p>
+                                                            </div>
+                                                        </div>
+                                                        <div className='flex items-center gap-2 text-[8px] font-mono text-white/40 mt-6'>
+                                                            <div>HASH: 0xD1F8</div>
+                                                            <div className='ml-auto'>REV: 1.9.2</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div className='feature-block col-start-9 col-span-12 row-start-8'>
-                                        <div className='grid grid-cols-8 gap-4'>
-                                            <h3 className='font-[PPEditorialOld] text-white/95 text-[2.5vw] leading-[1.1] col-span-12'>
-                                                ◈Quantum
-                                                <br />
-                                                Stabilization
-                                            </h3>
-                                            <p className='text-white/50 font-mono text-sm col-start-2 col-span-4'>
-                                                Reality-grade containment field prevents unwanted timeline bleed and maintains dimensional integrity.
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className='feature-block col-start-1 col-span-5 row-start-9'>
-                                        <div className='grid grid-cols-8 gap-4'>
-                                            <h3 className='font-[PPEditorialOld] text-white/95 text-[2.5vw] leading-[1.1] col-span-12'>
-                                                ⎔Interface
-                                                <br />
-                                                Alignment
-                                                Delta
-                                            </h3>
-                                            <p className='text-white/50 font-mono text-sm col-start-2 col-span-4'>
-                                                Zero latency between decision and implementation through quantum entanglement protocols.
-                                            </p>
+                                    {/* Bottom Row - Quantum Core */}
+                                    <div className='flex justify-center'>
+                                        <div className='feature-block max-w-[600px] w-full'>
+                                            <div className='panel-text border-l border-white/10 pl-16 tech-specs'>
+                                                <div className='flex items-center gap-4 mb-4'>
+                                                    <div className='w-2 h-2 bg-white/20 rotate-45'></div>
+                                                    <p className='technical-readout'>QUANTUM CORE</p>
+                                                    <div className='ml-auto text-[8px] font-mono text-white/40'>ID:QC-002</div>
+                                                </div>
+                                                <p className='text-white/90 font-[PPEditorialOld] text-[1.5vw]'>
+                                                    Stabilization
+                                                </p>
+                                                <div className='w-12 h-[1px] bg-white/10 my-6'></div>
+                                                <div className='space-y-4'>
+                                                    <div className='flex items-center gap-2'>
+                                                        <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                                        <p className='technical-readout text-white/60'>STATUS: OPTIMAL</p>
+                                                        <div className='ml-auto text-[8px] font-mono text-green-500/60'>VERIFIED</div>
+                                                    </div>
+                                                    <div className='border border-white/5 bg-white/5 p-4'>
+                                                        <p className='technical-readout'>
+                                                            Proprietary quantum stabilization prevents timeline collapse while accessing parallel realities.
+                                                        </p>
+                                                    </div>
+                                                    <div className='grid grid-cols-2 gap-4'>
+                                                        <div className='flex items-center gap-2'>
+                                                            <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                                            <p className='technical-readout text-white/60'>FIELD: 100%</p>
+                                                        </div>
+                                                        <div className='flex items-center gap-2'>
+                                                            <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                                            <p className='technical-readout text-white/60'>TEMP: 42°K</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className='flex items-center gap-2 text-[8px] font-mono text-white/40 mt-6'>
+                                                        <div>HASH: 0xB2E4</div>
+                                                        <div className='ml-auto'>REV: 3.0.1</div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Panel 3 */}
-                            <div className='panel w-screen h-screen flex-shrink-0 p-16 grid grid-rows-6 grid-cols-12 gap-8'>
-                                <div className='col-span-10 col-start-2 row-span-full grid grid-cols-[1fr_auto] items-center gap-32'>
+                            <div className='panel w-screen h-screen flex-shrink-0 p-16 flex items-center justify-center'>
+                                <div className='max-w-[1200px] mx-auto grid grid-cols-[1fr_auto] gap-32'>
+                                    {/* Left Side - Main Content */}
                                     <div className='max-w-[50vw]'>
-                                        <div className='technical-readout text-[10px] tracking-[0.5em] text-white/40 mb-8'>SYSTEM ANALYSIS</div>
-                                        <h2 className='font-[PPEditorialOld] text-white/95 text-[4vw] tracking-[-0.03em] leading-[0.95] mb-8'>
-                                            Until now, you lived with it.
-                                        </h2>
-                                        <p className='technical-readout text-white/70 font-mono text-sm leading-relaxed mb-6'>
-                                            Every decision point creates infinite branches. We just help you find the right one.
-                                        </p>
-                                        <div className='grid grid-cols-2 gap-4 text-[10px] font-mono text-white/40 tracking-[0.3em] mt-8'>
-                                            <div className='technical-readout'>BRANCH COUNT: ∞</div>
-                                            <div className='technical-readout'>SUCCESS RATE: 99.99%</div>
+                                        <div className='border-l border-white/10 pl-16'>
+                                            <div className='flex items-center gap-4 mb-8'>
+                                                <div className='w-2 h-2 bg-white/20 rotate-45'></div>
+                                                <div className='technical-readout'>SYSTEM ANALYSIS</div>
+                                                <div className='ml-auto text-[8px] font-mono text-green-500/60'>VERIFIED</div>
+                                            </div>
+                                            <h2 className='font-[PPEditorialOld] text-white/95 text-[3vw] tracking-[-0.02em] leading-[1.1] mb-8'>
+                                                Traditional solutions told you to move on.
+                                                <br />
+                                                <br />
+                                                We found a better way.
+                                            </h2>
+                                            <div className='w-12 h-[1px] bg-white/10 my-6'></div>
+                                            <div className='space-y-4'>
+                                                <div className='flex items-center gap-2'>
+                                                    <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                                    <p className='technical-readout text-white/60'>ANALYSIS STATUS: COMPLETE</p>
+                                                    <div className='ml-auto text-[8px] font-mono text-green-500/60'>VERIFIED</div>
+                                                </div>
+                                                <div className='border border-white/5 bg-white/5 p-4'>
+                                                    <p className='technical-readout'>
+                                                        Our quantum-infused beverage opens doorways to parallel timelines, letting you find the reality where you made the right choice.
+                                                    </p>
+                                                </div>
+                                                <div className='grid grid-cols-2 gap-4'>
+                                                    <div className='flex items-center gap-2'>
+                                                        <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                                        <div className='technical-readout text-white/60'>BRANCH COUNT: ∞</div>
+                                                    </div>
+                                                    <div className='flex items-center gap-2'>
+                                                        <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                                        <div className='technical-readout text-white/60'>SUCCESS RATE: 99.99%</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className='flex items-center gap-2 text-[8px] font-mono text-white/40 mt-6'>
+                                                <div>HASH: 0xG7H8</div>
+                                                <div className='ml-auto'>REV: 2.5.0</div>
+                                            </div>
                                         </div>
                                     </div>
+
+                                    {/* Right Side - Technical Specs */}
                                     <div className='panel-text w-[360px] border-l border-white/10 pl-16 tech-specs'>
-                                        <p className='text-white/40 font-mono text-sm tracking-[0.2em] uppercase mb-12'>
-                                            Technical Specifications
-                                        </p>
+                                        <div className='flex items-center gap-4 mb-12'>
+                                            <div className='w-2 h-2 bg-white/20 rotate-45'></div>
+                                            <p className='technical-readout'>Technical Specifications</p>
+                                            <div className='ml-auto text-[8px] font-mono text-white/40'>ID:TS-001</div>
+                                        </div>
                                         <div className='space-y-12'>
-                                            <div className='spec-item group'>
-                                                <p className='text-white/40 font-mono text-xs tracking-[0.15em] uppercase mb-2 transition-colors duration-300 group-hover:text-white/60'>
-                                                    MODEL
-                                                </p>
-                                                <p className='text-white/90 font-mono text-xl transition-transform duration-500 group-hover:translate-x-2'>
+                                            <div className='spec-item'>
+                                                <div className='flex items-center gap-2 mb-2'>
+                                                    <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                                    <p className='technical-readout text-white/60'>MODEL</p>
+                                                </div>
+                                                <p className='text-white/90 font-[PPEditorialOld] text-[1.5vw]'>
                                                     QUANTUM CORE RT-749
                                                 </p>
+                                                <div className='w-12 h-[1px] bg-white/10 my-6'></div>
+                                                <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
+                                                    <div>HASH: 0xJ6K7</div>
+                                                    <div className='ml-auto'>REV: 1.8.3</div>
+                                                </div>
                                             </div>
-                                            <div className='spec-item group'>
-                                                <p className='text-white/40 font-mono text-xs tracking-[0.15em] uppercase mb-2 transition-colors duration-300 group-hover:text-white/60'>
-                                                    SERIES
-                                                </p>
-                                                <p className='text-white/90 font-mono text-xl transition-transform duration-500 group-hover:translate-x-2'>
+                                            <div className='spec-item'>
+                                                <div className='flex items-center gap-2 mb-2'>
+                                                    <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                                    <p className='technical-readout text-white/60'>SERIES</p>
+                                                </div>
+                                                <p className='text-white/90 font-[PPEditorialOld] text-[1.5vw]'>
                                                     SHIFT-X
                                                 </p>
+                                                <div className='w-12 h-[1px] bg-white/10 my-6'></div>
+                                                <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
+                                                    <div>HASH: 0xL4M5</div>
+                                                    <div className='ml-auto'>REV: 2.2.1</div>
+                                                </div>
                                             </div>
-                                            <div className='spec-item group'>
-                                                <p className='text-white/40 font-mono text-xs tracking-[0.15em] uppercase mb-2 transition-colors duration-300 group-hover:text-white/60'>
-                                                    ESTABLISHED
-                                                </p>
-                                                <p className='text-white/90 font-mono text-xl transition-transform duration-500 group-hover:translate-x-2'>
+                                            <div className='spec-item'>
+                                                <div className='flex items-center gap-2 mb-2'>
+                                                    <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                                    <p className='technical-readout text-white/60'>ESTABLISHED</p>
+                                                </div>
+                                                <p className='text-white/90 font-[PPEditorialOld] text-[1.5vw]'>
                                                     2038
                                                 </p>
+                                                <div className='w-12 h-[1px] bg-white/10 my-6'></div>
+                                                <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
+                                                    <div>HASH: 0xN2P3</div>
+                                                    <div className='ml-auto'>REV: 1.6.4</div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -432,16 +671,54 @@ const QuantumPage = () => {
                             {/* Panel 4 */}
                             <div className='panel w-screen h-screen flex-shrink-0 p-16 grid grid-rows-6 grid-cols-12 gap-8'>
                                 <div className='col-span-full row-span-full flex flex-col items-center justify-center text-center'>
-                                    <p className='text-white/40 font-mono text-base tracking-[0.5em] uppercase mb-8 fade-up'>
-                                        CRTL-Z
-                                    </p>
-                                    <h2 className='font-[PPEditorialOld] text-white/95 text-[10vw] tracking-[-0.03em] leading-[0.9]  fade-up'>
-                                        Now you can fix it.
-                                    </h2>
-                                    <div className='mt-12 flex items-center gap-8 fade-up'>
-                                        <p className='text-white/60 font-mono text-sm tracking-[0.2em] uppercase'>
+                                    <div className='border-l border-white/10 pl-8 mb-16'>
+                                        <div className='flex items-center gap-4 mb-4'>
+                                            <div className='w-2 h-2 bg-white/20 rotate-45'></div>
+                                            <p className='technical-readout'>SYSTEM IDENTITY</p>
+                                            <div className='ml-auto text-[8px] font-mono text-green-500/60'>VERIFIED</div>
+                                        </div>
+                                        <p className='technical-readout'>
+                                            CRTL-Z
+                                        </p>
+                                        <div className='w-12 h-[1px] bg-white/10 my-4'></div>
+                                        <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
+                                            <div>HASH: 0xK8L9</div>
+                                            <div className='ml-auto'>REV: 4.2.0</div>
+                                        </div>
+                                    </div>
+
+                                    <div className='border-l border-white/10 pl-8 mb-16'>
+                                        <div className='flex items-center gap-4 mb-4'>
+                                            <div className='w-2 h-2 bg-white/20 rotate-45'></div>
+                                            <p className='technical-readout'>DIRECTIVE</p>
+                                            <div className='ml-auto text-[8px] font-mono text-white/40'>ID:DR-001</div>
+                                        </div>
+                                        <h2 className='font-[PPEditorialOld] text-white/95 text-[8vw] tracking-[-0.03em] leading-[1.1]'>
+                                            Your perfect timeline exists.
+                                            <br />
+                                            We'll help you find it.
+                                        </h2>
+                                        <div className='w-12 h-[1px] bg-white/10 my-4'></div>
+                                        <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
+                                            <div>HASH: 0xM7N8</div>
+                                            <div className='ml-auto'>REV: 2.8.1</div>
+                                        </div>
+                                    </div>
+
+                                    <div className='border-l border-white/10 pl-8'>
+                                        <div className='flex items-center gap-4 mb-4'>
+                                            <div className='w-2 h-2 bg-white/20 rotate-45'></div>
+                                            <p className='technical-readout'>USER ACTION</p>
+                                            <div className='ml-auto text-[8px] font-mono text-green-500/60'>REQUIRED</div>
+                                        </div>
+                                        <p className='technical-readout'>
                                             Continue to experience
                                         </p>
+                                        <div className='w-12 h-[1px] bg-white/10 my-4'></div>
+                                        <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
+                                            <div>HASH: 0xP5Q6</div>
+                                            <div className='ml-auto'>REV: 1.3.4</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -449,36 +726,122 @@ const QuantumPage = () => {
                     </section>
 
                     {/* Testimonial Section */}
-                    <section className='relative min-h-screen bg-black/90 flex items-center justify-center py-24'>
-                        <div className='container mx-auto grid grid-cols-12 gap-8 px-8'>
-                            <div className='col-span-6'>
-                                <div className='technical-readout text-[10px] tracking-[0.5em] text-white/40 mb-8'>FIELD REPORTS</div>
-                                <h2 className='font-[PPEditorialOld] text-white/95 text-5xl leading-tight mb-16'>
-                                    When we first announced
+                    <section className='relative min-h-screen flex items-center justify-center py-24'>
+                        <div className='container grid grid-cols-12 gap-8 px-8'>
+                            <div className='col-span-6 border-l border-white/10 pl-8'>
+                                <div className='flex items-center gap-4 mb-8'>
+                                    <div className='w-2 h-2 bg-white/20 rotate-45'></div>
+                                    <p className='technical-readout'>FIELD REPORTS</p>
+                                    <div className='ml-auto text-[8px] font-mono text-green-500/60'>VERIFIED</div>
+                                </div>
+                                <h2 className='font-[PPEditorialOld] text-white/95 text-[3.5vw] leading-[1.1] mb-16'>
+                                    When we first introduced quantum-state manipulation in beverage form, they called us impossible.
                                     <br />
-                                    a beverage that could alter
                                     <br />
-                                    reality, they called us mad.
-                                    <br />
-                                    <br />
-                                    <span className='text-white/70'>88 billion successful
-                                        <br />
-                                        reality shifts later, they
-                                        <br />
-                                        call us the future.</span>
+                                    <span className='text-white/70'>88 billion successful reality shifts later, they call us revolutionary.</span>
                                 </h2>
+                                <div className='w-12 h-[1px] bg-white/10 my-4'></div>
+                                <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
+                                    <div>HASH: 0xR4S5</div>
+                                    <div className='ml-auto'>REV: 3.5.0</div>
+                                </div>
                             </div>
-                            <div className='col-span-5 col-start-8 space-y-12'>
-                                <div className='space-y-6'>
-                                    <div className='technical-readout text-[10px] tracking-[0.5em] text-white/40 mb-4'>USER TESTIMONIAL_01</div>
+
+                            <div className='col-span-5 col-start-8 space-y-24'>
+                                {/* Testimonial 1 */}
+                                <div className='border-l border-white/10 pl-8'>
+                                    <div className='flex items-center gap-4 mb-4'>
+                                        <div className='w-2 h-2 bg-white/20 rotate-45'></div>
+                                        <p className='technical-readout'>USER TESTIMONIAL</p>
+                                        <div className='ml-auto text-[8px] font-mono text-white/40'>ID:UT-001</div>
+                                    </div>
                                     <div className='flex mb-4'>
                                         {Array.from({ length: 5 }, (_, index) => (
                                             <span key={index} className='text-white/80 text-xl'>★</span>
                                         ))}
                                     </div>
-                                    <p className='technical-readout text-white/90 font-mono text-lg leading-relaxed'>
-                                        "Yesterday, I made the worst presentation of my career. Or I would have, if ctrl-z hadn't helped me find the timeline where I remembered to actually save my slides."
-                                    </p>
+                                    <div className='border border-white/5 bg-white/5 p-4'>
+                                        <p className='technical-readout text-white/90'>
+                                            "Yesterday, I made the worst presentation of my career. Or I would have, if ctrl-z hadn't helped me find the timeline where I remembered to actually save my slides."
+                                        </p>
+                                    </div>
+                                    <div className='w-12 h-[1px] bg-white/10 my-4'></div>
+                                    <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
+                                        <div>HASH: 0xT3U4</div>
+                                        <div className='ml-auto'>REV: 1.2.3</div>
+                                    </div>
+                                </div>
+
+                                {/* Testimonial 2 */}
+                                <div className='border-l border-white/10 pl-8'>
+                                    <div className='flex items-center gap-4 mb-4'>
+                                        <div className='w-2 h-2 bg-white/20 rotate-45'></div>
+                                        <p className='technical-readout'>USER TESTIMONIAL</p>
+                                        <div className='ml-auto text-[8px] font-mono text-white/40'>ID:UT-002</div>
+                                    </div>
+                                    <div className='flex mb-4'>
+                                        {Array.from({ length: 5 }, (_, index) => (
+                                            <span key={index} className='text-white/80 text-xl'>★</span>
+                                        ))}
+                                    </div>
+                                    <div className='border border-white/5 bg-white/5 p-4'>
+                                        <p className='technical-readout text-white/90'>
+                                            "Lost my wedding ring at the beach. One sip of ctrl-z and I was back in the timeline where I remembered to take it off before swimming. Life-saver!"
+                                        </p>
+                                    </div>
+                                    <div className='w-12 h-[1px] bg-white/10 my-4'></div>
+                                    <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
+                                        <div>HASH: 0xV2W3</div>
+                                        <div className='ml-auto'>REV: 2.4.1</div>
+                                    </div>
+                                </div>
+
+                                {/* Testimonial 3 */}
+                                <div className='border-l border-white/10 pl-8'>
+                                    <div className='flex items-center gap-4 mb-4'>
+                                        <div className='w-2 h-2 bg-white/20 rotate-45'></div>
+                                        <p className='technical-readout'>USER TESTIMONIAL</p>
+                                        <div className='ml-auto text-[8px] font-mono text-white/40'>ID:UT-003</div>
+                                    </div>
+                                    <div className='flex mb-4'>
+                                        {Array.from({ length: 5 }, (_, index) => (
+                                            <span key={index} className='text-white/80 text-xl'>★</span>
+                                        ))}
+                                    </div>
+                                    <div className='border border-white/5 bg-white/5 p-4'>
+                                        <p className='technical-readout text-white/90'>
+                                            "Sent an email to the entire company instead of just my team. ctrl-z helped me find the reality where I double-checked the recipient list. Worth every penny."
+                                        </p>
+                                    </div>
+                                    <div className='w-12 h-[1px] bg-white/10 my-4'></div>
+                                    <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
+                                        <div>HASH: 0xX1Y2</div>
+                                        <div className='ml-auto'>REV: 1.7.2</div>
+                                    </div>
+                                </div>
+
+                                {/* Testimonial 4 */}
+                                <div className='border-l border-white/10 pl-8'>
+                                    <div className='flex items-center gap-4 mb-4'>
+                                        <div className='w-2 h-2 bg-white/20 rotate-45'></div>
+                                        <p className='technical-readout'>USER TESTIMONIAL</p>
+                                        <div className='ml-auto text-[8px] font-mono text-white/40'>ID:UT-004</div>
+                                    </div>
+                                    <div className='flex mb-4'>
+                                        {Array.from({ length: 5 }, (_, index) => (
+                                            <span key={index} className='text-white/80 text-xl'>★</span>
+                                        ))}
+                                    </div>
+                                    <div className='border border-white/5 bg-white/5 p-4'>
+                                        <p className='technical-readout text-white/90'>
+                                            "Accidentally deleted three months of work with no backup. One ctrl-z later, I'm in a timeline where I religiously use cloud storage. Absolute game changer."
+                                        </p>
+                                    </div>
+                                    <div className='w-12 h-[1px] bg-white/10 my-4'></div>
+                                    <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
+                                        <div>HASH: 0xZ9A1</div>
+                                        <div className='ml-auto'>REV: 2.0.4</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -492,43 +855,87 @@ const QuantumPage = () => {
                         {/* Main Content */}
                         <div className='text-center relative z-10 max-w-6xl mx-auto flex flex-col items-center'>
                             {/* Technical Readout Header */}
-                            <div className='technical-readout text-[10px] tracking-[0.5em] text-white/40 mb-32'>
-                                QUANTUM SHIFT PROTOCOL: READY
+                            <div className='technical-readout mb-32 flex items-center gap-4'>
+                                <div className='w-2 h-2 bg-white/20 rotate-45'></div>
+                                <span>QUANTUM SHIFT PROTOCOL</span>
+                                <div className='ml-auto text-[8px] font-mono text-green-500/60'>READY</div>
                             </div>
 
                             {/* Technical Stats */}
-                            <div className='grid grid-cols-3 gap-32 mb-32 font-mono w-full max-w-2xl'>
-                                <DataReadout label="REALITY SHIFTS" value="88.2B+" />
-                                <DataReadout label="SUCCESS RATE" value="99.99%" />
-                                <DataReadout label="QUANTUM STABILITY" value="100%" />
+                            <div className='grid grid-cols-3 gap-32 mb-32 w-full max-w-2xl'>
+                                <div className='border-l border-white/10 pl-8'>
+                                    <div className='flex items-center gap-2 mb-4'>
+                                        <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                        <p className='technical-readout text-white/60'>REALITY SHIFTS</p>
+                                    </div>
+                                    <p className='text-white/90 font-[PPEditorialOld] text-[2vw]'>88.2B+</p>
+                                    <div className='w-12 h-[1px] bg-white/10 my-4'></div>
+                                    <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
+                                        <div>HASH: 0xE2A1</div>
+                                        <div className='ml-auto'>REV: 4.0.2</div>
+                                    </div>
+                                </div>
+
+                                <div className='border-l border-white/10 pl-8'>
+                                    <div className='flex items-center gap-2 mb-4'>
+                                        <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                        <p className='technical-readout text-white/60'>SUCCESS RATE</p>
+                                    </div>
+                                    <p className='text-white/90 font-[PPEditorialOld] text-[2vw]'>99.99%</p>
+                                    <div className='w-12 h-[1px] bg-white/10 my-4'></div>
+                                    <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
+                                        <div>HASH: 0xF3B2</div>
+                                        <div className='ml-auto'>REV: 3.1.4</div>
+                                    </div>
+                                </div>
+
+                                <div className='border-l border-white/10 pl-8'>
+                                    <div className='flex items-center gap-2 mb-4'>
+                                        <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                        <p className='technical-readout text-white/60'>QUANTUM STABILITY</p>
+                                    </div>
+                                    <p className='text-white/90 font-[PPEditorialOld] text-[2vw]'>100%</p>
+                                    <div className='w-12 h-[1px] bg-white/10 my-4'></div>
+                                    <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
+                                        <div>HASH: 0xC4D9</div>
+                                        <div className='ml-auto'>REV: 2.8.0</div>
+                                    </div>
+                                </div>
                             </div>
 
                             {/* Description */}
-                            <p className='text-white/60 font-mono text-md max-w-2xl mx-auto mb-16 leading-relaxed tracking-wider'>
-                                Step into a future where every possibility is within reach. Your perfect timeline awaits.
-                            </p>
+                            <div className='border border-white/5 bg-white/5 p-8 mb-16 max-w-2xl'>
+                                <div className='flex items-center gap-4 mb-4'>
+                                    <div className='w-2 h-2 bg-white/20 rotate-45'></div>
+                                    <p className='technical-readout'>SYSTEM MESSAGE</p>
+                                    <div className='ml-auto text-[8px] font-mono text-white/40'>ID:SM-001</div>
+                                </div>
+                                <p className='technical-readout text-white/90'>
+                                    Every mistake is just a timeline waiting to be corrected. Your perfect reality is just one sip away.
+                                </p>
+                            </div>
 
                             {/* CTA Buttons */}
                             <div className='flex gap-8 mb-32'>
                                 <div ref={initiateBtnRef} className='relative'>
-                                    <button className='cta-button hover-highlight group relative px-12 py-4'>
+                                    <button className='cta-button hover-highlight group relative'>
                                         <div className='corner corner-tl'></div>
                                         <div className='corner corner-tr'></div>
                                         <div className='corner corner-bl'></div>
                                         <div className='corner corner-br'></div>
-                                        <span className='text-white/90 font-mono text-sm tracking-[0.3em] relative z-10'>
+                                        <span className='technical-readout relative z-10 text-white/90'>
                                             INITIATE SHIFT
                                         </span>
                                     </button>
                                 </div>
 
                                 <div ref={learnMoreBtnRef} className='relative'>
-                                    <button className='cta-button group relative px-12 py-4'>
+                                    <button className='cta-button group relative'>
                                         <div className='corner corner-tl'></div>
                                         <div className='corner corner-tr'></div>
                                         <div className='corner corner-bl'></div>
                                         <div className='corner corner-br'></div>
-                                        <span className='text-white/40 font-mono text-sm tracking-[0.3em] relative z-10'>
+                                        <span className='technical-readout relative z-10 text-white/40'>
                                             LEARN MORE
                                         </span>
                                     </button>
@@ -536,17 +943,36 @@ const QuantumPage = () => {
                             </div>
 
                             {/* Technical Details */}
-                            <div className='grid grid-cols-2 gap-8 w-full max-w-2xl'>
-                                <div className='text-left'>
-                                    <div className='font-mono text-[10px] text-white/40 tracking-[0.2em]'>
-                                        <div>MODEL: QS-749-X</div>
-                                        <div>BUILD: 2038.12.1</div>
+                            <div className='grid grid-cols-2 gap-32 w-full max-w-2xl'>
+                                <div className='border-l border-white/10 pl-8'>
+                                    <div className='flex items-center gap-2 mb-4'>
+                                        <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                        <p className='technical-readout text-white/60'>SYSTEM INFO</p>
+                                    </div>
+                                    <div className='space-y-2'>
+                                        <div className='technical-readout'>MODEL: QS-749-X</div>
+                                        <div className='technical-readout'>BUILD: 2038.12.1</div>
+                                    </div>
+                                    <div className='w-12 h-[1px] bg-white/10 my-4'></div>
+                                    <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
+                                        <div>HASH: 0xA1B2</div>
+                                        <div className='ml-auto'>REV: 1.0.0</div>
                                     </div>
                                 </div>
-                                <div className='text-right'>
-                                    <div className='font-mono text-[10px] text-white/40 tracking-[0.2em]'>
-                                        <div>LAT: 37.7749° N</div>
-                                        <div>LONG: 122.4194° W</div>
+
+                                <div className='border-l border-white/10 pl-8'>
+                                    <div className='flex items-center gap-2 mb-4'>
+                                        <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                        <p className='technical-readout text-white/60'>LOCATION DATA</p>
+                                    </div>
+                                    <div className='space-y-2'>
+                                        <div className='technical-readout'>LAT: 37.7749° N</div>
+                                        <div className='technical-readout'>LONG: 122.4194° W</div>
+                                    </div>
+                                    <div className='w-12 h-[1px] bg-white/10 my-4'></div>
+                                    <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
+                                        <div>HASH: 0xD3E4</div>
+                                        <div className='ml-auto'>REV: 2.1.5</div>
                                     </div>
                                 </div>
                             </div>

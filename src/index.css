@@ -74,12 +74,7 @@ body {
   left: 0;
   width: 1px;
   height: 100%;
-  background: linear-gradient(
-    to bottom,
-    transparent,
-    rgba(255, 255, 255, 0.1),
-    transparent
-  );
+  background: rgba(255, 255, 255, 0.1);
 }
 
 /* Technical text styles */
@@ -90,22 +85,6 @@ body {
   position: relative;
   display: inline-block;
   line-height: 1.6;
-}
-
-.technical-readout::before {
-  content: "";
-  position: absolute;
-  left: -8px;
-  top: 50%;
-  width: 4px;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.2);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.technical-readout:hover::before {
-  opacity: 1;
 }
 
 /* Technical grid */
@@ -242,10 +221,31 @@ body {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   transform: scale(1);
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 64px;
+  min-width: 200px;
+  padding: 0 2rem;
+}
+
+/* For menu button specifically */
+.cta-button.w-12 {
+  min-width: unset;
+  min-height: unset;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+}
+
+.cta-button.w-12 span {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  transform: translateY(0);
 }
 
 .cta-button::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background: rgba(255, 255, 255, 0.05);
@@ -278,7 +278,7 @@ body {
 /* Corner lines */
 .corner::before,
 .corner::after {
-  content: '';
+  content: "";
   position: absolute;
   background: rgba(255, 255, 255, 0.6);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -372,14 +372,9 @@ body {
   position: relative;
   z-index: 1;
   transition: all 0.3s ease;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.8),
-    rgba(255, 255, 255, 1)
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
+  font-size: 14px;
+  letter-spacing: 0.3em;
+  transform: translateY(1px);
 }
 
 .cta-button:hover span {

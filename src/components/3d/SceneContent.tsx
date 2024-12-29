@@ -10,7 +10,7 @@ import { lerpV3 } from "../../utils/animations";
 export function SceneContent() {
     const { scrollProgress, isHorizontalSection } = useScrollContext();
     const cameraState = useRef({
-        position: new THREE.Vector3(0, 1.5, 4),
+        position: new THREE.Vector3(0, 2, 4),
         lookAt: new THREE.Vector3(0, -0, 0),
         velocity: new THREE.Vector3()
     });
@@ -25,11 +25,11 @@ export function SceneContent() {
             const targetZ = radius * Math.cos(rotationAngle);
 
             // Smooth camera position transition
-            cameraState.current.position.set(targetX, 1.5, targetZ);
+            cameraState.current.position.set(targetX, 2, targetZ);
             lerpV3(camera.position, cameraState.current.position, lerpFactor);
         } else {
             // Transition back to initial position
-            cameraState.current.position.set(0, 1.5, 4);
+            cameraState.current.position.set(0, 2, 4);
             lerpV3(camera.position, cameraState.current.position, lerpFactor);
         }
 
@@ -42,7 +42,7 @@ export function SceneContent() {
         <>
             <SpaceBackground />
             <Environment preset='night' />
-            <ambientLight intensity={1} />
+            <ambientLight intensity={4} />
             <SpotLight
                 position={[5, 5, 2]}
                 angle={0.4}

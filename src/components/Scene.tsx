@@ -2,7 +2,6 @@ import { Canvas } from "@react-three/fiber"
 import { Suspense, useEffect, useRef, useState } from "react"
 import * as THREE from "three"
 import { SceneContent } from "./SceneComponents"
-import { motion, useSpring } from "framer-motion"
 
 export default function Scene() {
     const containerRef = useRef<HTMLDivElement>(null)
@@ -74,7 +73,7 @@ export default function Scene() {
                     />
                     <fog
                         attach='fog'
-                        args={["#000000", 5, 15]}
+                        args={["#000000", 5, 25]}
                     />
 
                     <Suspense fallback={null}>
