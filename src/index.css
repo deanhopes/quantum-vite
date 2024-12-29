@@ -85,29 +85,27 @@ body {
 /* Technical text styles */
 .technical-readout {
   font-family: "JetBrains Mono", monospace;
-  @apply text-xs uppercase tracking-[0.2em] text-white/60;
+  @apply text-[10px] uppercase tracking-[0.2em] text-white/40;
   mix-blend-mode: difference;
   position: relative;
   display: inline-block;
-  opacity: 0.8;
+  line-height: 1.6;
+}
+
+.technical-readout::before {
+  content: "";
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  width: 4px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.2);
+  opacity: 0;
   transition: opacity 0.3s ease;
 }
 
-.technical-readout::before,
-.technical-readout::after {
-  content: "";
-  position: absolute;
-  opacity: 0;
-  transition: all 0.3s ease;
-}
-
-.technical-readout:hover {
+.technical-readout:hover::before {
   opacity: 1;
-}
-
-.technical-readout:hover::before,
-.technical-readout:hover::after {
-  opacity: 0.4;
 }
 
 /* Technical grid */

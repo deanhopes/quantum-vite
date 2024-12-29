@@ -151,56 +151,63 @@ const QuantumPage = () => {
                 {/* Main Content */}
                 <div ref={containerRef} className='relative w-full'>
                     {/* Hero Section */}
-                    <section className='relative h-screen flex flex-col items-center justify-center overflow-hidden'>
-                        {/* Background Elements */}
-                        <div className='absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/50'></div>
+                    <section className='relative h-screen flex flex-col overflow-hidden p-8'>
+                        {/* Top Bar */}
+                        <div className='flex justify-between items-start'>
+                            <div className='technical-readout'>
+                                11.07+
+                                <br />
+                                SSM24
+                            </div>
+                            <div className='technical-readout text-right'>
+                                QMO2040
+                                <br />
+                                355⟩CTRL-Z
+                            </div>
+                        </div>
 
-                        {/* Main Content Container */}
-                        <div className='relative z-10 flex flex-col items-center max-w-[90vw] mx-auto px-8'>
-                            {/* Main Title Group */}
-                            <div className='glitch-container relative mb-16 mt-24'>
-                                {/* Interface Label */}
-                                <div className='hero-interface-label overflow-hidden mb-12'>
-                                    <div className='technical-readout text-[10px] tracking-[0.5em] text-white/40 flex items-center justify-center gap-4'>
-                                        <span className='inline-block'>QUANTUM</span>
-                                        <span className='inline-block'>REALITY</span>
-                                        <span className='inline-block'>INTERFACE</span>
-                                    </div>
+                        {/* Main Content */}
+                        <div className='flex-1 flex'>
+                            {/* Left Side */}
+                            <div className='flex flex-col justify-between py-64'>
+                                <div className='text-[4vw] leading-none font-[PPEditorialOld] tracking-tighter'>
+                                    20//
+                                    <br />
+                                    40
                                 </div>
+                                <div className='technical-readout'>
+                                    12QT × 8QT
+                                    <br />
+                                    ⟨MAINTAIN NEURAL INTERFACE STABILITY⟩
+                                </div>
+                            </div>
 
-                                {/* Main Title */}
-                                <div className='hero-title-wrapper overflow-visible px-16 mb-24'>
-                                    <h1 ref={heroTextRef}
-                                        className='font-[PPEditorialOld] text-white/90 text-[4vw] md:text-[3.5vw] lg:text-[3vw] text-center leading-[1.2] tracking-tight mix-blend-difference max-w-[24ch] mx-auto'
-                                        data-splitting
-                                    >
-                                        For those moments when you need a different version of now.
+                            {/* Right Side */}
+                            <div className='flex-1 flex flex-col justify-center items-end'>
+                                <div className='text-right max-w-[40vw] ml-auto'>
+                                    <h1 className='text-[3vw] leading-[1.1] font-[PPEditorialOld] tracking-[-0.02em] mb-8 text-justify'>
+                                        Manipulate each reality with
+                                        <br />
+                                        quantum precision.
                                     </h1>
+                                    <h2 className='text-[4vw] leading-[1.1] font-[PPEditorialOld] tracking-[-0.02em] text-white/80 text-justify'>
+                                        Experience every timeline.
+                                    </h2>
                                 </div>
-
-                                {/* Decorative Lines */}
-                                <div className='absolute -left-8 top-1/2 w-6 h-[1px] bg-white/20 opacity-0 transform -translate-y-1/2 hero-line-left transition-opacity duration-300'></div>
-                                <div className='absolute -right-8 top-1/2 w-6 h-[1px] bg-white/20 opacity-0 transform -translate-y-1/2 hero-line-right transition-opacity duration-300'></div>
-                            </div>
-
-                            {/* Subtitle */}
-                            <div className='hero-subtitle-wrapper overflow-hidden mb-48 px-8'>
-                                <h2 ref={subTextRef}
-                                    className='technical-readout text-white/80 font-mono text-xl tracking-[0.5em] glitch-text'
-                                    data-text="CTRL-Z: Reality's Undo Button"
-                                >
-                                    CTRL-Z: Reality's Undo Button
-                                </h2>
-                            </div>
-
-                            {/* Scroll Indicator */}
-                            <div className='hero-scroll fixed bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center space-y-4'>
-                                <span className='technical-readout text-[10px] tracking-[0.5em] text-white/40 overflow-hidden'>
-                                    <span className='inline-block'>SCROLL TO INITIALIZE</span>
-                                </span>
-                                <div className='scroll-indicator w-6 h-10 border-2 border-white/20 rounded-full flex items-start p-1'>
-                                    <div className='w-1 h-2 bg-white/40 rounded-full animate-scroll-hint mx-auto'></div>
+                                <div className='technical-readout text-right mt-8'>
+                                    ⟨14.40×23.40⟩
+                                    <br />
+                                    ⟨NEURAL-SYNC_REQUIRED⟩
+                                    <br />
+                                    ⟨QUANTUM STABILIZATION_ACTIVE⟩
                                 </div>
+                            </div>
+                        </div>
+
+                        {/* Placeholder for CTRL-Z SVG */}
+                        <div className='absolute bottom-0 left-0 w-full h-[40vh] flex items-end'>
+                            <div className='w-full h-[20vh] text-[20vh] font-[PPEditorialOld] tracking-tighter text-white'>
+                                CTRL-Z
                             </div>
                         </div>
                     </section>
