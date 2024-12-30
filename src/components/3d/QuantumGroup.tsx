@@ -219,10 +219,22 @@ export function QuantumGroup() {
         const deltaTime = state.clock.getDelta();
         const time = state.clock.elapsedTime;
 
-        // Update atmosphere material uniforms
+        // Update all material uniforms consistently
+        if (materialRef.current) {
+            materialRef.current.uniforms.uTime.value = time;
+            materialRef.current.uniforms.uScrollProgress.value = scrollProgress * values.scrollEffect;
+        }
         if (atmosphereMaterialRef.current) {
             atmosphereMaterialRef.current.uniforms.uTime.value = time;
             atmosphereMaterialRef.current.uniforms.uScrollProgress.value = scrollProgress * values.scrollEffect;
+        }
+        if (coreMaterialRef.current) {
+            coreMaterialRef.current.uniforms.uTime.value = time;
+            coreMaterialRef.current.uniforms.uScrollProgress.value = scrollProgress * values.scrollEffect;
+        }
+        if (glowMaterialRef.current) {
+            glowMaterialRef.current.uniforms.uTime.value = time;
+            glowMaterialRef.current.uniforms.uScrollProgress.value = scrollProgress * values.scrollEffect;
         }
 
         const lerpFactor = deltaTime * 1.0;

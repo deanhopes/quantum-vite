@@ -11,29 +11,44 @@ export function SceneContent() {
     const { scrollProgress, isHorizontalSection } = useScrollContext();
     const cameraState = useRef({
         position: new THREE.Vector3(0, 2, 4),
-        lookAt: new THREE.Vector3(0, -0, 0),
-        velocity: new THREE.Vector3()
+        lookAt: new THREE.Vector3(0, 0, 0),
+        velocity: new THREE.Vector3(),
+        transitionProgress: 0
     });
 
     useFrame(({ camera }) => {
         const lerpFactor = 0.02; // Adjust for camera smoothness
+        const transitionSpeed = 0.05; // Speed of transition when leaving horizontal section
 
+        // Update transition progress
         if (isHorizontalSection) {
-            const radius = 12;
-            const rotationAngle = THREE.MathUtils.lerp(0, Math.PI / 2, scrollProgress);
-            const targetX = radius * Math.sin(rotationAngle);
-            const targetZ = radius * Math.cos(rotationAngle);
-
-            // Smooth camera position transition
-            cameraState.current.position.set(targetX, 2, targetZ);
-            lerpV3(camera.position, cameraState.current.position, lerpFactor);
+            cameraState.current.transitionProgress = Math.min(1, cameraState.current.transitionProgress + transitionSpeed);
         } else {
-            // Transition back to initial position
-            cameraState.current.position.set(0, 2, 4);
-            lerpV3(camera.position, cameraState.current.position, lerpFactor);
+            cameraState.current.transitionProgress = Math.max(0, cameraState.current.transitionProgress - transitionSpeed);
         }
 
+        // Calculate camera position based on transition progress
+        const startRadius = 4;
+        const endRadius = 2;
+        const radius = THREE.MathUtils.lerp(startRadius, endRadius, scrollProgress);
+        const rotationAngle = THREE.MathUtils.lerp(0, Math.PI / 2, scrollProgress);
+        const targetX = radius * Math.sin(rotationAngle);
+        const targetZ = radius * Math.cos(rotationAngle);
+        const targetY = THREE.MathUtils.lerp(2, 1, scrollProgress);
+
+        // Calculate positions for both states
+        const horizontalPosition = new THREE.Vector3(targetX, targetY, targetZ);
+        const normalPosition = new THREE.Vector3(0, 2, 4);
+        const finalPosition = new THREE.Vector3();
+        finalPosition.lerpVectors(normalPosition, horizontalPosition, cameraState.current.transitionProgress);
+
+        // Smooth camera position transition
+        cameraState.current.position.copy(finalPosition);
+        lerpV3(camera.position, cameraState.current.position, lerpFactor);
+
         // Smooth lookAt transition
+        const lookAtY = THREE.MathUtils.lerp(0, 0.5, scrollProgress * cameraState.current.transitionProgress);
+        cameraState.current.lookAt.set(0, lookAtY, 0);
         camera.lookAt(cameraState.current.lookAt);
         camera.updateProjectionMatrix();
     });
