@@ -18,10 +18,10 @@ export function SpaceBackground() {
         <group>
             <Stars
                 ref={starsRef}
-                radius={50}
-                depth={50}
-                count={5000}
-                factor={4}
+                radius={70}
+                depth={150}
+                count={8000}
+                factor={6}
                 saturation={0}
                 fade
                 speed={1}

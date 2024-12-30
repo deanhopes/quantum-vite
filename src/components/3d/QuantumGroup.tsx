@@ -138,7 +138,7 @@ export function QuantumGroup() {
             label: 'Light 2 Angle'
         },
         spot2Penumbra: {
-            value: 1.00,
+            value: 4.00,
             min: 0,
             max: 1,
             step: 0.01,
