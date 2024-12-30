@@ -16,7 +16,10 @@ export function SceneContent() {
         transitionProgress: 0
     });
 
-    useFrame(({ camera }) => {
+    useFrame(({ camera, scene }) => {
+        // Remove fog
+        scene.fog = null;
+        
         const lerpFactor = 0.02; // Adjust for camera smoothness
         const transitionSpeed = 0.05; // Speed of transition when leaving horizontal section
 
@@ -56,32 +59,40 @@ export function SceneContent() {
     return (
         <>
             <SpaceBackground />
-            <Environment preset='night' />
-            <ambientLight intensity={4} />
-            <SpotLight
-                position={[5, 5, 2]}
-                angle={0.4}
-                penumbra={0.8}
-                intensity={2}
-                distance={6}
+            <Environment preset='night' background={false} />
+            
+            {/* Ambient base light */}
+            <ambientLight intensity={0.3} />
+            
+            {/* Main directional key light */}
+            <directionalLight 
+                position={[5, 5, 5]} 
+                intensity={0.8}
+                color="#b1e1ff"
                 castShadow
                 shadow-bias={-0.0001}
                 shadow-mapSize={[2048, 2048]}
-                color='#b1e1ff'
             />
-            <SpotLight
-                position={[-5, 3, 2]}
-                angle={0.5}
-                penumbra={1}
-                intensity={0.3}
-                distance={6}
-                color='#4499ff'
+            
+            {/* Fill light from opposite side */}
+            <directionalLight 
+                position={[-5, 3, -2]} 
+                intensity={0.4}
+                color="#4499ff"
             />
+            
+            {/* Soft top light */}
+            <directionalLight 
+                position={[0, 8, 0]} 
+                intensity={0.2}
+                color="#ffffff"
+            />
+            
             <ContactShadows
                 position={[0, -0.49, 0]}
-                opacity={0.3}
+                opacity={0.15}
                 scale={20}
-                blur={2}
+                blur={3}
                 far={4}
                 resolution={512}
                 color='#000000'

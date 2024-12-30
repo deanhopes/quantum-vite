@@ -427,24 +427,48 @@ export function QuantumGroup() {
             </group>
 
             <ambientLight intensity={values.ambientIntensity} />
+            
+            {/* Key Light */}
             <SpotLight
-                position={values.spot1Position}
-                angle={values.spot1Angle}
-                penumbra={values.spot1Penumbra}
-                intensity={values.spot1Intensity}
-                distance={6}
+                position={[3, 4, 2]}
+                angle={0.3}
+                penumbra={0.9}
+                intensity={3.5}
+                distance={8}
                 castShadow
                 shadow-bias={-0.0001}
                 shadow-mapSize={[2048, 2048]}
-                color={values.spot1Color}
+                color='#b1e1ff'
             />
+            
+            {/* Fill Light */}
             <SpotLight
-                position={values.spot2Position}
-                angle={values.spot2Angle}
-                penumbra={values.spot2Penumbra}
-                intensity={values.spot2Intensity}
-                distance={6}
-                color={values.spot2Color}
+                position={[-4, 2, -2]}
+                angle={0.4}
+                penumbra={1}
+                intensity={2}
+                distance={10}
+                color='#4499ff'
+            />
+            
+            {/* Rim Light */}
+            <SpotLight
+                position={[-2, 3, 4]}
+                angle={0.3}
+                penumbra={0.8}
+                intensity={1.5}
+                distance={8}
+                color='#ffffff'
+            />
+            
+            {/* Ground Fill */}
+            <SpotLight
+                position={[0, -3, 0]}
+                angle={0.8}
+                penumbra={1}
+                intensity={0.5}
+                distance={5}
+                color='#4466ff'
             />
         </group>
     );
