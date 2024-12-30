@@ -414,9 +414,9 @@ export function QuantumGroup() {
                     <pS1Material
                         ref={atmosphereMaterialRef}
                         transparent={true}
-                        depthWrite={false}
+                        depthWrite={true}
                         depthTest={true}
-                        blending={THREE.AdditiveBlending}
+                        blending={THREE.NormalBlending}
                         uniforms={{
                             uTime: { value: 0 },
                             uGlitchIntensity: { value: values.glitchIntensity },
