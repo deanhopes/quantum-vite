@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { useFrame, extend } from "@react-three/fiber";
-import { Float, SpotLight, Cylinder } from "@react-three/drei";
+import { Float, SpotLight, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import { useControls } from 'leva';
 import { useScrollContext } from "../types/ScrollContext";
@@ -18,6 +18,35 @@ declare global {
             pS1Material: any;
         }
     }
+}
+
+interface ModelProps {
+    canRef: React.RefObject<THREE.Group>;
+}
+
+function Model({ canRef }: ModelProps) {
+    const { scene } = useGLTF('/src/assets/futuristic-drinking-can.glb');
+    
+    React.useEffect(() => {
+        if (scene) {
+            scene.traverse((child) => {
+                if (child instanceof THREE.Mesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            });
+        }
+    }, [scene]);
+
+    return (
+        <primitive 
+            object={scene} 
+            ref={canRef}
+            scale={[0.5, 0.5, 0.5]}
+            position={[0, 0, 0]}
+            rotation={[0, 0, 0]}
+        />
+    );
 }
 
 export function QuantumGroup() {
@@ -359,73 +388,7 @@ export function QuantumGroup() {
                 floatIntensity={0.3}
                 floatingRange={[-0.05, 0.05]}
             >
-                {/* Main can body */}
-                <group ref={canRef}>
-                    {/* Can body */}
-                    <Cylinder
-                        args={[0.3, 0.3, 1.2, 32]}
-                        castShadow
-                        receiveShadow
-                    >
-                        <meshPhysicalMaterial
-                            color="#4a4a5a"  // Lighter base color
-                            metalness={0.95}  // Increased metalness
-                            roughness={0.05}  // Decreased roughness for more shine
-                            clearcoat={1}
-                            clearcoatRoughness={0.1}
-                            reflectivity={1}
-                            envMapIntensity={2}  // Increased environment map intensity
-                        />
-                    </Cylinder>
-
-                    {/* Top rim */}
-                    <Cylinder
-                        args={[0.31, 0.31, 0.05, 32]}
-                        position={[0, 0.6, 0]}
-                    >
-                        <meshStandardMaterial
-                            color="#6a6a7a"  // Lighter rim color
-                            metalness={0.9}
-                            roughness={0.1}  // Decreased roughness
-                        />
-                    </Cylinder>
-
-                    {/* Bottom rim */}
-                    <Cylinder
-                        args={[0.31, 0.31, 0.05, 32]}
-                        position={[0, -0.6, 0]}
-                    >
-                        <meshStandardMaterial
-                            color="#6a6a7a"  // Lighter rim color
-                            metalness={0.9}
-                            roughness={0.1}  // Decreased roughness
-                        />
-                    </Cylinder>
-
-                    {/* Top lid detail */}
-                    <Cylinder
-                        args={[0.28, 0.28, 0.02, 32]}
-                        position={[0, 0.62, 0]}
-                    >
-                        <meshStandardMaterial
-                            color="#5a5a6a"  // Lighter detail color
-                            metalness={0.95}
-                            roughness={0.05}  // Decreased roughness
-                        />
-                    </Cylinder>
-
-                    {/* Bottom indent */}
-                    <Cylinder
-                        args={[0.28, 0.28, 0.02, 32]}
-                        position={[0, -0.62, 0]}
-                    >
-                        <meshStandardMaterial
-                            color="#404050"
-                            metalness={0.9}
-                            roughness={0.1}
-                        />
-                    </Cylinder>
-                </group>
+                <Model canRef={canRef} />
             </Float>
 
             <group
@@ -473,4 +436,7 @@ export function QuantumGroup() {
             />
         </group>
     );
-} 
+}
+
+// Preload the model
+useGLTF.preload('/src/assets/futuristic-drinking-can.glb'); 
