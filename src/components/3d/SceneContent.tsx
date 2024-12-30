@@ -19,7 +19,7 @@ export function SceneContent() {
     useFrame(({ camera, scene }) => {
         // Remove fog
         scene.fog = null;
-        
+
         const lerpFactor = 0.02; // Adjust for camera smoothness
         const transitionSpeed = 0.05; // Speed of transition when leaving horizontal section
 
@@ -60,34 +60,34 @@ export function SceneContent() {
         <>
             <SpaceBackground />
             <Environment preset='night' background={false} />
-            
+
             {/* Ambient base light */}
             <ambientLight intensity={0.3} />
-            
+
             {/* Main directional key light */}
-            <directionalLight 
-                position={[5, 5, 5]} 
+            <directionalLight
+                position={[5, 5, 5]}
                 intensity={0.8}
                 color="#b1e1ff"
                 castShadow
                 shadow-bias={-0.0001}
                 shadow-mapSize={[2048, 2048]}
             />
-            
+
             {/* Fill light from opposite side */}
-            <directionalLight 
-                position={[-5, 3, -2]} 
+            <directionalLight
+                position={[-5, 3, -2]}
                 intensity={0.4}
                 color="#4499ff"
             />
-            
+
             {/* Soft top light */}
-            <directionalLight 
-                position={[0, 8, 0]} 
+            <directionalLight
+                position={[0, 8, 0]}
                 intensity={0.2}
                 color="#ffffff"
             />
-            
+
             <ContactShadows
                 position={[0, -0.49, 0]}
                 opacity={0.15}
