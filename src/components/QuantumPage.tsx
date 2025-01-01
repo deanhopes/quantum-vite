@@ -426,12 +426,10 @@ const QuantumPage = ({ isLoading }: QuantumPageProps) => {
                                 <div className='grid grid-cols-12 gap-8'>
                                     <div className='col-span-12 text-center mb-16'>
                                         <h1 ref={heroTextRef} className='font-[PPEditorialOld] text-white/95 text-[5vw] leading-[1.1] tracking-[-0.02em] mb-8 will-change-transform'>
-                                            One sip to access
-                                            <br />
-                                            infinite timelines.
+                                            In this timeline, you're reading this ad.
                                         </h1>
                                         <h2 ref={subTextRef} className='font-[PPEditorialOld] text-[3vw] leading-[1.2] text-white/70 tracking-[-0.02em] mb-12 will-change-transform'>
-                                            Rewrite your reality.
+                                            In another, you've already tried our drink.
                                         </h2>
                                         <div className='flex gap-6 justify-center'>
                                             <div ref={initiateBtnRef}>
@@ -487,16 +485,14 @@ const QuantumPage = ({ isLoading }: QuantumPageProps) => {
                                     <div className='absolute inset-0 p-24 flex flex-col justify-between'>
                                         {/* Top Content */}
                                         <div className='flex justify-between items-start'>
-                                            <div className='border-l border-white/10 pl-16 max-w-[50vw]'>
+                                            <div className='border-l-2 border-quantum-green/20 pl-16 max-w-[50vw]'>
                                                 <div className='flex items-center gap-4 mb-8'>
-                                                    <div className='w-2 h-2 bg-white/20 rotate-45'></div>
-                                                    <p className='technical-readout'>QUANTUM ANALYSIS</p>
-                                                    <div className='ml-auto text-[8px] font-mono text-green-500/60'>PROCESSING</div>
+                                                    <div className='w-2 h-2 bg-quantum-green/30 rotate-45 animate-pulse'></div>
+                                                    <p className='font-quantum-mono text-quantum-green/60 text-sm tracking-[0.2em]'>QUANTUM ANALYSIS</p>
+                                                    <div className='ml-auto text-[8px] font-quantum-mono text-quantum-green/40 animate-pulse'>PROCESSING</div>
                                                 </div>
-                                                <h2 className='animate-text text-white/95 font-[PPEditorialOld] text-[3.5vw] tracking-[-0.02em] leading-[1.1] mix-blend-difference mb-16'>
-                                                    We all have those moments.
-                                                    <br />
-                                                    The ones we wish we could undo.
+                                                <h2 className='animate-text text-quantum-green/90 font-[PPEditorialOld] text-[3.5vw] tracking-[-0.02em] leading-[1.1] mix-blend-difference mb-16'>
+                                                    In a third, you invented it.
                                                 </h2>
                                             </div>
                                         </div>
@@ -504,34 +500,34 @@ const QuantumPage = ({ isLoading }: QuantumPageProps) => {
                                         {/* Bottom Content */}
                                         <div className='flex justify-end'>
                                             <div className='w-[600px]'>
-                                                <div className='border-l border-white/10 pl-8'>
+                                                <div className='border-l-2 border-quantum-green/20 pl-8'>
                                                     <div className='flex items-center gap-4 mb-4'>
-                                                        <div className='w-1 h-1 bg-white/20 rotate-45'></div>
-                                                        <p className='technical-readout text-white/60'>SYSTEM STATUS</p>
-                                                        <div className='ml-auto text-[8px] font-mono text-green-500/60'>ACTIVE</div>
+                                                        <div className='w-1 h-1 bg-quantum-green/30 rotate-45'></div>
+                                                        <p className='font-quantum-mono text-quantum-green/60 text-xs tracking-[0.2em]'>SYSTEM STATUS</p>
+                                                        <div className='ml-auto text-[8px] font-quantum-mono text-quantum-green/40 animate-pulse'>ACTIVE</div>
                                                     </div>
-                                                    <div className='border border-white/5 bg-white/5 p-8'>
+                                                    <div className='border border-quantum-green/10 bg-quantum-green/5 p-8 backdrop-blur-sm'>
                                                         <div className='grid grid-cols-3 gap-12'>
                                                             <div className='space-y-2'>
                                                                 <div className='flex items-center gap-2'>
-                                                                    <div className='w-1 h-1 bg-white/20 rotate-45'></div>
-                                                                    <p className='technical-readout text-white/60'>CPU LOAD</p>
+                                                                    <div className='w-1 h-1 bg-quantum-green/30 rotate-45'></div>
+                                                                    <p className='font-quantum-mono text-quantum-green/60 text-xs tracking-[0.2em]'>CPU LOAD</p>
                                                                 </div>
-                                                                <p className='technical-readout'>98.2%</p>
+                                                                <p className='font-quantum-mono text-quantum-green/80 quantum-glow'>98.2%</p>
                                                             </div>
                                                             <div className='space-y-2'>
                                                                 <div className='flex items-center gap-2'>
-                                                                    <div className='w-1 h-1 bg-white/20 rotate-45'></div>
-                                                                    <p className='technical-readout text-white/60'>MEMORY</p>
+                                                                    <div className='w-1 h-1 bg-quantum-green/30 rotate-45'></div>
+                                                                    <p className='font-quantum-mono text-quantum-green/60 text-xs tracking-[0.2em]'>MEMORY</p>
                                                                 </div>
-                                                                <p className='technical-readout'>64.7%</p>
+                                                                <p className='font-quantum-mono text-quantum-green/80 quantum-glow'>64.7%</p>
                                                             </div>
                                                             <div className='space-y-2'>
                                                                 <div className='flex items-center gap-2'>
-                                                                    <div className='w-1 h-1 bg-white/20 rotate-45'></div>
-                                                                    <p className='technical-readout text-white/60'>TEMP</p>
+                                                                    <div className='w-1 h-1 bg-quantum-green/30 rotate-45'></div>
+                                                                    <p className='font-quantum-mono text-quantum-green/60 text-xs tracking-[0.2em]'>TEMP</p>
                                                                 </div>
-                                                                <p className='technical-readout'>42°C</p>
+                                                                <p className='font-quantum-mono text-quantum-green/80 quantum-glow'>42°C</p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -539,6 +535,23 @@ const QuantumPage = ({ isLoading }: QuantumPageProps) => {
                                             </div>
                                         </div>
                                     </div>
+
+                                    {/* Add scanline and glitch effects */}
+                                    <div className='absolute inset-0 pointer-events-none bg-scanline opacity-[0.03] animate-scan' />
+                                    <div className='absolute inset-0 pointer-events-none bg-glitch-pattern opacity-[0.02] animate-glitch-fast' />
+                                    <div className='absolute inset-0 bg-gradient-radial from-transparent via-black/30 to-black/70 pointer-events-none' />
+
+                                    {/* Enhanced CTA Button */}
+                                    <button className='cta-button group relative overflow-hidden'>
+                                        <div className='corner corner-tl bg-quantum-green/20'></div>
+                                        <div className='corner corner-tr bg-quantum-green/20'></div>
+                                        <div className='corner corner-bl bg-quantum-green/20'></div>
+                                        <div className='corner corner-br bg-quantum-green/20'></div>
+                                        <span className='font-quantum-mono text-quantum-green/80 relative z-10 tracking-[0.2em] quantum-glow'>
+                                            INITIATE SHIFT
+                                        </span>
+                                        <div className='absolute inset-0 bg-gradient-to-r from-transparent via-quantum-green/10 to-transparent animate-glitch-slide' />
+                                    </button>
                                 </div>
 
                                 {/* Panel 2 */}
@@ -553,9 +566,9 @@ const QuantumPage = ({ isLoading }: QuantumPageProps) => {
                                                     <div className='ml-auto text-[8px] font-mono text-green-500/60'>VERIFIED</div>
                                                 </div>
                                                 <h2 className='animate-text text-white/95 font-[PPEditorialOld] text-[3.5vw] tracking-[-0.02em] leading-[1.1] mb-16'>
-                                                    Traditional solutions told you to move on.
-                                                    <br />
-                                                    We found a better way.
+                                                    The first quantum beverage <br />
+                                                    that exists in all states <br />
+                                                    until you take a sip.
                                                 </h2>
                                                 <div className='border border-white/5 bg-white/5 p-4'>
                                                     <p className='animate-text technical-readout'>
@@ -586,9 +599,9 @@ const QuantumPage = ({ isLoading }: QuantumPageProps) => {
                                                     <div className='ml-auto text-[8px] font-mono text-white/40'>ID:DR-001</div>
                                                 </div>
                                                 <h2 className='animate-text text-white/95 font-[PPEditorialOld] text-[8vw] tracking-[-0.03em] leading-[1.1]'>
-                                                    Your perfect timeline exists.
+                                                    Choose your reality.
                                                     <br />
-                                                    We'll help you find it.
+                                                    All of them are true.
                                                 </h2>
                                             </div>
                                         </div>
@@ -750,40 +763,40 @@ const QuantumPage = ({ isLoading }: QuantumPageProps) => {
 
                                 {/* Technical Stats */}
                                 <div className='grid grid-cols-3 gap-32 mb-32 w-full max-w-2xl'>
-                                    <div className='border-l border-white/10 pl-8'>
+                                    <div className='border-l-2 border-quantum-green/20 pl-8'>
                                         <div className='flex items-center gap-2 mb-4'>
-                                            <div className='w-1 h-1 bg-white/20 rotate-45'></div>
-                                            <p className='technical-readout text-white/60'>REALITY SHIFTS</p>
+                                            <div className='w-1 h-1 bg-quantum-green/30 rotate-45'></div>
+                                            <p className='font-quantum-mono text-quantum-green/60 text-xs tracking-[0.2em]'>REALITY SHIFTS</p>
                                         </div>
-                                        <p className='text-white/90 font-[PPEditorialOld] text-[2vw]'>88.2B+</p>
-                                        <div className='w-12 h-[1px] bg-white/10 my-4'></div>
-                                        <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
+                                        <p className='text-quantum-green/90 font-[PPEditorialOld] text-[2vw] quantum-glow'>88.2B+</p>
+                                        <div className='w-12 h-[1px] bg-quantum-green/10 my-4'></div>
+                                        <div className='flex items-center gap-2 text-[8px] font-quantum-mono text-quantum-green/40'>
                                             <div>HASH: 0xE2A1</div>
                                             <div className='ml-auto'>REV: 4.0.2</div>
                                         </div>
                                     </div>
 
-                                    <div className='border-l border-white/10 pl-8'>
+                                    <div className='border-l-2 border-quantum-green/20 pl-8'>
                                         <div className='flex items-center gap-2 mb-4'>
-                                            <div className='w-1 h-1 bg-white/20 rotate-45'></div>
-                                            <p className='technical-readout text-white/60'>SUCCESS RATE</p>
+                                            <div className='w-1 h-1 bg-quantum-green/30 rotate-45'></div>
+                                            <p className='font-quantum-mono text-quantum-green/60 text-xs tracking-[0.2em]'>SUCCESS RATE</p>
                                         </div>
-                                        <p className='text-white/90 font-[PPEditorialOld] text-[2vw]'>99.99%</p>
-                                        <div className='w-12 h-[1px] bg-white/10 my-4'></div>
-                                        <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
+                                        <p className='text-quantum-green/90 font-[PPEditorialOld] text-[2vw] quantum-glow'>99.99%</p>
+                                        <div className='w-12 h-[1px] bg-quantum-green/10 my-4'></div>
+                                        <div className='flex items-center gap-2 text-[8px] font-quantum-mono text-quantum-green/40'>
                                             <div>HASH: 0xF3B2</div>
                                             <div className='ml-auto'>REV: 3.1.4</div>
                                         </div>
                                     </div>
 
-                                    <div className='border-l border-white/10 pl-8'>
+                                    <div className='border-l-2 border-quantum-green/20 pl-8'>
                                         <div className='flex items-center gap-2 mb-4'>
-                                            <div className='w-1 h-1 bg-white/20 rotate-45'></div>
-                                            <p className='technical-readout text-white/60'>QUANTUM STABILITY</p>
+                                            <div className='w-1 h-1 bg-quantum-green/30 rotate-45'></div>
+                                            <p className='font-quantum-mono text-quantum-green/60 text-xs tracking-[0.2em]'>QUANTUM STABILITY</p>
                                         </div>
-                                        <p className='text-white/90 font-[PPEditorialOld] text-[2vw]'>100%</p>
-                                        <div className='w-12 h-[1px] bg-white/10 my-4'></div>
-                                        <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
+                                        <p className='text-quantum-green/90 font-[PPEditorialOld] text-[2vw] quantum-glow'>100%</p>
+                                        <div className='w-12 h-[1px] bg-quantum-green/10 my-4'></div>
+                                        <div className='flex items-center gap-2 text-[8px] font-quantum-mono text-quantum-green/40'>
                                             <div>HASH: 0xC4D9</div>
                                             <div className='ml-auto'>REV: 2.8.0</div>
                                         </div>
@@ -831,33 +844,33 @@ const QuantumPage = ({ isLoading }: QuantumPageProps) => {
 
                                 {/* Technical Details */}
                                 <div className='grid grid-cols-2 gap-32 w-full max-w-2xl'>
-                                    <div className='border-l border-white/10 pl-8'>
+                                    <div className='border-l-2 border-quantum-green/20 pl-8'>
                                         <div className='flex items-center gap-2 mb-4'>
-                                            <div className='w-1 h-1 bg-white/20 rotate-45'></div>
-                                            <p className='technical-readout text-white/60'>SYSTEM INFO</p>
+                                            <div className='w-1 h-1 bg-quantum-green/30 rotate-45'></div>
+                                            <p className='font-quantum-mono text-quantum-green/60 text-xs tracking-[0.2em]'>SYSTEM INFO</p>
                                         </div>
                                         <div className='space-y-2'>
                                             <div className='technical-readout'>MODEL: QS-749-X</div>
                                             <div className='technical-readout'>BUILD: 2038.12.1</div>
                                         </div>
-                                        <div className='w-12 h-[1px] bg-white/10 my-4'></div>
-                                        <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
+                                        <div className='w-12 h-[1px] bg-quantum-green/10 my-4'></div>
+                                        <div className='flex items-center gap-2 text-[8px] font-quantum-mono text-quantum-green/40'>
                                             <div>HASH: 0xA1B2</div>
                                             <div className='ml-auto'>REV: 1.0.0</div>
                                         </div>
                                     </div>
 
-                                    <div className='border-l border-white/10 pl-8'>
+                                    <div className='border-l-2 border-quantum-green/20 pl-8'>
                                         <div className='flex items-center gap-2 mb-4'>
-                                            <div className='w-1 h-1 bg-white/20 rotate-45'></div>
-                                            <p className='technical-readout text-white/60'>LOCATION DATA</p>
+                                            <div className='w-1 h-1 bg-quantum-green/30 rotate-45'></div>
+                                            <p className='font-quantum-mono text-quantum-green/60 text-xs tracking-[0.2em]'>LOCATION DATA</p>
                                         </div>
                                         <div className='space-y-2'>
                                             <div className='technical-readout'>LAT: 37.7749° N</div>
                                             <div className='technical-readout'>LONG: 122.4194° W</div>
                                         </div>
-                                        <div className='w-12 h-[1px] bg-white/10 my-4'></div>
-                                        <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
+                                        <div className='w-12 h-[1px] bg-quantum-green/10 my-4'></div>
+                                        <div className='flex items-center gap-2 text-[8px] font-quantum-mono text-quantum-green/40'>
                                             <div>HASH: 0xD3E4</div>
                                             <div className='ml-auto'>REV: 2.1.5</div>
                                         </div>

@@ -217,7 +217,7 @@ body {
 .cta-button {
   position: relative;
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 255, 200, 0.2);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   transform: scale(1);
   overflow: hidden;
@@ -227,6 +227,7 @@ body {
   min-height: 64px;
   min-width: 200px;
   padding: 0 2rem;
+  backdrop-filter: blur(4px);
 }
 
 /* For menu button specifically */
@@ -248,20 +249,29 @@ body {
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(255, 255, 255, 0.05);
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(0, 255, 200, 0.05) 50%,
+    transparent
+  );
   opacity: 0;
-  transition: all 0.3s ease;
-  z-index: -1;
+  transform: translateY(-100%);
+  transition: opacity 0.3s;
+  pointer-events: none;
 }
 
 .cta-button:hover {
-  transform: scale(0.97);
-  border-color: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+  transform: scale(0.98);
+  border-color: rgba(0, 255, 200, 0.4);
+  box-shadow: 
+    0 0 20px rgba(0, 255, 200, 0.2),
+    inset 0 0 20px rgba(0, 255, 200, 0.1);
 }
 
 .cta-button:hover::before {
   opacity: 1;
+  animation: quantum-scan 1.5s linear infinite;
 }
 
 /* Corner base */
@@ -269,8 +279,8 @@ body {
   position: absolute;
   pointer-events: none;
   z-index: 2;
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   opacity: 0;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -280,7 +290,7 @@ body {
 .corner::after {
   content: "";
   position: absolute;
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(0, 255, 200, 0.6);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -362,8 +372,8 @@ body {
 
 /* Hover states */
 .cta-button:hover .corner {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   opacity: 1;
 }
 
@@ -378,8 +388,8 @@ body {
 }
 
 .cta-button:hover span {
-  transform: scale(0.97);
-  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
+  transform: scale(0.98);
+  filter: drop-shadow(0 0 8px rgba(0, 255, 200, 0.6));
 }
 
 /* Scan line effect */
@@ -390,7 +400,7 @@ body {
   background: linear-gradient(
     to bottom,
     transparent,
-    rgba(255, 255, 255, 0.05) 50%,
+    rgba(0, 255, 200, 0.05) 50%,
     transparent
   );
   opacity: 0;
@@ -710,15 +720,18 @@ body {
 /* Progress bar effects */
 @keyframes quantum-scan {
   0% {
-    transform: translateX(-100%);
-    opacity: 0.4;
+    transform: translateY(-100%) translateX(-100%) skewX(-45deg);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.5;
   }
   50% {
-    opacity: 0.8;
+    opacity: 0.3;
   }
   100% {
-    transform: translateX(100%);
-    opacity: 0.4;
+    transform: translateY(100%) translateX(100%) skewX(-45deg);
+    opacity: 0;
   }
 }
 
@@ -733,4 +746,103 @@ body {
 
 .visibility-hidden {
     visibility: hidden;
+}
+
+/* Quantum Loader Enhanced Styles */
+.bg-scanline {
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 255, 200, 0.05) 0.5%,
+    transparent 1%
+  );
+  background-size: 100% 4px;
+}
+
+.bg-glitch-pattern {
+  background-image: 
+    repeating-linear-gradient(90deg, rgba(0, 255, 200, 0.03) 0px, rgba(0, 255, 200, 0.03) 1px, transparent 1px, transparent 3px),
+    repeating-linear-gradient(0deg, rgba(0, 255, 200, 0.03) 0px, rgba(0, 255, 200, 0.03) 1px, transparent 1px, transparent 3px);
+  background-size: 4px 4px;
+}
+
+.animate-scan {
+  animation: scanline 4s linear infinite;
+}
+
+.animate-glitch-fast {
+  animation: glitch-fast 0.4s steps(2) infinite;
+}
+
+.animate-glitch-slide {
+  animation: glitch-slide 2s linear infinite;
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes glitch-fast {
+  0% {
+    transform: translate(0);
+  }
+  25% {
+    transform: translate(-1px, 1px);
+  }
+  50% {
+    transform: translate(1px, -1px);
+  }
+  75% {
+    transform: translate(-1px, -1px);
+  }
+  100% {
+    transform: translate(1px, 1px);
+  }
+}
+
+@keyframes glitch-slide {
+  0% {
+    transform: translateX(-100%) skewX(-45deg);
+  }
+  50% {
+    transform: translateX(0%) skewX(-45deg);
+  }
+  100% {
+    transform: translateX(100%) skewX(-45deg);
+  }
+}
+
+.text-quantum-green {
+  color: rgb(0, 255, 200);
+}
+
+.font-quantum-mono {
+  font-family: "JetBrains Mono", monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.1em;
+}
+
+/* Enhanced quantum effects */
+.quantum-glow {
+  text-shadow: 0 0 10px rgba(0, 255, 200, 0.4),
+               0 0 20px rgba(0, 255, 200, 0.2),
+               0 0 30px rgba(0, 255, 200, 0.1);
+}
+
+.quantum-border {
+  border-image: linear-gradient(to right, transparent, rgba(0, 255, 200, 0.3), transparent) 1;
+}
+
+/* Progress bar enhancement */
+.quantum-progress {
+  background: linear-gradient(90deg, 
+    rgba(0, 255, 200, 0.1),
+    rgba(0, 255, 200, 0.2) 50%,
+    rgba(0, 255, 200, 0.1)
+  );
 }

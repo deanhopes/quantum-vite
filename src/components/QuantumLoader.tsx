@@ -15,17 +15,17 @@ const random = (min: number, max: number, decimals = 3) => {
 
 const PROGRESS_STEPS = [15, 35, 65, 85, 100] as const
 const LOADING_TEXTS = [
-    "QUANTUM CORE INITIALIZATION",
-    "NEURAL INTERFACE SYNC",
-    "TIMELINE STABILIZATION",
-    "REALITY MATRIX MAPPING",
-    "QUANTUM STATE VERIFIED",
+    "INITIALIZING QUANTUM CORE [...]",
+    "CALIBRATING NEURAL MATRICES <?>",
+    "STABILIZING TIMELINE VARIANCE",
+    "MAPPING QUANTUM PATHWAYS |:|",
+    "CORE INTEGRITY VERIFIED >>>",
 ] as const
 
 const BINARY_CHARS = "01"
-const QUANTUM_STATES = "⟨ψ|H|ψ⟩ |0⟩ |1⟩ |+⟩ |-⟩ ⊗ √ π Δ ℏ ∞ ∫ ∑ ∏ ∈ ∉ ∪ ∩ ⊆ ⊇"
-const CIRCUIT_SYMBOLS = "━ ┃ ┏ ┓ ┗ ┛ ╋ ┣ ┫ ┳ ┻ ═ ║ ╔ ╗ ╚ ╝ ╬ ╠ ╣ ╦ ╩"
-const MATRIX_CHARS = "αβγδεζηθικλμνξπρστυφχψω∀∃∄∅∈∉∊∋∌∍∎∏∐∑√∛∜∝∞∟∠∡∢∣"
+const QUANTUM_STATES = "⟨ψ|H|ψ⟩ |0⟩ |1⟩ |+⟩ |-⟩ ⊗ √ π Δ ℏ ∞ ∫ ∑ ∏ ∈ ∉ ∪ ∩ ⊆ ⊇ ⌭⎔⌬⌇⍡⌸⌹⌺⌻⌼⌽⌾⌿"
+const CIRCUIT_SYMBOLS = "━ ┃ ┏ ┓ ┗ ┛ ╋ ┣ ┫ ┳ ┻ ═ ║ ╔ ╗ ╚ ╝ ╬ ╠ ╣ ╦ ╩ ▓ █ ▀ ▄ ▌ ▐"
+const MATRIX_CHARS = "αβγδεζηθικλμνξπρστυφχψω∀∃∄∅∈∉∊∋∌∍∎∏∐∑√∛∜∝∞∟∠∡∢∣⌬⌇⍡⌸⌹⌺⌻⌼⌽⌾⌿"
 
 // Generate quantum particles with more properties
 const QUANTUM_PARTICLES = Array.from({ length: 150 }, (_, i) => ({
@@ -440,139 +440,96 @@ export function QuantumLoader({ children, onLoadComplete }: QuantumLoaderProps) 
             aria-valuemax={100}
             aria-valuenow={progress}
             style={{
-                background: 'radial-gradient(circle at center, rgba(25, 25, 25, 0.8) 0%, rgba(0, 0, 0, 0.95) 100%)',
-                backdropFilter: 'blur(10px)',
+                background: 'radial-gradient(circle at center, rgba(15, 15, 15, 0.9) 0%, rgba(0, 0, 0, 0.98) 100%)',
+                backdropFilter: 'blur(12px)',
             }}
         >
-            {/* Add a subtle vignette effect */}
-            <div className='absolute inset-0 bg-gradient-radial from-transparent via-transparent to-black/50 pointer-events-none' />
+            {/* Scanline effect */}
+            <div className='absolute inset-0 pointer-events-none bg-scanline opacity-[0.03] animate-scan' />
+            
+            {/* Glitch overlay */}
+            <div className='absolute inset-0 pointer-events-none bg-glitch-pattern opacity-[0.02] animate-glitch-fast' />
 
-            {/* Matrix rain effect */}
+            {/* Enhanced vignette */}
+            <div className='absolute inset-0 bg-gradient-radial from-transparent via-black/30 to-black/70 pointer-events-none' />
+
+            {/* Matrix rain effect with enhanced styling */}
             {createMatrixRain().map((rain, i) => (
                 <div
                     key={i}
                     ref={(el) => setBinaryRainRef(el, i)}
-                    className='absolute font-geist-mono text-quantum-white/30 pointer-events-none transform'
+                    className='absolute font-quantum-mono text-quantum-green/20 pointer-events-none transform'
                     style={{
-                        fontSize: "14px",
+                        fontSize: "12px",
                         willChange: "transform, opacity",
                         transform: `scale(${rain.scale})`,
-                        textShadow: "0 0 12px rgba(255,255,255,0.7)",
+                        textShadow: "0 0 8px rgba(0,255,200,0.4)",
                     }}
                 >
                     {rain.char}
                 </div>
             ))}
 
-            {/* Circuit background elements with enhanced subtle styling */}
-            {CIRCUIT_ELEMENTS.map((circuit) => (
-                <div
-                    key={circuit.id}
-                    ref={(el) => setCircuitElementRef(el, circuit.id - 1000)}
-                    className='absolute font-geist-mono text-quantum-white/20 pointer-events-none flex items-center justify-center transform'
-                    style={{
-                        fontSize: "16px",
-                        willChange: "transform, opacity",
-                        textShadow: "0 0 8px rgba(255,255,255,0.25)",
-                        filter: "blur(0.3px)",
-                    }}
-                >
-                    {circuit.symbol}
-                </div>
-            ))}
-
-            {/* Quantum particles with enhanced effects */}
-            {QUANTUM_PARTICLES.map((particle) => (
-                <div
-                    key={particle.id}
-                    ref={(el) => setParticleRef(el, particle.id)}
-                    className='absolute font-geist-mono text-quantum-white/30 pointer-events-none flex items-center justify-center transform'
-                    style={{
-                        width: `${particle.size * 8}px`,
-                        height: `${particle.size * 8}px`,
-                        fontSize: `${particle.size * 3}px`,
-                        filter: `blur(0.3px) brightness(${1 + particle.glowIntensity * 0.8})`,
-                        willChange: "transform, opacity",
-                        textShadow: `0 0 ${particle.size * 2}px rgba(255,255,255,${particle.glowIntensity})`,
-                    }}
-                >
-                    {particle.symbol}
-                </div>
-            ))}
-
+            {/* Technical interface container */}
             <div className='w-[80vw] max-w-2xl space-y-8 relative'>
-                {/* Technical readout header */}
-                <div className='border-l border-white/10 pl-8 mb-12'>
+                {/* Enhanced technical readout */}
+                <div className='border-l-2 border-quantum-green/20 pl-6 mb-12'>
                     <div className='flex items-center gap-4 mb-4'>
-                        <div className='w-2 h-2 bg-white/20 rotate-45'></div>
-                        <p className='technical-readout'>QUANTUM METRICS</p>
-                        <div className='ml-auto text-[8px] font-mono text-green-500/60'>ACTIVE</div>
+                        <div className='w-2 h-2 bg-quantum-green/30 rotate-45 animate-pulse'></div>
+                        <p className='font-quantum-mono text-quantum-green/60 text-sm tracking-[0.2em]'>QUANTUM METRICS</p>
+                        <div className='ml-auto text-[8px] font-quantum-mono text-quantum-green/40 animate-pulse'>ACTIVE</div>
                     </div>
                     <div className='space-y-2'>
-                        <div className='technical-readout'>12QT × 8QT</div>
-                        <div className='technical-readout'>⟨MAINTAIN NEURAL INTERFACE STABILITY⟩</div>
-                    </div>
-                    <div className='w-12 h-[1px] bg-white/10 my-4'></div>
-                    <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
-                        <div>HASH: 0xA7D2</div>
-                        <div className='ml-auto'>REV: 1.4.2</div>
+                        <div className='font-quantum-mono text-quantum-green/40 text-xs tracking-[0.2em]'>
+                            QUANTUM FLUX: {(Math.random() * 100).toFixed(2)}%
+                        </div>
+                        <div className='font-quantum-mono text-quantum-green/40 text-xs tracking-[0.2em]'>
+                            ⟨NEURAL SYNC: {(Math.random() * 100).toFixed(2)}%⟩
+                        </div>
                     </div>
                 </div>
 
-                {/* Loading status */}
+                {/* Enhanced loading status */}
                 <div
                     ref={progressTextRef}
-                    className='text-quantum-white font-geist-mono text-2xl text-center mb-8 h-8 transform'
+                    className='text-quantum-green/80 font-quantum-mono text-xl text-center mb-8 h-8 transform tracking-[0.2em]'
                     style={{
                         willChange: "transform, opacity",
-                        textShadow: "0 0 20px rgba(255,255,255,0.6)",
-                        letterSpacing: "0.2em",
+                        textShadow: "0 0 15px rgba(0,255,200,0.4)",
                     }}
                 >
                     {LOADING_TEXTS[0]}
                 </div>
 
                 {/* Enhanced progress bar */}
-                <div className='relative h-4 bg-quantum-white/5 overflow-hidden rounded-sm backdrop-blur-sm border border-white/10'>
+                <div className='relative h-3 bg-quantum-green/5 overflow-hidden rounded-none border border-quantum-green/20'>
                     {[0, 1, 2].map((index) => (
                         <div
                             key={index}
                             ref={(el) => setProgressBarRef(el, index)}
-                            className={`absolute top-0 left-0 h-full w-0 bg-quantum-white/80
-                                ${index === 1 ? "mix-blend-difference" : ""}
-                                ${index === 2 ? "mix-blend-overlay" : ""}`}
+                            className={`absolute top-0 left-0 h-full w-0 bg-quantum-green/60
+                                ${index === 1 ? "mix-blend-overlay" : ""}
+                                ${index === 2 ? "mix-blend-difference" : ""}`}
                             style={{
-                                boxShadow:
-                                    "0 0 30px rgba(255,255,255,0.6), 0 0 60px rgba(255,255,255,0.4)",
-                                transform: `translateY(${index * 33.33}%)`,
+                                boxShadow: "0 0 20px rgba(0,255,200,0.2)",
+                                transform: `translateX(${index * 2}px)`,
                                 willChange: "transform, width, opacity",
-                                backdropFilter: "blur(4px)",
                             }}
                         />
                     ))}
-
-                    <div className='absolute inset-0 bg-gradient-to-r from-transparent via-quantum-white/30 to-transparent animate-glitch' />
+                    
+                    {/* Glitch line */}
+                    <div className='absolute inset-0 bg-gradient-to-r from-transparent via-quantum-green/40 to-transparent animate-glitch-slide' />
                 </div>
 
-                {/* Progress percentage with enhanced styling */}
-                <div className='border-l border-white/10 pl-8 mt-8'>
+                {/* Technical status readout */}
+                <div className='border-l-2 border-quantum-green/20 pl-6 mt-8'>
                     <div className='flex items-center gap-2 mb-2'>
-                        <div className='w-1 h-1 bg-white/20 rotate-45'></div>
-                        <p className='technical-readout text-white/60'>SYSTEM STATUS</p>
+                        <div className='w-1 h-1 bg-quantum-green/30 rotate-45'></div>
+                        <p className='font-quantum-mono text-quantum-green/60 text-xs tracking-[0.2em]'>SYSTEM STATUS</p>
                     </div>
-                    <div
-                        className='text-quantum-white/70 font-mono text-sm transform'
-                        style={{
-                            textShadow: "0 0 10px rgba(255,255,255,0.4)",
-                            letterSpacing: "0.1em",
-                        }}
-                    >
-                        {progress}% COMPLETE
-                    </div>
-                    <div className='w-12 h-[1px] bg-white/10 my-4'></div>
-                    <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
-                        <div>HASH: 0xB8E3</div>
-                        <div className='ml-auto'>REV: 2.0.1</div>
+                    <div className='font-quantum-mono text-quantum-green/40 text-sm tracking-[0.2em]'>
+                        {`${progress}% << INITIALIZATION >>`}
                     </div>
                 </div>
             </div>
