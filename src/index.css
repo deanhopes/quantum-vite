@@ -730,3 +730,7 @@ body {
 .bg-gradient-radial {
   background-image: radial-gradient(var(--tw-gradient-stops));
 }
+
+.visibility-hidden {
+    visibility: hidden;
+}
