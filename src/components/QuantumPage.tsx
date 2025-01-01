@@ -62,7 +62,7 @@ const QuantumPage = ({ isLoading }: QuantumPageProps) => {
         window.history.scrollRestoration = 'manual';
         window.scrollTo(0, 0);
         document.body.style.overflow = 'hidden';
-        
+
         // Set initial opacity of parent container
         if (containerRef.current) {
             gsap.set(containerRef.current, { autoAlpha: 0 });
@@ -80,12 +80,12 @@ const QuantumPage = ({ isLoading }: QuantumPageProps) => {
         // Start animations after a short delay
         const startAnimations = () => {
             setIsVisible(true);
-            
+
             // Create main timeline
-            const tl = gsap.timeline({ 
+            const tl = gsap.timeline({
                 defaults: { ease: "power3.out" }
             });
-            
+
             // Set parent container to visible first
             if (containerRef.current) {
                 tl.to(containerRef.current, {
@@ -93,14 +93,14 @@ const QuantumPage = ({ isLoading }: QuantumPageProps) => {
                     duration: 0.5
                 });
             }
-            
+
             // Hero section animation
             if (heroTextRef.current && subTextRef.current) {
-                const heroTitle = new SplitType(heroTextRef.current, { 
+                const heroTitle = new SplitType(heroTextRef.current, {
                     types: 'words,chars',
                     tagName: 'span'
                 });
-                const heroSubtitle = new SplitType(subTextRef.current, { 
+                const heroSubtitle = new SplitType(subTextRef.current, {
                     types: 'words,chars',
                     tagName: 'span'
                 });
@@ -111,68 +111,68 @@ const QuantumPage = ({ isLoading }: QuantumPageProps) => {
 
                 tl.fromTo(
                     heroTitle.chars,
-                    { 
+                    {
                         y: 100,
                         opacity: 0
                     },
-                    { 
+                    {
                         y: 0,
                         opacity: 1,
                         duration: 1,
                         stagger: 0.02,
-                        onStart: function() { gsap.set(heroTextRef.current, { autoAlpha: 1 }); }
+                        onStart: function () { gsap.set(heroTextRef.current, { autoAlpha: 1 }); }
                     }
                 )
-                .fromTo(
-                    heroSubtitle.chars,
-                    { 
-                        y: 50,
-                        opacity: 0
-                    },
-                    { 
-                        y: 0,
-                        opacity: 1,
-                        duration: 0.8,
-                        stagger: 0.02,
-                        onStart: function() { gsap.set(subTextRef.current, { autoAlpha: 1 }); }
-                    },
-                    "-=0.5"
-                )
-                .fromTo(
-                    [initiateBtnRef.current, learnMoreBtnRef.current],
-                    { 
-                        scale: 0.9,
-                        opacity: 0,
-                        y: 20
-                    },
-                    { 
-                        scale: 1,
-                        opacity: 1,
-                        y: 0,
-                        duration: 0.8,
-                        stagger: 0.1,
-                        ease: "back.out(1.2)",
-                        onStart: function() { gsap.set([initiateBtnRef.current, learnMoreBtnRef.current], { autoAlpha: 1 }); }
-                    },
-                    "-=0.4"
-                )
-                .fromTo(
-                    [logoRef.current, magneticBtnRef.current],
-                    { 
-                        y: -100,
-                        opacity: 0,
-                        scale: 0.8,
-                    },
-                    { 
-                        y: 0,
-                        opacity: 1,
-                        scale: 1,
-                        duration: 1.2,
-                        stagger: 0.2,
-                        ease: "elastic.out(1, 0.75)"
-                    },
-                    "+=0.2"
-                );
+                    .fromTo(
+                        heroSubtitle.chars,
+                        {
+                            y: 50,
+                            opacity: 0
+                        },
+                        {
+                            y: 0,
+                            opacity: 1,
+                            duration: 0.8,
+                            stagger: 0.02,
+                            onStart: function () { gsap.set(subTextRef.current, { autoAlpha: 1 }); }
+                        },
+                        "-=0.5"
+                    )
+                    .fromTo(
+                        [initiateBtnRef.current, learnMoreBtnRef.current],
+                        {
+                            scale: 0.9,
+                            opacity: 0,
+                            y: 20
+                        },
+                        {
+                            scale: 1,
+                            opacity: 1,
+                            y: 0,
+                            duration: 0.8,
+                            stagger: 0.1,
+                            ease: "back.out(1.2)",
+                            onStart: function () { gsap.set([initiateBtnRef.current, learnMoreBtnRef.current], { autoAlpha: 1 }); }
+                        },
+                        "-=0.4"
+                    )
+                    .fromTo(
+                        [logoRef.current, magneticBtnRef.current],
+                        {
+                            y: -100,
+                            opacity: 0,
+                            scale: 0.8,
+                        },
+                        {
+                            y: 0,
+                            opacity: 1,
+                            scale: 1,
+                            duration: 1.2,
+                            stagger: 0.2,
+                            ease: "elastic.out(1, 0.75)"
+                        },
+                        "+=0.2"
+                    );
 
                 // Clean up split text
                 return () => {
@@ -607,97 +607,127 @@ const QuantumPage = ({ isLoading }: QuantumPageProps) => {
                         {/* Testimonial Section */}
                         <section className='testimonial-section relative min-h-screen flex items-center justify-center py-24'>
                             <div className='container mx-auto grid grid-cols-12 gap-8 px-8'>
-                                {/* Left side - Field Reports */}
+                                {/* Left side - Field Report */}
                                 <div className='col-span-6 border-l border-white/10 pl-8'>
-                                    <div className='flex items-center gap-4 mb-8'>
+                                    <div className='flex items-center gap-4 mb-4'>
                                         <div className='w-2 h-2 bg-white/20 rotate-45'></div>
-                                        <p className='technical-readout'>FIELD REPORTS</p>
+                                        <p className='technical-readout'>FIELD REPORT: QUANTUM-STATE BEVERAGE INNOVATION</p>
                                         <div className='ml-auto text-[8px] font-mono text-green-500/60'>VERIFIED</div>
                                     </div>
-                                    <h2 className='animate-text font-[PPEditorialOld] text-white/95 text-[3.5vw] leading-[1.1] mb-16'>
-                                        When we first introduced quantum-state manipulation in beverage form, they called us impossible.
-                                        <br />
-                                        <br />
-                                        88 billion successful reality shifts later, they call us revolutionary.
-                                    </h2>
-                                    <div className='w-12 h-[1px] bg-white/10 my-4'></div>
-                                    <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
-                                        <div>HASH: 0xR4S5</div>
-                                        <div className='ml-auto'>REV: 3.5.0</div>
+                                    <div className='space-y-2 mb-8'>
+                                        <div className='technical-readout text-white/60'>VERSION: 4.0.1</div>
+                                        <div className='technical-readout text-white/60'>HASH: 0xQSM-2024-001</div>
+                                    </div>
+                                    <div className='mb-12'>
+                                        <div className='flex items-center gap-4 mb-4'>
+                                            <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                            <p className='technical-readout'>EXECUTIVE SUMMARY</p>
+                                        </div>
+                                        <h2 className='animate-text font-[PPEditorialOld] text-white/95 text-[3.5vw] leading-[1.1] mb-16'>
+                                            When we introduced quantum-state manipulation in beverage form, skeptics called it impossible. <br /><br /> After 88 billion documented reality corrections across 1.2 million users, they call it inevitable.
+                                        </h2>
+                                    </div>
+                                    <div className='border border-white/5 bg-white/5 p-8 mb-8'>
+                                        <div className='flex items-center gap-4 mb-4'>
+                                            <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                            <p className='technical-readout'>VERIFICATION METRICS</p>
+                                        </div>
+                                        <div className='grid grid-cols-2 gap-4'>
+                                            <div className='technical-readout text-white/90'>Success Rate: 99.997%</div>
+                                            <div className='technical-readout text-white/90'>Reality Coherence: 100%</div>
+                                            <div className='technical-readout text-white/90'>User Satisfaction: 98.9%</div>
+                                            <div className='technical-readout text-white/90'>Timeline Stability: ∆0.0001</div>
+                                        </div>
                                     </div>
                                 </div>
 
-                                {/* Right side - Testimonials */}
+                                {/* Right side - Case Studies */}
                                 <div className='col-span-5 col-start-8 space-y-12'>
-                                    {/* Testimonial 1 */}
+                                    <div className='flex items-center gap-4 mb-8'>
+                                        <div className='w-2 h-2 bg-white/20 rotate-45'></div>
+                                        <p className='technical-readout'>USER IMPACT ANALYSIS</p>
+                                    </div>
+
+                                    {/* Case Study 001 */}
                                     <div className='border-l border-white/10 pl-8'>
                                         <div className='flex items-center gap-4 mb-4'>
-                                            <div className='w-2 h-2 bg-white/20 rotate-45'></div>
-                                            <p className='technical-readout'>USER TESTIMONIAL</p>
-                                            <div className='ml-auto text-[8px] font-mono text-white/40'>ID:UT-001</div>
+                                            <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                            <p className='technical-readout'>CASE STUDY 001</p>
+                                            <div className='ml-auto text-[8px] font-mono text-white/40'>HASH: 0xCS001-24</div>
                                         </div>
-                                        <div className='flex mb-4'>
-                                            {Array.from({ length: 5 }, (_, index) => (
-                                                <span key={index} className='text-white/80 text-xl'>★</span>
-                                            ))}
-                                        </div>
-                                        <div className='border border-white/5 bg-white/5 p-4'>
+                                        <div className='technical-readout text-white/60 mb-4'>CONTEXT: High-Stakes Professional Presentation</div>
+                                        <div className='border border-white/5 bg-white/5 p-4 mb-4'>
                                             <p className='technical-readout text-white/90'>
-                                                "Yesterday, I made the worst presentation of my career. Or I would have, if CTRL-Z hadn't helped me find the timeline where I remembered to actually save my slides."
+                                                "The presentation was destined for failure - critical data missing, wrong format, obsolete figures. One precision-timed application of CTRL-Z revealed the optimal timeline where meticulous preparation met flawless execution. Board approval secured."
                                             </p>
                                         </div>
-                                        <div className='w-12 h-[1px] bg-white/10 my-4'></div>
-                                        <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
-                                            <div>HASH: 0xT3U4</div>
-                                            <div className='ml-auto'>REV: 1.2.3</div>
+                                        <div className='flex justify-between items-center'>
+                                            <div className='flex mb-4'>
+                                                {Array.from({ length: 5 }, (_, index) => (
+                                                    <span key={index} className='text-white/80 text-xl'>★</span>
+                                                ))}
+                                            </div>
+                                            <div className='technical-readout text-white/60'>Temporal Shift: -3.5 hours</div>
                                         </div>
                                     </div>
 
-                                    {/* Testimonial 2 */}
+                                    {/* Case Study 002 */}
                                     <div className='border-l border-white/10 pl-8'>
                                         <div className='flex items-center gap-4 mb-4'>
-                                            <div className='w-2 h-2 bg-white/20 rotate-45'></div>
-                                            <p className='technical-readout'>USER TESTIMONIAL</p>
-                                            <div className='ml-auto text-[8px] font-mono text-white/40'>ID:UT-002</div>
+                                            <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                            <p className='technical-readout'>CASE STUDY 002</p>
+                                            <div className='ml-auto text-[8px] font-mono text-white/40'>HASH: 0xCS002-24</div>
                                         </div>
-                                        <div className='flex mb-4'>
-                                            {Array.from({ length: 5 }, (_, index) => (
-                                                <span key={index} className='text-white/80 text-xl'>★</span>
-                                            ))}
-                                        </div>
-                                        <div className='border border-white/5 bg-white/5 p-4'>
+                                        <div className='technical-readout text-white/60 mb-4'>CONTEXT: Personal Value Recovery</div>
+                                        <div className='border border-white/5 bg-white/5 p-4 mb-4'>
                                             <p className='technical-readout text-white/90'>
-                                                "Lost my wedding ring at the beach. One sip of CTRL-Z and I was back in the timeline where I remembered to take it off before swimming. Life-saver!"
+                                                "Mediterranean vacation, platinum wedding band, unexpected wave pattern. CTRL-Z identified the convergence point where foresight prevented loss. Asset secured, marriage harmony maintained, vacation uninterrupted."
                                             </p>
                                         </div>
-                                        <div className='w-12 h-[1px] bg-white/10 my-4'></div>
-                                        <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
-                                            <div>HASH: 0xV2W3</div>
-                                            <div className='ml-auto'>REV: 2.4.1</div>
+                                        <div className='flex justify-between items-center'>
+                                            <div className='flex mb-4'>
+                                                {Array.from({ length: 5 }, (_, index) => (
+                                                    <span key={index} className='text-white/80 text-xl'>★</span>
+                                                ))}
+                                            </div>
+                                            <div className='technical-readout text-white/60'>Temporal Shift: -45 minutes</div>
                                         </div>
                                     </div>
 
-                                    {/* Testimonial 3 */}
+                                    {/* Case Study 003 */}
                                     <div className='border-l border-white/10 pl-8'>
                                         <div className='flex items-center gap-4 mb-4'>
-                                            <div className='w-2 h-2 bg-white/20 rotate-45'></div>
-                                            <p className='technical-readout'>USER TESTIMONIAL</p>
-                                            <div className='ml-auto text-[8px] font-mono text-white/40'>ID:UT-003</div>
+                                            <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                            <p className='technical-readout'>CASE STUDY 003</p>
+                                            <div className='ml-auto text-[8px] font-mono text-white/40'>HASH: 0xCS003-24</div>
                                         </div>
-                                        <div className='flex mb-4'>
-                                            {Array.from({ length: 5 }, (_, index) => (
-                                                <span key={index} className='text-white/80 text-xl'>★</span>
-                                            ))}
-                                        </div>
-                                        <div className='border border-white/5 bg-white/5 p-4'>
+                                        <div className='technical-readout text-white/60 mb-4'>CONTEXT: Corporate Communication Crisis</div>
+                                        <div className='border border-white/5 bg-white/5 p-4 mb-4'>
                                             <p className='technical-readout text-white/90'>
-                                                "Sent an email to the entire company instead of just my team. CTRL-Z helped me find the reality where I double-checked the recipient list. Worth every penny."
+                                                "All-company email incident avoided through quantum intervention. CTRL-Z facilitated access to the decision point where standard verification protocols were observed. Professional reputation preserved, workflow maintained."
                                             </p>
                                         </div>
-                                        <div className='w-12 h-[1px] bg-white/10 my-4'></div>
-                                        <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
-                                            <div>HASH: 0xX1Y2</div>
-                                            <div className='ml-auto'>REV: 1.7.2</div>
+                                        <div className='flex justify-between items-center'>
+                                            <div className='flex mb-4'>
+                                                {Array.from({ length: 5 }, (_, index) => (
+                                                    <span key={index} className='text-white/80 text-xl'>★</span>
+                                                ))}
+                                            </div>
+                                            <div className='technical-readout text-white/60'>Temporal Shift: -2.2 minutes</div>
+                                        </div>
+                                    </div>
+
+                                    {/* System Integrity */}
+                                    <div className='border-l border-white/10 pl-8 mt-16'>
+                                        <div className='flex items-center gap-4 mb-4'>
+                                            <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                            <p className='technical-readout'>SYSTEM INTEGRITY VERIFICATION</p>
+                                            <div className='ml-auto text-[8px] font-mono text-white/40'>HASH: 0xSYS-QA-24</div>
+                                        </div>
+                                        <div className='space-y-2'>
+                                            <div className='technical-readout text-white/60'>All reports quantum-authenticated</div>
+                                            <div className='technical-readout text-white/60'>Timeline coherence validated</div>
+                                            <div className='technical-readout text-white/60'>Causality chains intact</div>
                                         </div>
                                     </div>
                                 </div>
