@@ -6,16 +6,15 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollContext, ScrollContextType } from "./types/ScrollContext";
 import { SceneContent } from "./3d/SceneContent";
 import { InteractiveGrid } from "./ui/InteractiveGrid";
-import { DataReadout } from "./ui/DataReadout";
-
-// #
-
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger);
 
-// Move component definitions outside the main component
-const QuantumPage = () => {
+interface QuantumPageProps {
+    isLoading: boolean;
+}
+
+const QuantumPage = ({ isLoading }: QuantumPageProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasContainerRef = useRef<HTMLDivElement>(null);
     const heroTextRef = useRef<HTMLHeadingElement>(null);
@@ -29,6 +28,8 @@ const QuantumPage = () => {
         scrollProgress: 0,
         isHorizontalSection: false,
     });
+    const [isSceneReady, setIsSceneReady] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
 
     // Handle canvas dimensions
     useEffect(() => {
@@ -49,6 +50,74 @@ const QuantumPage = () => {
 
         return () => resizeObserver.disconnect();
     }, []);
+
+    // Scene ready handler
+    const handleSceneReady = () => {
+        setIsSceneReady(true);
+
+        // Short delay before starting animations
+        setTimeout(() => {
+            setIsVisible(true);
+
+            // Animate in the UI elements
+            const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+            // First animate the navbar elements with a dramatic entrance
+            if (!isLoading && logoRef.current && magneticBtnRef.current) {
+                // Add a small delay before starting navbar animation
+                tl.to({}, { duration: 0.5 }) // Delay for loader to finish
+                    .fromTo(
+                        [logoRef.current, magneticBtnRef.current],
+                        {
+                            y: -100,
+                            opacity: 0,
+                            scale: 0.8,
+                        },
+                        {
+                            y: 0,
+                            opacity: 1,
+                            scale: 1,
+                            duration: 1.2,
+                            stagger: 0.2,
+                            ease: "elastic.out(1, 0.75)"
+                        }
+                    );
+            }
+
+            // Then animate the rest of the content
+            tl.fromTo(
+                [heroTextRef.current, subTextRef.current],
+                {
+                    y: 20,
+                    opacity: 0
+                },
+                {
+                    y: 0,
+                    opacity: 1,
+                    duration: 1,
+                    stagger: 0.2
+                },
+                "-=0.4"
+            )
+                .fromTo(
+                    [initiateBtnRef.current, learnMoreBtnRef.current],
+                    {
+                        scale: 0.9,
+                        opacity: 0,
+                        y: 20
+                    },
+                    {
+                        scale: 1,
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.8,
+                        stagger: 0.1,
+                        ease: "back.out(1.2)"
+                    },
+                    "-=0.6"
+                );
+        }, 100);
+    };
 
     // Update the text animation setup
     useEffect(() => {
@@ -173,7 +242,11 @@ const QuantumPage = () => {
 
     return (
         <ScrollContext.Provider value={scrollState}>
-            <div className='relative'>
+            <div className='relative' style={{
+                opacity: isVisible ? 1 : 0,
+                visibility: isVisible ? 'visible' : 'hidden',
+                transition: 'opacity 1s ease-in-out, visibility 1s ease-in-out'
+            }}>
                 {/* Canvas Container */}
                 <div
                     ref={canvasContainerRef}
@@ -185,6 +258,7 @@ const QuantumPage = () => {
                             camera={{ position: [0, 1, 4], fov: 35 }}
                             onCreated={state => {
                                 console.log('Canvas created', state);
+                                handleSceneReady();
                             }}
                             style={{
                                 position: "absolute",
@@ -200,30 +274,24 @@ const QuantumPage = () => {
                         >
                             <color attach='background' args={["#000000"]} />
                             <fog attach='fog' args={["#000000", 5, 15]} />
-                            <Suspense fallback={
-                                <mesh>
-                                    <boxGeometry args={[1, 1, 1]} />
-                                    <meshBasicMaterial color="red" wireframe />
-                                </mesh>
-                            }>
+                            <Suspense fallback={null}>
                                 <SceneContent />
                             </Suspense>
                         </Canvas>
                     )}
                 </div>
 
-                {/* Navbar */}
-                <nav className='fixed top-0 left-0 w-full h-16 flex items-center justify-between px-8 z-50'>
-                    <div className='w-16'></div> {/* Spacer for centering */}
-                    <div ref={logoRef} className='w-[8rem] origin-bottom'>
+                {/* Navbar - Hidden during loading but prepared for animation */}
+                <nav className={`fixed top-0 left-0 w-full h-20 flex items-center justify-between px-16 z-50 transition-all duration-500 ${isLoading ? 'opacity-0 translate-y-[-20px] pointer-events-none' : 'opacity-100 translate-y-0'}`}>
+                    <div ref={logoRef} className='w-[8rem] origin-top will-change-transform'>
                         <img
                             src='/src/assets/ctrlz-logo.svg'
                             alt='CTRL-Z'
                             className='w-full object-contain'
                         />
                     </div>
-                    <div ref={magneticBtnRef} className='relative w-16 h-16 flex items-center justify-center'>
-                        <button className='cta-button hover-highlight group relative w-12 h-12 flex items-center justify-center'>
+                    <div ref={magneticBtnRef} className='relative flex items-center justify-center will-change-transform'>
+                        <button className='cta-button hover-highlight group relative w-32 h-12 flex items-center justify-center'>
                             <div className='corner corner-tl'></div>
                             <div className='corner corner-tr'></div>
                             <div className='corner corner-bl'></div>
@@ -237,112 +305,58 @@ const QuantumPage = () => {
 
                 {/* Main Content */}
                 <div ref={containerRef} className='relative w-full'>
-                    {/* Hero Section */}
-                    <section className='relative h-screen flex flex-col overflow-hidden p-8'>
-                        {/* Main Content */}
-                        <div className='flex-1 flex'>
-                            {/* Left Side */}
-                            <div className='flex flex-col justify-start mt-24'>
-                                <div className='border-l border-white/10 pl-8'>
-                                    <div className='flex items-center gap-4 mb-4'>
-                                        <div className='w-2 h-2 bg-white/20 rotate-45'></div>
-                                        <p className='technical-readout'>QUANTUM METRICS</p>
-                                        <div className='ml-auto text-[8px] font-mono text-green-500/60'>ACTIVE</div>
-                                    </div>
-                                    <div className='space-y-2'>
-                                        <div className='technical-readout'>12QT × 8QT</div>
-                                        <div className='technical-readout'>⟨MAINTAIN NEURAL INTERFACE STABILITY⟩</div>
-                                    </div>
-                                    <div className='w-12 h-[1px] bg-white/10 my-4'></div>
-                                    <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
-                                        <div>HASH: 0xA7D2</div>
-                                        <div className='ml-auto'>REV: 1.4.2</div>
-                                    </div>
-                                </div>
-                                <div className='mt-48 border-l border-white/10 pl-8'>
-                                    <div className='flex items-center gap-4 mb-4'>
-                                        <div className='w-2 h-2 bg-white/20 rotate-45'></div>
-                                        <p className='technical-readout'>TEMPORAL INDEX</p>
-                                        <div className='ml-auto text-[8px] font-mono text-white/40'>ID:TI-001</div>
-                                    </div>
-                                    <div className='text-[4vw] leading-none font-[PPEditorialOld] tracking-tighter'>
-                                        20//
-                                        <br />
-                                        40
-                                    </div>
-                                    <div className='w-12 h-[1px] bg-white/10 my-4'></div>
-                                    <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
-                                        <div>HASH: 0xB8E3</div>
-                                        <div className='ml-auto'>REV: 2.0.1</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Right Side */}
-                            <div className='flex-1 flex flex-col justify-center items-end'>
-                                <div className='max-w-[40vw] border-l border-white/10 pl-8'>
-                                    <div className='flex items-center gap-4 mb-4'>
-                                        <div className='w-2 h-2 bg-white/20 rotate-45'></div>
-                                        <p className='technical-readout'>SYSTEM DIRECTIVE</p>
-                                        <div className='ml-auto text-[8px] font-mono text-green-500/60'>VERIFIED</div>
-                                    </div>
-                                    <h1 className='text-[3vw] leading-[1.1] font-[PPEditorialOld] tracking-[-0.02em] mb-8 text-justify'>
+                    {/* Hero Section - Updated with Swiss typography inspiration */}
+                    <section className='relative h-screen flex flex-col overflow-hidden'>
+                        <div className='container mx-auto max-w-[80vw] h-full flex flex-col justify-center'>
+                            <div className='grid grid-cols-12 gap-8'>
+                                {/* Main Content - Centered */}
+                                <div className='col-span-12 text-center mb-16'>
+                                    <h1 ref={heroTextRef} className='font-[PPEditorialOld] text-white/95 text-[5vw] leading-[1.1] tracking-[-0.02em] mb-8'>
                                         One sip to access
                                         <br />
                                         infinite timelines.
                                     </h1>
-                                    <h2 className='text-[4vw] leading-[1.1] font-[PPEditorialOld] tracking-[-0.02em] text-white/80 text-justify'>
+                                    <h2 ref={subTextRef} className='font-[PPEditorialOld] text-[3vw] leading-[1.2] text-white/70 tracking-[-0.02em] mb-12'>
                                         Rewrite your reality.
                                     </h2>
-                                    <div className='w-12 h-[1px] bg-white/10 my-4'></div>
-                                    <div className='technical-readout text-right mt-12'>
-                                        <div className='flex items-center gap-2 mb-2'>
-                                            <div className='w-1 h-1 bg-white/20 rotate-45'></div>
-                                            <p className='technical-readout text-white/60'>SYSTEM STATUS</p>
+                                    <div className='flex gap-6 justify-center'>
+                                        <div ref={initiateBtnRef}>
+                                            <button className='cta-button hover-highlight group'>
+                                                <div className='corner corner-tl'></div>
+                                                <div className='corner corner-tr'></div>
+                                                <div className='corner corner-bl'></div>
+                                                <div className='corner corner-br'></div>
+                                                <span className='technical-readout text-white/90'>
+                                                    INITIATE SHIFT
+                                                </span>
+                                            </button>
                                         </div>
-                                        <div className='space-y-2'>
-                                            <div className='technical-readout'>⟨14.40×23.40⟩</div>
-                                            <div className='technical-readout'>⟨NEURAL-SYNC_REQUIRED⟩</div>
-                                            <div className='technical-readout'>⟨QUANTUM STABILIZATION_ACTIVE⟩</div>
+                                        <div ref={learnMoreBtnRef}>
+                                            <button className='cta-button group'>
+                                                <div className='corner corner-tl'></div>
+                                                <div className='corner corner-tr'></div>
+                                                <div className='corner corner-bl'></div>
+                                                <div className='corner corner-br'></div>
+                                                <span className='technical-readout text-white/40'>
+                                                    LEARN MORE
+                                                </span>
+                                            </button>
                                         </div>
-                                    </div>
-                                    <div className='flex items-center gap-2 text-[8px] font-mono text-white/40 mt-6'>
-                                        <div>HASH: 0xC9F4</div>
-                                        <div className='ml-auto'>REV: 3.2.0</div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
 
-                        <div className='flex justify-between items-end'>
-                            <div className='border-l border-white/10 pl-8'>
-                                <div className='flex items-center gap-2 mb-2'>
-                                    <div className='w-1 h-1 bg-white/20 rotate-45'></div>
-                                    <p className='technical-readout text-white/60'>SESSION DATA</p>
-                                </div>
-                                <div className='technical-readout'>
-                                    11.07+
-                                    <br />
-                                    SSM24
-                                </div>
-                                <div className='flex items-center gap-2 text-[8px] font-mono text-white/40 mt-4'>
-                                    <div>HASH: 0xE5B6</div>
-                                    <div className='ml-auto'>REV: 1.1.3</div>
-                                </div>
-                            </div>
-                            <div className='border-l border-white/10 pl-8'>
-                                <div className='flex items-center gap-2 mb-2'>
-                                    <div className='w-1 h-1 bg-white/20 rotate-45'></div>
-                                    <p className='technical-readout text-white/60'>INSTANCE ID</p>
-                                </div>
-                                <div className='technical-readout text-right'>
-                                    QMO2040
-                                    <br />
-                                    355⟩CTRL-Z
-                                </div>
-                                <div className='flex items-center gap-2 text-[8px] font-mono text-white/40 mt-4'>
-                                    <div>HASH: 0xF7A8</div>
-                                    <div className='ml-auto'>REV: 2.3.1</div>
+                                {/* Technical Details - Minimal and Elegant */}
+                                <div className='col-span-12 flex justify-center gap-8'>
+                                    <div className='technical-readout text-[10px] flex items-center gap-4'>
+                                        <div className='w-1.5 h-1.5 bg-white/20 rotate-45'></div>
+                                        <span>NEURAL SYNC: 99.99%</span>
+                                        <span className='text-green-500/60'>ACTIVE</span>
+                                    </div>
+                                    <div className='technical-readout text-[10px] flex items-center gap-4'>
+                                        <div className='w-1.5 h-1.5 bg-white/20 rotate-45'></div>
+                                        <span>TIMELINE INTEGRITY: 100%</span>
+                                        <span className='text-green-500/60'>VERIFIED</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -727,7 +741,8 @@ const QuantumPage = () => {
 
                     {/* Testimonial Section */}
                     <section className='relative min-h-screen flex items-center justify-center py-24'>
-                        <div className='container grid grid-cols-12 gap-8 px-8'>
+                        <div className='container mx-auto grid grid-cols-12 gap-8 px-8'>
+                            {/* Left side - Field Reports */}
                             <div className='col-span-6 border-l border-white/10 pl-8'>
                                 <div className='flex items-center gap-4 mb-8'>
                                     <div className='w-2 h-2 bg-white/20 rotate-45'></div>
@@ -738,7 +753,7 @@ const QuantumPage = () => {
                                     When we first introduced quantum-state manipulation in beverage form, they called us impossible.
                                     <br />
                                     <br />
-                                    <span className='text-white/70'>88 billion successful reality shifts later, they call us revolutionary.</span>
+                                    88 billion successful reality shifts later, they call us revolutionary.
                                 </h2>
                                 <div className='w-12 h-[1px] bg-white/10 my-4'></div>
                                 <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
@@ -747,7 +762,8 @@ const QuantumPage = () => {
                                 </div>
                             </div>
 
-                            <div className='col-span-5 col-start-8 space-y-24'>
+                            {/* Right side - Testimonials */}
+                            <div className='col-span-5 col-start-8 space-y-12'>
                                 {/* Testimonial 1 */}
                                 <div className='border-l border-white/10 pl-8'>
                                     <div className='flex items-center gap-4 mb-4'>
@@ -762,7 +778,7 @@ const QuantumPage = () => {
                                     </div>
                                     <div className='border border-white/5 bg-white/5 p-4'>
                                         <p className='technical-readout text-white/90'>
-                                            "Yesterday, I made the worst presentation of my career. Or I would have, if ctrl-z hadn't helped me find the timeline where I remembered to actually save my slides."
+                                            "Yesterday, I made the worst presentation of my career. Or I would have, if CTRL-Z hadn't helped me find the timeline where I remembered to actually save my slides."
                                         </p>
                                     </div>
                                     <div className='w-12 h-[1px] bg-white/10 my-4'></div>
@@ -786,7 +802,7 @@ const QuantumPage = () => {
                                     </div>
                                     <div className='border border-white/5 bg-white/5 p-4'>
                                         <p className='technical-readout text-white/90'>
-                                            "Lost my wedding ring at the beach. One sip of ctrl-z and I was back in the timeline where I remembered to take it off before swimming. Life-saver!"
+                                            "Lost my wedding ring at the beach. One sip of CTRL-Z and I was back in the timeline where I remembered to take it off before swimming. Life-saver!"
                                         </p>
                                     </div>
                                     <div className='w-12 h-[1px] bg-white/10 my-4'></div>
@@ -810,37 +826,13 @@ const QuantumPage = () => {
                                     </div>
                                     <div className='border border-white/5 bg-white/5 p-4'>
                                         <p className='technical-readout text-white/90'>
-                                            "Sent an email to the entire company instead of just my team. ctrl-z helped me find the reality where I double-checked the recipient list. Worth every penny."
+                                            "Sent an email to the entire company instead of just my team. CTRL-Z helped me find the reality where I double-checked the recipient list. Worth every penny."
                                         </p>
                                     </div>
                                     <div className='w-12 h-[1px] bg-white/10 my-4'></div>
                                     <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
                                         <div>HASH: 0xX1Y2</div>
                                         <div className='ml-auto'>REV: 1.7.2</div>
-                                    </div>
-                                </div>
-
-                                {/* Testimonial 4 */}
-                                <div className='border-l border-white/10 pl-8'>
-                                    <div className='flex items-center gap-4 mb-4'>
-                                        <div className='w-2 h-2 bg-white/20 rotate-45'></div>
-                                        <p className='technical-readout'>USER TESTIMONIAL</p>
-                                        <div className='ml-auto text-[8px] font-mono text-white/40'>ID:UT-004</div>
-                                    </div>
-                                    <div className='flex mb-4'>
-                                        {Array.from({ length: 5 }, (_, index) => (
-                                            <span key={index} className='text-white/80 text-xl'>★</span>
-                                        ))}
-                                    </div>
-                                    <div className='border border-white/5 bg-white/5 p-4'>
-                                        <p className='technical-readout text-white/90'>
-                                            "Accidentally deleted three months of work with no backup. One ctrl-z later, I'm in a timeline where I religiously use cloud storage. Absolute game changer."
-                                        </p>
-                                    </div>
-                                    <div className='w-12 h-[1px] bg-white/10 my-4'></div>
-                                    <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
-                                        <div>HASH: 0xZ9A1</div>
-                                        <div className='ml-auto'>REV: 2.0.4</div>
                                     </div>
                                 </div>
                             </div>

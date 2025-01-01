@@ -3,8 +3,8 @@ import gsap from "gsap"
 import { useEncryptionEffect } from "../hooks/useEncryptionEffect"
 
 interface QuantumLoaderProps {
-    children: React.ReactNode
-    onLoadComplete?: () => void
+    children?: React.ReactNode;
+    onLoadComplete?: () => void;
 }
 
 // Enhanced random function with better distribution
@@ -15,11 +15,11 @@ const random = (min: number, max: number, decimals = 3) => {
 
 const PROGRESS_STEPS = [15, 35, 65, 85, 100] as const
 const LOADING_TEXTS = [
-    "QUANTUM INITIALIZATION",
-    "ENTANGLEMENT SYNC",
-    "SUPERPOSITION MAPPING",
-    "QUANTUM DECOHERENCE",
-    "REALITY STABILIZED",
+    "QUANTUM CORE INITIALIZATION",
+    "NEURAL INTERFACE SYNC",
+    "TIMELINE STABILIZATION",
+    "REALITY MATRIX MAPPING",
+    "QUANTUM STATE VERIFIED",
 ] as const
 
 const BINARY_CHARS = "01"
@@ -434,12 +434,19 @@ export function QuantumLoader({ children, onLoadComplete }: QuantumLoaderProps) 
     return (
         <div
             ref={containerRef}
-            className='fixed inset-0 bg-quantum-black z-50 flex items-center justify-center overflow-hidden'
+            className='fixed inset-0 bg-quantum-black z-[200] flex items-center justify-center overflow-hidden'
             role='progressbar'
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={progress}
+            style={{
+                background: 'radial-gradient(circle at center, rgba(25, 25, 25, 0.8) 0%, rgba(0, 0, 0, 0.95) 100%)',
+                backdropFilter: 'blur(10px)',
+            }}
         >
+            {/* Add a subtle vignette effect */}
+            <div className='absolute inset-0 bg-gradient-radial from-transparent via-transparent to-black/50 pointer-events-none' />
+
             {/* Matrix rain effect */}
             {createMatrixRain().map((rain, i) => (
                 <div
@@ -450,7 +457,7 @@ export function QuantumLoader({ children, onLoadComplete }: QuantumLoaderProps) 
                         fontSize: "14px",
                         willChange: "transform, opacity",
                         transform: `scale(${rain.scale})`,
-                        textShadow: "0 0 8px rgba(255,255,255,0.5)",
+                        textShadow: "0 0 12px rgba(255,255,255,0.7)",
                     }}
                 >
                     {rain.char}
@@ -466,7 +473,7 @@ export function QuantumLoader({ children, onLoadComplete }: QuantumLoaderProps) 
                     style={{
                         fontSize: "16px",
                         willChange: "transform, opacity",
-                        textShadow: "0 0 5px rgba(255,255,255,0.15)",
+                        textShadow: "0 0 8px rgba(255,255,255,0.25)",
                         filter: "blur(0.3px)",
                     }}
                 >
@@ -474,7 +481,7 @@ export function QuantumLoader({ children, onLoadComplete }: QuantumLoaderProps) 
                 </div>
             ))}
 
-            {/* Quantum particles with subtle effects */}
+            {/* Quantum particles with enhanced effects */}
             {QUANTUM_PARTICLES.map((particle) => (
                 <div
                     key={particle.id}
@@ -484,30 +491,49 @@ export function QuantumLoader({ children, onLoadComplete }: QuantumLoaderProps) 
                         width: `${particle.size * 8}px`,
                         height: `${particle.size * 8}px`,
                         fontSize: `${particle.size * 3}px`,
-                        filter: `blur(0.3px) brightness(${1 + particle.glowIntensity * 0.5
-                            })`,
+                        filter: `blur(0.3px) brightness(${1 + particle.glowIntensity * 0.8})`,
                         willChange: "transform, opacity",
-                        textShadow: `0 0 ${particle.size}px rgba(255,255,255,${particle.glowIntensity * 0.5
-                            })`,
+                        textShadow: `0 0 ${particle.size * 2}px rgba(255,255,255,${particle.glowIntensity})`,
                     }}
                 >
                     {particle.symbol}
                 </div>
             ))}
 
-            <div className='w-[80vw] max-w-2xl space-y-6 relative'>
+            <div className='w-[80vw] max-w-2xl space-y-8 relative'>
+                {/* Technical readout header */}
+                <div className='border-l border-white/10 pl-8 mb-12'>
+                    <div className='flex items-center gap-4 mb-4'>
+                        <div className='w-2 h-2 bg-white/20 rotate-45'></div>
+                        <p className='technical-readout'>QUANTUM METRICS</p>
+                        <div className='ml-auto text-[8px] font-mono text-green-500/60'>ACTIVE</div>
+                    </div>
+                    <div className='space-y-2'>
+                        <div className='technical-readout'>12QT × 8QT</div>
+                        <div className='technical-readout'>⟨MAINTAIN NEURAL INTERFACE STABILITY⟩</div>
+                    </div>
+                    <div className='w-12 h-[1px] bg-white/10 my-4'></div>
+                    <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
+                        <div>HASH: 0xA7D2</div>
+                        <div className='ml-auto'>REV: 1.4.2</div>
+                    </div>
+                </div>
+
+                {/* Loading status */}
                 <div
                     ref={progressTextRef}
-                    className='text-quantum-white font-geist-mono text-2xl text-center mb-4 h-8 transform'
+                    className='text-quantum-white font-geist-mono text-2xl text-center mb-8 h-8 transform'
                     style={{
                         willChange: "transform, opacity",
-                        textShadow: "0 0 15px rgba(255,255,255,0.5)",
+                        textShadow: "0 0 20px rgba(255,255,255,0.6)",
+                        letterSpacing: "0.2em",
                     }}
                 >
                     {LOADING_TEXTS[0]}
                 </div>
 
-                <div className='relative h-4 bg-quantum-white/10 overflow-hidden rounded-sm backdrop-blur-sm'>
+                {/* Enhanced progress bar */}
+                <div className='relative h-4 bg-quantum-white/5 overflow-hidden rounded-sm backdrop-blur-sm border border-white/10'>
                     {[0, 1, 2].map((index) => (
                         <div
                             key={index}
@@ -517,7 +543,7 @@ export function QuantumLoader({ children, onLoadComplete }: QuantumLoaderProps) 
                                 ${index === 2 ? "mix-blend-overlay" : ""}`}
                             style={{
                                 boxShadow:
-                                    "0 0 20px rgba(255,255,255,0.5), 0 0 40px rgba(255,255,255,0.3)",
+                                    "0 0 30px rgba(255,255,255,0.6), 0 0 60px rgba(255,255,255,0.4)",
                                 transform: `translateY(${index * 33.33}%)`,
                                 willChange: "transform, width, opacity",
                                 backdropFilter: "blur(4px)",
@@ -525,16 +551,29 @@ export function QuantumLoader({ children, onLoadComplete }: QuantumLoaderProps) 
                         />
                     ))}
 
-                    <div className='absolute inset-0 bg-gradient-to-r from-transparent via-quantum-white/20 to-transparent animate-glitch' />
+                    <div className='absolute inset-0 bg-gradient-to-r from-transparent via-quantum-white/30 to-transparent animate-glitch' />
                 </div>
 
-                <div
-                    className='text-quantum-white/50 font-mono text-sm text-center transform'
-                    style={{
-                        textShadow: "0 0 8px rgba(255,255,255,0.3)",
-                    }}
-                >
-                    {progress}% COMPLETE
+                {/* Progress percentage with enhanced styling */}
+                <div className='border-l border-white/10 pl-8 mt-8'>
+                    <div className='flex items-center gap-2 mb-2'>
+                        <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                        <p className='technical-readout text-white/60'>SYSTEM STATUS</p>
+                    </div>
+                    <div
+                        className='text-quantum-white/70 font-mono text-sm transform'
+                        style={{
+                            textShadow: "0 0 10px rgba(255,255,255,0.4)",
+                            letterSpacing: "0.1em",
+                        }}
+                    >
+                        {progress}% COMPLETE
+                    </div>
+                    <div className='w-12 h-[1px] bg-white/10 my-4'></div>
+                    <div className='flex items-center gap-2 text-[8px] font-mono text-white/40'>
+                        <div>HASH: 0xB8E3</div>
+                        <div className='ml-auto'>REV: 2.0.1</div>
+                    </div>
                 </div>
             </div>
         </div>

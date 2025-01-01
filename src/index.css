@@ -586,3 +586,147 @@ body {
     background-size: 32px 32px;
   }
 }
+
+/* Text animation styles */
+.technical-readout span {
+    display: inline-block;
+    position: relative;
+}
+
+.technical-readout span::before {
+    content: attr(data-char);
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: rgba(0, 255, 255, 0.5);
+    transform: translateX(-1px);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.technical-readout span::after {
+    content: attr(data-char);
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: rgba(255, 0, 255, 0.5);
+    transform: translateX(1px);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.technical-readout span:hover::before,
+.technical-readout span:hover::after {
+    opacity: 1;
+}
+
+.font-\[PPEditorialOld\] span {
+    display: inline-block;
+    white-space: pre;
+}
+
+/* Quantum Loader Styles */
+.bg-quantum-black {
+  background-color: #000000;
+  background-image: 
+    linear-gradient(0deg, rgba(19, 19, 19, 0.8) 0%, transparent 100%),
+    radial-gradient(circle at 50% 50%, rgba(24, 24, 24, 0.4) 0%, transparent 100%);
+}
+
+.text-quantum-white {
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+@keyframes glitch {
+  0% {
+    clip-path: inset(40% 0 61% 0);
+    transform: translate(-2px, 2px);
+  }
+  20% {
+    clip-path: inset(92% 0 1% 0);
+    transform: translate(1px, -3px);
+  }
+  40% {
+    clip-path: inset(43% 0 1% 0);
+    transform: translate(-1px, 3px);
+  }
+  60% {
+    clip-path: inset(25% 0 58% 0);
+    transform: translate(3px, 1px);
+  }
+  80% {
+    clip-path: inset(54% 0 7% 0);
+    transform: translate(-2px, -2px);
+  }
+  100% {
+    clip-path: inset(58% 0 43% 0);
+    transform: translate(2px, 2px);
+  }
+}
+
+.animate-glitch {
+  animation: glitch 2s steps(100) infinite;
+}
+
+/* Quantum particle effects */
+@keyframes quantum-pulse {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.2) rotate(180deg);
+    opacity: 0.6;
+  }
+}
+
+.quantum-particle {
+  animation: quantum-pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Matrix rain animation */
+@keyframes matrix-rain {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.3;
+  }
+  90% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+.matrix-rain {
+  animation: matrix-rain 2s linear infinite;
+}
+
+/* Progress bar effects */
+@keyframes quantum-scan {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0.4;
+  }
+}
+
+.quantum-scan {
+  animation: quantum-scan 2s ease-in-out infinite;
+}
+
+/* Add radial gradient utility */
+.bg-gradient-radial {
+  background-image: radial-gradient(var(--tw-gradient-stops));
+}
