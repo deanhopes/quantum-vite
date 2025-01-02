@@ -1,5 +1,5 @@
-import React from 'react'
-import { InteractiveGrid } from './InteractiveGrid'
+import React from "react"
+import {InteractiveGrid} from "./InteractiveGrid"
 
 const Testimonials: React.FC = () => {
     return (
@@ -14,28 +14,23 @@ const Testimonials: React.FC = () => {
                 <div className='col-span-6 border-l border-white/10 pl-8'>
                     <div className='flex items-center gap-4 mb-8'>
                         <div className='w-2 h-2 bg-white/20 rotate-45'></div>
-                        <p className='font-input text-[8px]'>
-                            FIELD REPORTS
-                        </p>
+                        <p className='font-input text-[8px]'>FIELD REPORTS</p>
                         <div className='ml-auto text-[8px] font-input text-green-500/60'>
                             VERIFIED
                         </div>
                     </div>
                     <h2 className='animate-text font-[PPEditorialOld] text-white/95 text-[3.5vw] leading-[1.1] mb-16'>
-                        When we first introduced quantum-state
-                        manipulation in beverage form, they
-                        called us impossible.
+                        When we first introduced quantum-state manipulation in
+                        beverage form, they called us impossible.
                         <br />
                         <br />
-                        88 billion successful reality shifts
-                        later, they call us revolutionary.
+                        88 billion successful reality shifts later, they call us
+                        revolutionary.
                     </h2>
                     <div className='w-12 h-[1px] bg-white/10 my-4'></div>
                     <div className='flex items-center gap-2 text-[8px] font-input text-white/40'>
                         <div>HASH: 0xR4S5</div>
-                        <div className='ml-auto'>
-                            REV: 3.5.0
-                        </div>
+                        <div className='ml-auto'>REV: 3.5.0</div>
                     </div>
                 </div>
 
@@ -53,35 +48,28 @@ const Testimonials: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className='border border-white/5 bg-white/5 p-4'>
+                        <div className='border border-white/[0.04] bg-white/[0.01] p-8'>
                             <div className='flex mb-4'>
-                                {Array.from(
-                                    {length: 5},
-                                    (_, index) => (
-                                        <span
-                                            key={index}
-                                            className='text-white/80 text-xl'
-                                        >
-                                            ★
-                                        </span>
-                                    )
-                                )}
+                                {Array.from({length: 5}, (_, index) => (
+                                    <span
+                                        key={index}
+                                        className='text-white/80 text-xl'
+                                    >
+                                        ★
+                                    </span>
+                                ))}
                             </div>
                             <p className='font-sans text-[1rem] font-light leading-[1.4] text-white/60'>
-                                "Yesterday, I made the worst
-                                presentation of my career. Or I
-                                would have, if CTRL-Z hadn't
-                                helped me find the timeline
-                                where I remembered to actually
-                                save my slides."
+                                "Yesterday, I made the worst presentation of my
+                                career. Or I would have, if CTRL-Z hadn't helped
+                                me find the timeline where I remembered to
+                                actually save my slides."
                             </p>
                         </div>
                         <div className='w-12 h-[1px] bg-white/10 my-4'></div>
                         <div className='flex items-center gap-2 text-[8px] font-input text-white/40'>
                             <div>HASH: 0xT3U4</div>
-                            <div className='ml-auto'>
-                                REV: 1.2.3
-                            </div>
+                            <div className='ml-auto'>REV: 1.2.3</div>
                         </div>
                     </div>
 
@@ -97,34 +85,28 @@ const Testimonials: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className='border border-white/5 bg-white/5 p-4'>
+                        <div className='border border-white/[0.04] bg-white/[0.01] p-8'>
                             <div className='flex mb-4'>
-                                {Array.from(
-                                    {length: 5},
-                                    (_, index) => (
-                                        <span
-                                            key={index}
-                                            className='text-white/80 text-xl'
-                                        >
-                                            ★
-                                        </span>
-                                    )
-                                )}
+                                {Array.from({length: 5}, (_, index) => (
+                                    <span
+                                        key={index}
+                                        className='text-white/80 text-xl'
+                                    >
+                                        ★
+                                    </span>
+                                ))}
                             </div>
                             <p className='font-sans text-[1rem] font-light leading-[1.4] text-white/60'>
-                                "Lost my wedding ring at the
-                                beach. One sip of CTRL-Z and I
-                                was back in the timeline where I
-                                remembered to take it off before
-                                swimming. Life-saver!"
+                                "Lost my wedding ring at the beach. One sip of
+                                CTRL-Z and I was back in the timeline where I
+                                remembered to take it off before swimming.
+                                Life-saver!"
                             </p>
                         </div>
                         <div className='w-12 h-[1px] bg-white/10 my-4'></div>
                         <div className='flex items-center gap-2 text-[8px] font-input text-white/40'>
                             <div>HASH: 0xV2W3</div>
-                            <div className='ml-auto'>
-                                REV: 2.4.1
-                            </div>
+                            <div className='ml-auto'>REV: 2.4.1</div>
                         </div>
                     </div>
 
@@ -140,35 +122,28 @@ const Testimonials: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className='border border-white/5 bg-white/5 p-4'>
+                        <div className='border border-white/[0.04] bg-white/[0.01] p-8'>
                             <div className='flex mb-4'>
-                                {Array.from(
-                                    {length: 5},
-                                    (_, index) => (
-                                        <span
-                                            key={index}
-                                            className='text-white/80 text-xl'
-                                        >
-                                            ★
-                                        </span>
-                                    )
-                                )}
+                                {Array.from({length: 5}, (_, index) => (
+                                    <span
+                                        key={index}
+                                        className='text-white/80 text-xl'
+                                    >
+                                        ★
+                                    </span>
+                                ))}
                             </div>
                             <p className='font-sans text-[1rem] font-light leading-[1.4] text-white/60'>
-                                "Sent an email to the entire
-                                company instead of just my team.
-                                CTRL-Z helped me find the
-                                reality where I double-checked
-                                the recipient list. Worth every
-                                penny."
+                                "Sent an email to the entire company instead of
+                                just my team. CTRL-Z helped me find the reality
+                                where I double-checked the recipient list. Worth
+                                every penny."
                             </p>
                         </div>
                         <div className='w-12 h-[1px] bg-white/10 my-4'></div>
                         <div className='flex items-center gap-2 text-[8px] font-input text-white/40'>
                             <div>HASH: 0xX1Y2</div>
-                            <div className='ml-auto'>
-                                REV: 1.7.2
-                            </div>
+                            <div className='ml-auto'>REV: 1.7.2</div>
                         </div>
                     </div>
                 </div>
@@ -186,4 +161,4 @@ const Testimonials: React.FC = () => {
     )
 }
 
-export default Testimonials 
+export default Testimonials

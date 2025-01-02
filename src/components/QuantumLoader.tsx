@@ -81,9 +81,12 @@ export function QuantumLoader({children, onLoadComplete}: QuantumLoaderProps) {
                         if (progressTextRef.current) {
                             progressTextRef.current.textContent =
                                 LOADING_TEXTS[index]
-                            createEncryptionEffect(progressTextRef.current, () => {
-                                // Optional callback after encryption effect
-                            })
+                            createEncryptionEffect(
+                                progressTextRef.current,
+                                () => {
+                                    // Optional callback after encryption effect
+                                }
+                            )
                         }
                     },
                 }
@@ -130,7 +133,10 @@ export function QuantumLoader({children, onLoadComplete}: QuantumLoaderProps) {
                                     SYSTEM ID
                                 </div>
                                 <div className='font-input text-[10px] text-white/60'>
-                                    QT-{Math.floor(progress).toString().padStart(3, "0")}
+                                    QT-
+                                    {Math.floor(progress)
+                                        .toString()
+                                        .padStart(3, "0")}
                                 </div>
                             </div>
                         </div>

@@ -1,4 +1,4 @@
-import React from "react"
+import React, {useEffect} from "react"
 import {useMagneticEffect} from "../hooks/useMagneticEffect"
 import clsx from "clsx"
 
@@ -14,18 +14,32 @@ interface MagneticButtonProps
 export const MagneticButton: React.FC<MagneticButtonProps> = ({
     children,
     className,
-    strength = 0.5,
-    radius = 100,
-    ease = 0.3,
+    strength = 2,
+    radius = 200,
+    ease = 0.15,
     ...props
 }) => {
     const magneticRef = useMagneticEffect({strength, radius, ease})
+
+    // Debug mount
+    useEffect(() => {
+        if (magneticRef.current) {
+            console.log("MagneticButton mounted", {
+                strength,
+                radius,
+                ease,
+                element: magneticRef.current,
+            })
+        }
+    }, [strength, radius, ease])
 
     return (
         <button
             ref={magneticRef}
             className={clsx(
-                "relative inline-block transform-gpu will-change-transform",
+                "relative inline-block cursor-pointer select-none",
+                "transform-gpu will-change-transform transition-none",
+                "hover:z-10",
                 className
             )}
             {...props}

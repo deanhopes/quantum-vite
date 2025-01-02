@@ -29,6 +29,7 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
     const initiateBtnRef = useRef<HTMLDivElement>(null)
     const learnMoreBtnRef = useRef<HTMLDivElement>(null)
     const statsContainerRef = useRef<HTMLDivElement>(null)
+    const statusBadgeRef = useRef<HTMLDivElement>(null)
     const [dimensions, setDimensions] = useState({width: 0, height: 0})
     const [scrollState, setScrollState] = useState<ScrollContextType>({
         scrollProgress: 0,
@@ -99,26 +100,38 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
                 })
             }
 
-            // Hero section animation
-            if (heroTextRef.current && subTextRef.current) {
-                const heroTitle = new SplitType(heroTextRef.current, {
-                    types: "words,chars",
-                    tagName: "span",
-                })
-                const heroSubtitle = new SplitType(subTextRef.current, {
-                    types: "words,chars",
-                    tagName: "span",
-                })
+            // Get references to elements
+            const heroTitle = new SplitType(heroTextRef.current!, {
+                types: "words,chars",
+                tagName: "span",
+            })
 
-                // Set initial states
-                gsap.set([heroTextRef.current, subTextRef.current], {
-                    autoAlpha: 0,
-                })
-                gsap.set([initiateBtnRef.current, learnMoreBtnRef.current], {
-                    autoAlpha: 0,
-                })
+            // Set initial states
+            gsap.set([heroTextRef.current, statusBadgeRef.current], {
+                autoAlpha: 0,
+            })
+            gsap.set([initiateBtnRef.current, learnMoreBtnRef.current], {
+                autoAlpha: 0,
+            })
 
-                tl.fromTo(
+            // Animation sequence
+            tl
+                // Animate in status badge first
+                .fromTo(
+                    statusBadgeRef.current,
+                    {
+                        y: -20,
+                        opacity: 0,
+                    },
+                    {
+                        y: 0,
+                        opacity: 1,
+                        duration: 0.8,
+                        ease: "power2.out",
+                    }
+                )
+                // Then animate in the title
+                .fromTo(
                     heroTitle.chars,
                     {
                         y: 100,
@@ -132,74 +145,40 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
                         onStart: function () {
                             gsap.set(heroTextRef.current, {autoAlpha: 1})
                         },
-                    }
+                    },
+                    "-=0.4" // Overlap with previous animation
                 )
-                    .fromTo(
-                        heroSubtitle.chars,
-                        {
-                            y: 50,
-                            opacity: 0,
+                // Finally, animate in the buttons
+                .fromTo(
+                    [initiateBtnRef.current, learnMoreBtnRef.current],
+                    {
+                        scale: 0.9,
+                        opacity: 0,
+                        y: 20,
+                    },
+                    {
+                        scale: 1,
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.8,
+                        stagger: 0.1,
+                        ease: "back.out(1.2)",
+                        onStart: function () {
+                            gsap.set(
+                                [
+                                    initiateBtnRef.current,
+                                    learnMoreBtnRef.current,
+                                ],
+                                {autoAlpha: 1}
+                            )
                         },
-                        {
-                            y: 0,
-                            opacity: 1,
-                            duration: 0.8,
-                            stagger: 0.02,
-                            onStart: function () {
-                                gsap.set(subTextRef.current, {autoAlpha: 1})
-                            },
-                        },
-                        "-=0.5"
-                    )
-                    .fromTo(
-                        [initiateBtnRef.current, learnMoreBtnRef.current],
-                        {
-                            scale: 0.9,
-                            opacity: 0,
-                            y: 20,
-                        },
-                        {
-                            scale: 1,
-                            opacity: 1,
-                            y: 0,
-                            duration: 0.8,
-                            stagger: 0.1,
-                            ease: "back.out(1.2)",
-                            onStart: function () {
-                                gsap.set(
-                                    [
-                                        initiateBtnRef.current,
-                                        learnMoreBtnRef.current,
-                                    ],
-                                    {autoAlpha: 1}
-                                )
-                            },
-                        },
-                        "-=0.4"
-                    )
-                    .fromTo(
-                        [logoRef.current, magneticBtnRef.current],
-                        {
-                            y: -100,
-                            opacity: 0,
-                            scale: 0.8,
-                        },
-                        {
-                            y: 0,
-                            opacity: 1,
-                            scale: 1,
-                            duration: 1.2,
-                            stagger: 0.2,
-                            ease: "elastic.out(1, 0.75)",
-                        },
-                        "+=0.2"
-                    )
+                    },
+                    "-=0.4"
+                )
 
-                // Clean up split text
-                return () => {
-                    heroTitle.revert()
-                    heroSubtitle.revert()
-                }
+            // Clean up split text
+            return () => {
+                heroTitle.revert()
             }
         }
 
@@ -454,12 +433,12 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
                 {/* Canvas Container */}
                 <div
                     ref={canvasContainerRef}
-                    className='fixed inset-0 w-full h-full overflow-hidden bg-gradient-to-b from-black via-purple-900/20 to-black'
+                    className='fixed inset-0 w-full h-full overflow-hidden bg-black'
                 >
                     {dimensions.width > 0 && (
                         <Canvas
                             shadows
-                            camera={{position: [0, 1, 4], fov: 35}}
+                            camera={{position: [0, 1, 44], fov: 35}}
                             onCreated={(state) => {
                                 console.log("Canvas created", state)
                                 handleSceneReady()
@@ -468,22 +447,13 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
                                 position: "absolute",
                                 width: `${dimensions.width}px`,
                                 height: `${dimensions.height}px`,
-                                imageRendering: "pixelated",
                             }}
                             gl={{
-                                antialias: false,
+                                antialias: true,
                                 powerPreference: "high-performance",
                                 alpha: true,
                             }}
                         >
-                            <color
-                                attach='background'
-                                args={["#000000"]}
-                            />
-                            <fog
-                                attach='fog'
-                                args={["#000000", 5, 15]}
-                            />
                             <Suspense fallback={null}>
                                 <SceneContent />
                             </Suspense>
@@ -534,7 +504,10 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
                                     {/* Main Content */}
                                     <div className='col-span-12 text-center mt-[15vh]'>
                                         {/* Status Badge */}
-                                        <div className='inline-flex items-center gap-4 px-6 py-3 rounded-full bg-white/2 border border-white/10 backdrop-blur-sm'>
+                                        <div
+                                            ref={statusBadgeRef}
+                                            className='status-badge inline-flex items-center gap-4 px-6 py-3 rounded-full bg-white/2 border border-white/10 backdrop-blur-sm'
+                                        >
                                             <div className='w-1 h-1 bg-green-500/60 rounded-full animate-pulse'></div>
                                             <span className='font-input text-[10px] text-white/60'>
                                                 REALITY MANIPULATION SYSTEM
@@ -634,10 +607,10 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
 
                                         {/* Bottom Content */}
                                         <div className='flex justify-end'>
-                                            <div className='w-[600px]'>
+                                            <div className=''>
                                                 <div className='border-l border-white/10 pl-8'>
-                                                    <div className='flex items-center gap-4 mb-4'>
-                                                        <div className='w-1 h-1 bg-white/20 rotate-45'></div>
+                                                    <div className='flex items-center gap-2 mb-4'>
+                                                        <div className='w-1 h-1 bg-white/[40%] rotate-45'></div>
                                                         <p className='font-input text-white/40 text-[12px]'>
                                                             SYSTEM STATUS
                                                         </p>
@@ -645,7 +618,7 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
                                                             ACTIVE
                                                         </div>
                                                     </div>
-                                                    <div className='border border-white/5 bg-white/5 p-8'>
+                                                    <div className='border border-white/5 bg-white/[0.01] p-8'>
                                                         <div className='grid grid-cols-3 gap-12'>
                                                             <div className='space-y-2'>
                                                                 <div className='flex items-center gap-2'>
@@ -688,7 +661,7 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
                                     </div>
                                     {/* Panel Gradient */}
                                     <div
-                                        className='absolute inset-0 z-[5] pointer-events-none'
+                                        className='absolute inset-0 z-[-5] pointer-events-none'
                                         style={{
                                             background:
                                                 "linear-gradient(180deg, black 0%, transparent 15%, transparent 100%)",
@@ -716,7 +689,7 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
                                                     that exists in all states
                                                     until you take a sip.
                                                 </h2>
-                                                <div className='border border-white/5 bg-white/[0.02] p-8'>
+                                                <div className='border border-white/[0.04] bg-white/[0.01] p-8'>
                                                     <p
                                                         className='font-sans font-light text-white'
                                                         style={{opacity: 0.6}}
