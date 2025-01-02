@@ -1,6 +1,11 @@
-import React, {useRef, useState} from "react"
+import React, {useRef, useState, useMemo} from "react"
 import {useFrame, extend} from "@react-three/fiber"
-import {Float, SpotLight, useGLTF} from "@react-three/drei"
+import {
+    Float,
+    SpotLight,
+    useGLTF,
+    MeshTransmissionMaterial,
+} from "@react-three/drei"
 import * as THREE from "three"
 import {useControls} from "leva"
 import {useScrollContext} from "../types/ScrollContext"
@@ -148,7 +153,42 @@ export function QuantumGroup() {
             value: "#4499ff",
             label: "Light 2 Color",
         },
+        lightTransitionSpeed: {
+            value: 0.8,
+            min: 0.1,
+            max: 2.0,
+            step: 0.1,
+            label: "Light Transition Speed",
+        },
+        atmosphereIntensity: {
+            value: 1.2,
+            min: 0,
+            max: 3,
+            step: 0.1,
+            label: "Atmosphere Intensity",
+        },
+        pulseFrequency: {
+            value: 1.5,
+            min: 0.1,
+            max: 5,
+            step: 0.1,
+            label: "Pulse Frequency",
+        },
     })
+
+    // Memoized material configurations
+    const materialConfigs = useMemo(
+        () => ({
+            transmission: {
+                samples: 16,
+                transmission: 1,
+                thickness: 0.5,
+                roughness: 0.2,
+                chromaticAberration: 0.06,
+            },
+        }),
+        []
+    )
 
     // Debug mounting
     React.useEffect(() => {
@@ -156,29 +196,45 @@ export function QuantumGroup() {
         return () => console.log("QuantumGroup unmounted")
     }, [])
 
-    // Initial animation timeline
+    // Enhanced animation timeline
     React.useEffect(() => {
         if (!canRef.current || !groupRef.current) return
 
-        const tl = gsap.timeline()
+        const tl = gsap.timeline({
+            defaults: {ease: "power3.inOut"},
+        })
+
+        // More sophisticated entrance animation
         tl.fromTo(
             groupRef.current.position,
-            {y: -2},
-            {y: 0, duration: 1.5, ease: "power2.out"}
+            {y: -4, x: -2},
+            {y: 0, x: 0, duration: 2, ease: "elastic.out(1, 0.75)"}
         )
-        tl.fromTo(
-            canRef.current.scale,
-            {x: 0, y: 0, z: 0},
-            {x: 1, y: 1, z: 1, duration: 1.2, ease: "back.out(1.7)"},
-            "-=1.2"
-        )
+            .fromTo(
+                canRef.current.scale,
+                {x: 0, y: 0, z: 0},
+                {
+                    x: 1,
+                    y: 1,
+                    z: 1,
+                    duration: 1.5,
+                    ease: "back.out(2)",
+                    onComplete: () => setIsReady(true),
+                },
+                "-=1.5"
+            )
+            .fromTo(
+                canRef.current.rotation,
+                {y: -Math.PI * 2},
+                {y: 0, duration: 2, ease: "power2.out"},
+                "-=1.2"
+            )
 
-        // Show sphere initially
         setSphereVisible(true)
-        setIsReady(true)
 
         return () => {
             tl.kill()
+            return undefined
         }
     }, [])
 
@@ -220,27 +276,24 @@ export function QuantumGroup() {
         const deltaTime = state.clock.getDelta()
         const time = state.clock.elapsedTime
 
-        // Update all material uniforms consistently
-        if (materialRef.current) {
-            materialRef.current.uniforms.uTime.value = time
-            materialRef.current.uniforms.uScrollProgress.value =
-                scrollProgress * values.scrollEffect
-        }
-        if (atmosphereMaterialRef.current) {
-            atmosphereMaterialRef.current.uniforms.uTime.value = time
-            atmosphereMaterialRef.current.uniforms.uScrollProgress.value =
-                scrollProgress * values.scrollEffect
-        }
-        if (coreMaterialRef.current) {
-            coreMaterialRef.current.uniforms.uTime.value = time
-            coreMaterialRef.current.uniforms.uScrollProgress.value =
-                scrollProgress * values.scrollEffect
-        }
-        if (glowMaterialRef.current) {
-            glowMaterialRef.current.uniforms.uTime.value = time
-            glowMaterialRef.current.uniforms.uScrollProgress.value =
-                scrollProgress * values.scrollEffect
-        }
+        // Dynamic material updates
+        const materials = [
+            materialRef,
+            atmosphereMaterialRef,
+            coreMaterialRef,
+            glowMaterialRef,
+        ]
+        materials.forEach((material) => {
+            if (material.current?.uniforms) {
+                material.current.uniforms.uTime.value = time
+                material.current.uniforms.uScrollProgress.value =
+                    scrollProgress * values.scrollEffect
+                if (material.current.uniforms.uAtmosphereIntensity) {
+                    material.current.uniforms.uAtmosphereIntensity.value =
+                        values.atmosphereIntensity
+                }
+            }
+        })
 
         const lerpFactor = deltaTime * 1.0
 
@@ -379,39 +432,48 @@ export function QuantumGroup() {
                 lerpFactor * transitionSpeed
             )
         } else {
-            // More dynamic idle animation
-            const idlePosition = new THREE.Vector3(
-                Math.sin(time * 0.5) * 0.1,
-                Math.sin(time) * 0.15 + Math.sin(time * 0.5) * 0.1,
-                Math.sin(time * 0.7) * 0.1
-            )
-            const idleRotation = new THREE.Euler(
-                Math.sin(time * 0.5) * 0.1,
-                time * 0.2 + Math.sin(time * 0.3) * 0.1,
-                Math.sin(time * 0.7) * 0.05
-            )
-            const idleScale = new THREE.Vector3().setScalar(
-                1 + Math.sin(time * 0.8) * 0.05
-            )
+            // Enhanced idle animation with dynamic influences
+            if (!isHorizontalSection) {
+                const pulseInfluence = Math.sin(time * values.pulseFrequency)
+                const windEffect = Math.sin(time * 0.3) * Math.cos(time * 0.7)
 
-            const transitionSpeed = stateChanged ? 0.1 : 0.2
-            lerpV3(
-                canRef.current.position,
-                idlePosition,
-                lerpFactor * transitionSpeed
-            )
+                const idlePosition = new THREE.Vector3(
+                    Math.sin(time * 0.5) * 0.15 + windEffect * 0.05,
+                    Math.sin(time) * 0.2 + Math.sin(time * 0.5) * 0.15,
+                    Math.sin(time * 0.7) * 0.15 + pulseInfluence * 0.05
+                )
 
-            const idleQuat = new THREE.Quaternion().setFromEuler(idleRotation)
-            const currentQuat = new THREE.Quaternion()
-            currentQuat.setFromEuler(canRef.current.rotation)
-            slerpQ(currentQuat, idleQuat, lerpFactor * transitionSpeed)
-            canRef.current.setRotationFromQuaternion(currentQuat)
+                const idleRotation = new THREE.Euler(
+                    Math.sin(time * 0.5) * 0.15,
+                    time * 0.15 + Math.sin(time * 0.3) * 0.2,
+                    Math.sin(time * 0.7) * 0.1 * (1 + pulseInfluence * 0.2)
+                )
 
-            lerpV3(
-                canRef.current.scale,
-                idleScale,
-                lerpFactor * transitionSpeed
-            )
+                const breathingScale =
+                    1 + Math.sin(time * 0.8) * 0.08 * (1 + pulseInfluence * 0.1)
+                const idleScale = new THREE.Vector3().setScalar(breathingScale)
+
+                const transitionSpeed = stateChanged ? 0.1 : 0.2
+                lerpV3(
+                    canRef.current.position,
+                    idlePosition,
+                    lerpFactor * transitionSpeed
+                )
+
+                const idleQuat = new THREE.Quaternion().setFromEuler(
+                    idleRotation
+                )
+                const currentQuat = new THREE.Quaternion()
+                currentQuat.setFromEuler(canRef.current.rotation)
+                slerpQ(currentQuat, idleQuat, lerpFactor * transitionSpeed)
+                canRef.current.setRotationFromQuaternion(currentQuat)
+
+                lerpV3(
+                    canRef.current.scale,
+                    idleScale,
+                    lerpFactor * transitionSpeed
+                )
+            }
         }
 
         // Smoother position clamping
@@ -436,9 +498,9 @@ export function QuantumGroup() {
         >
             <Float
                 speed={1.5}
-                rotationIntensity={0.5}
-                floatIntensity={0.5}
-                floatingRange={[-0.05, 0.05]}
+                rotationIntensity={0.6}
+                floatIntensity={0.6}
+                floatingRange={[-0.1, 0.1]}
             >
                 <Model canRef={canRef} />
             </Float>
@@ -448,63 +510,108 @@ export function QuantumGroup() {
                 position={[0, sphereAnimation.startY, 0]}
                 visible={sphereVisible}
             >
-                {/* Main atmospheric sphere */}
-                <mesh scale={0.8}>
-                    <sphereGeometry args={[4, 256, 256]} />
+                {/* Enhanced atmospheric sphere */}
+                <mesh scale={1}>
+                    <sphereGeometry args={[2.86, 256, 256]} />
                     <pS1Material
                         ref={atmosphereMaterialRef}
                         transparent={true}
                         depthWrite={true}
                         depthTest={true}
-                        blending={THREE.NormalBlending}
+                        blending={THREE.AdditiveBlending}
+                    />
+                </mesh>
+
+                {/* Inner glow sphere */}
+                <mesh scale={0.75}>
+                    <sphereGeometry args={[3.8, 256, 256]} />
+                    <MeshTransmissionMaterial
+                        {...materialConfigs.transmission}
                     />
                 </mesh>
             </group>
 
-            <ambientLight intensity={values.ambientIntensity} />
+            {/* Enhanced lighting setup */}
+            <ambientLight intensity={values.ambientIntensity * 0.1} />
 
-            {/* Key Light */}
-            <SpotLight
-                position={[3, 4, 2]}
-                angle={0.3}
-                penumbra={0.9}
-                intensity={3.5}
-                distance={8}
-                castShadow
-                shadow-bias={-0.0001}
-                shadow-mapSize={[1080, 1080]}
-                color='#b1e1ff'
-            />
+            {/* Dynamic lighting system */}
+            {useFrame(({clock}) => {
+                const time = clock.elapsedTime
+                return (
+                    <>
+                        {/* Dynamic key light */}
+                        <SpotLight
+                            position={[3, 4, 2]}
+                            angle={0.3}
+                            penumbra={0.9}
+                            intensity={
+                                3.5 *
+                                (1 +
+                                    Math.sin(
+                                        time * values.lightTransitionSpeed
+                                    ) *
+                                        0.2)
+                            }
+                            distance={8}
+                            castShadow
+                            shadow-bias={-0.0001}
+                            shadow-mapSize={[1080, 1080]}
+                            color='#b1e1ff'
+                        />
 
-            {/* Fill Light */}
-            <SpotLight
-                position={[-4, 2, -2]}
-                angle={0.4}
-                penumbra={1}
-                intensity={2}
-                distance={10}
-                color='#4499ff'
-            />
+                        {/* Animated fill light */}
+                        <SpotLight
+                            position={[-4, 2, -2]}
+                            angle={0.4}
+                            penumbra={1}
+                            intensity={
+                                2 *
+                                (1 +
+                                    Math.sin(
+                                        time * values.lightTransitionSpeed * 0.7
+                                    ) *
+                                        0.15)
+                            }
+                            distance={10}
+                            color='#4499ff'
+                        />
 
-            {/* Rim Light */}
-            <SpotLight
-                position={[-2, 3, 4]}
-                angle={0.3}
-                penumbra={0.8}
-                intensity={1.5}
-                distance={8}
-                color='#ffffff'
-            />
+                        {/* Dynamic rim light */}
+                        <SpotLight
+                            position={[-2, 3, 4]}
+                            angle={0.3}
+                            penumbra={0.8}
+                            intensity={
+                                1.5 *
+                                (1 +
+                                    Math.sin(
+                                        time * values.lightTransitionSpeed * 1.2
+                                    ) *
+                                        0.1)
+                            }
+                            distance={8}
+                            color='#ffffff'
+                        />
 
-            {/* Ground Fill */}
-            <SpotLight
-                position={[0, -3, 0]}
-                angle={0.8}
-                penumbra={1}
-                intensity={0.5}
-                distance={5}
-                color='#4466ff'
-            />
+                        {/* Atmospheric ground fill */}
+                        <SpotLight
+                            position={[0, -3, 0]}
+                            angle={0.8}
+                            penumbra={1}
+                            intensity={
+                                0.5 *
+                                (1 +
+                                    Math.sin(
+                                        time * values.lightTransitionSpeed * 0.5
+                                    ) *
+                                        0.2)
+                            }
+                            distance={5}
+                            color='#4466ff'
+                        />
+                    </>
+                )
+            })}
         </group>
     )
 }
