@@ -1,38 +1,62 @@
-import { useCallback } from "react";
+import {useCallback, useMemo} from "react"
+
+interface EncryptionOptions {
+    speed?: number
+    glitchChars?: string
+    smoothness?: number
+}
 
 export function useEncryptionEffect() {
-  const createEncryptionEffect = useCallback(
-    (element: HTMLDivElement, onComplete: () => void) => {
-      const originalText = element.textContent || "";
-      const glitchChars = "⌭⎔⌬⌇⍡⌸⌹⌺⌻⌼⌽⌾⌿⍀⍁⍂⍃⍄⍅⍆⍇⍈⍉⍊⍋⍌⍍⍎⍏⍐⍑⍒⍓⍔⍕⍖⍗⍘⍙⍚⍛⍜⍝⍞⍟⍠⍡⍢⍣⍤⍥⍦⍧⍨⍩⍪⍫⍬⍭⍮⍯⍰⍱⍲⍳⍴⍵⍶⍷⍸⍹⍺⎈⎌⎍⎎⎏⎐⎑⎒⎓⎔⎕";
-      const encryptionSpeed = Math.random() * 15 + 10;
-      let iterations = 0;
+    const defaultGlitchChars = useMemo(() => "!<>-_\\/[]{}—=+*^?#_$%&@", [])
 
-      const interval = setInterval(() => {
-        element.textContent = originalText
-          .split("")
-          .map((char, index) => {
-            if (index < iterations) return originalText[index];
-            if (Math.random() > 0.7) {
-              return glitchChars[Math.floor(Math.random() * glitchChars.length)];
+    const createEncryptionEffect = useCallback(
+        (
+            element: HTMLDivElement,
+            onComplete: () => void,
+            options: EncryptionOptions = {}
+        ) => {
+            const {
+                speed = 1,
+                glitchChars = defaultGlitchChars,
+                smoothness = 0.5,
+            } = options
+
+            const originalText = element.textContent || ""
+            let iterations = 0
+            let animationFrameId: number
+
+            const animate = () => {
+                element.textContent = originalText
+                    .split("")
+                    .map((_, index) => {
+                        if (index < iterations) return originalText[index]
+                        return glitchChars[
+                            Math.floor(Math.random() * glitchChars.length)
+                        ]
+                    })
+                    .join("")
+
+                iterations += smoothness * speed
+
+                if (iterations >= originalText.length) {
+                    element.textContent = originalText
+                    onComplete()
+                    return
+                }
+
+                animationFrameId = requestAnimationFrame(animate)
             }
-            return char;
-          })
-          .join("");
 
-        iterations += 1 / 2;
+            animationFrameId = requestAnimationFrame(animate)
 
-        if (iterations >= originalText.length) {
-          clearInterval(interval);
-          element.textContent = originalText;
-          onComplete();
-        }
-      }, encryptionSpeed);
+            return () => {
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId)
+                }
+            }
+        },
+        []
+    )
 
-      return () => clearInterval(interval);
-    },
-    []
-  );
-
-  return { createEncryptionEffect };
+    return {createEncryptionEffect}
 }

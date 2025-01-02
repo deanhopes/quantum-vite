@@ -1,0 +1,13 @@
+@keyframes titleGradient {
+    0% {
+        background-position: 200% center;
+    }
+    100% {
+        background-position: -200% center;
+    }
+}
+
+.animate-title-gradient {
+    animation: titleGradient 8s linear infinite;
+    background-size: 400% auto;
+} 
