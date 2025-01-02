@@ -23,9 +23,6 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
     const containerRef = useRef<HTMLDivElement>(null)
     const canvasContainerRef = useRef<HTMLDivElement>(null)
     const heroTextRef = useRef<HTMLHeadingElement>(null)
-    const subTextRef = useRef<HTMLHeadingElement>(null)
-    const logoRef = useRef<HTMLDivElement>(null)
-    const magneticBtnRef = useRef<HTMLDivElement>(null)
     const initiateBtnRef = useRef<HTMLDivElement>(null)
     const learnMoreBtnRef = useRef<HTMLDivElement>(null)
     const statsContainerRef = useRef<HTMLDivElement>(null)
@@ -36,7 +33,6 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
         isHorizontalSection: false,
     })
     const [isSceneReady, setIsSceneReady] = useState(false)
-    const [isVisible, setIsVisible] = useState(false)
 
     // Handle canvas dimensions
     useEffect(() => {
@@ -85,8 +81,6 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
 
         // Start animations after a short delay
         const startAnimations = () => {
-            setIsVisible(true)
-
             // Create main timeline
             const tl = gsap.timeline({
                 defaults: {ease: "power3.out"},
@@ -223,7 +217,7 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
         })
 
         // Set up scroll-triggered text animations for each panel separately
-        panels.forEach((panel, index) => {
+        panels.forEach((panel) => {
             // Only animate non-mono font text elements
             const textElements = panel.querySelectorAll(
                 ".animate-text:not(.technical-readout)"

@@ -3,7 +3,6 @@ import gsap from "gsap"
 import {useEncryptionEffect} from "../hooks/useEncryptionEffect"
 
 interface QuantumLoaderProps {
-    children?: React.ReactNode
     onLoadComplete?: () => void
 }
 
@@ -39,7 +38,7 @@ const SYSTEM_METRICS = [
     },
 ] as const
 
-export function QuantumLoader({children, onLoadComplete}: QuantumLoaderProps) {
+export function QuantumLoader({onLoadComplete}: QuantumLoaderProps) {
     const [progress, setProgress] = useState(0)
     const [currentStep, setCurrentStep] = useState(0)
     const [isUnmounting, setIsUnmounting] = useState(false)

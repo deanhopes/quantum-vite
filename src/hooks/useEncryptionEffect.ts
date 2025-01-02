@@ -25,10 +25,10 @@ export function useEncryptionEffect() {
             let iterations = 0
             let animationFrameId: number
 
-            const animate = (timestamp: number) => {
+            const animate = () => {
                 element.textContent = originalText
                     .split("")
-                    .map((char, index) => {
+                    .map((_, index) => {
                         if (index < iterations) return originalText[index]
                         return glitchChars[
                             Math.floor(Math.random() * glitchChars.length)
