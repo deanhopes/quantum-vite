@@ -436,8 +436,8 @@ export function QuantumGroup() {
         >
             <Float
                 speed={1.5}
-                rotationIntensity={0.1}
-                floatIntensity={0.3}
+                rotationIntensity={0.5}
+                floatIntensity={0.5}
                 floatingRange={[-0.05, 0.05]}
             >
                 <Model canRef={canRef} />
@@ -449,21 +449,14 @@ export function QuantumGroup() {
                 visible={sphereVisible}
             >
                 {/* Main atmospheric sphere */}
-                <mesh scale={1.2}>
-                    <sphereGeometry args={[2, 128, 128]} />
+                <mesh scale={0.8}>
+                    <sphereGeometry args={[4, 256, 256]} />
                     <pS1Material
                         ref={atmosphereMaterialRef}
                         transparent={true}
                         depthWrite={true}
                         depthTest={true}
                         blending={THREE.NormalBlending}
-                        uniforms={{
-                            uTime: {value: 0},
-                            uGlitchIntensity: {value: values.glitchIntensity},
-                            uScrollProgress: {
-                                value: scrollProgress * values.scrollEffect,
-                            },
-                        }}
                     />
                 </mesh>
             </group>
@@ -479,7 +472,7 @@ export function QuantumGroup() {
                 distance={8}
                 castShadow
                 shadow-bias={-0.0001}
-                shadow-mapSize={[2048, 2048]}
+                shadow-mapSize={[1080, 1080]}
                 color='#b1e1ff'
             />
 
