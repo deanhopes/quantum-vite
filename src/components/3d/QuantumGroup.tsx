@@ -30,12 +30,17 @@ interface ModelProps {
 }
 
 function Model({canRef}: ModelProps) {
-    const {scene} = useGLTF("/src/assets/futuristic-drinking-can.glb")
+    const {scene} = useGLTF("/src/assets/can.glb")
 
     React.useEffect(() => {
         if (scene) {
+            // Method 1: Scale the scene directly
+            scene.scale.set(4, 4, 4)
+
+            // Method 2: Scale each mesh
             scene.traverse((child) => {
                 if (child instanceof THREE.Mesh) {
+                    child.scale.set(16, 16, 16)
                     child.castShadow = true
                     child.receiveShadow = true
                 }
@@ -47,9 +52,9 @@ function Model({canRef}: ModelProps) {
         <primitive
             object={scene}
             ref={canRef}
-            scale={[0.5, 0.5, 0.5]}
-            position={[0, 0, 0]}
-            rotation={[0, 0, 0]}
+            scale={[4, 4, 4]}
+            position={[0, 0, 1]}
+            rotation={[0, Math.PI * 3, 0]}
         />
     )
 }
@@ -209,26 +214,19 @@ export function QuantumGroup() {
             groupRef.current.position,
             {y: -4, x: -2},
             {y: 0, x: 0, duration: 2, ease: "elastic.out(1, 0.75)"}
+        ).fromTo(
+            canRef.current.scale,
+            {x: 0, y: 0, z: 0},
+            {
+                x: 1,
+                y: 1,
+                z: 1,
+                duration: 1.5,
+                ease: "back.out(2)",
+                onComplete: () => setIsReady(true),
+            },
+            "-=1.5"
         )
-            .fromTo(
-                canRef.current.scale,
-                {x: 0, y: 0, z: 0},
-                {
-                    x: 1,
-                    y: 1,
-                    z: 1,
-                    duration: 1.5,
-                    ease: "back.out(2)",
-                    onComplete: () => setIsReady(true),
-                },
-                "-=1.5"
-            )
-            .fromTo(
-                canRef.current.rotation,
-                {y: -Math.PI * 2},
-                {y: 0, duration: 2, ease: "power2.out"},
-                "-=1.2"
-            )
 
         setSphereVisible(true)
 
@@ -355,47 +353,47 @@ export function QuantumGroup() {
 
             // Section 1: Dramatic rise and spin
             if (section1Progress > 0) {
-                targetY = THREE.MathUtils.lerp(0, 1.5, section1Progress)
-                targetZ = THREE.MathUtils.lerp(0, -1, section1Progress)
-                targetY += Math.sin(time * 3) * 0.1 * (1 - section1Progress)
+                targetY = THREE.MathUtils.lerp(0, 1.2, section1Progress)
+                targetZ = THREE.MathUtils.lerp(0, -0.8, section1Progress)
+                targetY += Math.sin(time * 3) * 0.08 * (1 - section1Progress)
             }
 
             // Section 2: Sweeping side movement
             if (section2Progress > 0) {
-                targetX = THREE.MathUtils.lerp(0, -3.0, section2Progress)
+                targetX = THREE.MathUtils.lerp(0, -2.0, section2Progress)
                 targetY =
-                    THREE.MathUtils.lerp(targetY, 0.8, section2Progress) +
-                    Math.sin(section2Progress * Math.PI) * 0.5
+                    THREE.MathUtils.lerp(targetY, 0.6, section2Progress) +
+                    Math.sin(section2Progress * Math.PI) * 0.4
                 targetZ =
-                    THREE.MathUtils.lerp(targetZ, 0.5, section2Progress) +
-                    Math.cos(section2Progress * Math.PI) * 0.3
+                    THREE.MathUtils.lerp(targetZ, 0.4, section2Progress) +
+                    Math.cos(section2Progress * Math.PI) * 0.2
             }
 
             // Section 3: Dynamic final positioning
             if (section3Progress > 0) {
-                targetX = THREE.MathUtils.lerp(targetX, -1.5, section3Progress)
-                targetY = THREE.MathUtils.lerp(targetY, 1.2, section3Progress)
-                targetZ = THREE.MathUtils.lerp(targetZ, -0.5, section3Progress)
+                targetX = THREE.MathUtils.lerp(targetX, -1.2, section3Progress)
+                targetY = THREE.MathUtils.lerp(targetY, 0.8, section3Progress)
+                targetZ = THREE.MathUtils.lerp(targetZ, -0.3, section3Progress)
                 // Add floating motion in final position
-                targetY += Math.sin(time * 2) * 0.1 * section3Progress
-                targetX += Math.sin(time * 1.5) * 0.1 * section3Progress
+                targetY += Math.sin(time * 2) * 0.08 * section3Progress
+                targetX += Math.sin(time * 1.5) * 0.08 * section3Progress
             }
 
             // Add continuous motion
-            targetY += Math.sin(time * 2) * 0.05
-            targetZ += Math.sin(time * 1.5) * 0.05
+            targetY += Math.sin(time * 2) * 0.04
+            targetZ += Math.sin(time * 1.5) * 0.04
 
             // Wider position ranges but still clamped
-            targetX = THREE.MathUtils.clamp(targetX, -3.5, 1)
-            targetY = THREE.MathUtils.clamp(targetY, -0.5, 2)
-            targetZ = THREE.MathUtils.clamp(targetZ, -1.5, 1)
+            targetX = THREE.MathUtils.clamp(targetX, -2.2, 1)
+            targetY = THREE.MathUtils.clamp(targetY, -0.4, 1.5)
+            targetZ = THREE.MathUtils.clamp(targetZ, -1.0, 1)
 
             transitionState.targetPosition.set(targetX, targetY, targetZ)
 
             // More dramatic rotation
             const targetEuler = new THREE.Euler(
                 Math.sin(time) * 0.2 + section2Progress * Math.PI * 0.2,
-                THREE.MathUtils.lerp(0, Math.PI * 3, section1Progress) +
+                THREE.MathUtils.lerp(0, Math.PI * 12, section1Progress) +
                     Math.sin(time * 0.5) * 0.3,
                 Math.sin(time * 0.7) * 0.15 * (1 - section3Progress)
             )
@@ -617,4 +615,4 @@ export function QuantumGroup() {
 }
 
 // Preload the model
-useGLTF.preload("/src/assets/futuristic-drinking-can.glb")
+useGLTF.preload("/src/assets/can.glb")
