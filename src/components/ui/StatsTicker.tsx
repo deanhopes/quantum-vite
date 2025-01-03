@@ -80,7 +80,7 @@ const StatsTicker = () => {
     }, [])
 
     return (
-        <div className=' bottom-0 left-0 w-screen overflow-hidden bg-black/20 backdrop-blur-sm border-t border-white/5'>
+        <div className=' bottom-0 left-0 w-screen overflow-hidden bg-black/20 backdrop-blur-sm border-t border-white/5 z-10'>
             <div
                 ref={containerRef}
                 className='flex gap-4 py-8'

@@ -77,13 +77,23 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
 
     // Handle initial animations
     useEffect(() => {
-        if (!isSceneReady || isLoading) return
+        console.log("Animation useEffect triggered:", {isSceneReady, isLoading})
+        if (!isSceneReady || isLoading) {
+            console.log("Animation conditions not met:", {
+                isSceneReady,
+                isLoading,
+            })
+            return
+        }
 
         // Start animations after a short delay
         const startAnimations = () => {
+            console.log("Starting animations")
             // Create main timeline
             const tl = gsap.timeline({
                 defaults: {ease: "power3.out"},
+                onStart: () => console.log("Timeline started"),
+                onComplete: () => console.log("Timeline completed"),
             })
 
             // Set parent container to visible first
@@ -91,6 +101,8 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
                 tl.to(containerRef.current, {
                     autoAlpha: 1,
                     duration: 0.5,
+                    onStart: () => console.log("Container becoming visible"),
+                    onComplete: () => console.log("Container visible"),
                 })
             }
 
@@ -103,9 +115,13 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
             // Set initial states
             gsap.set([heroTextRef.current, statusBadgeRef.current], {
                 autoAlpha: 0,
+                clearProps: "all", // Clear any previous GSAP transforms
             })
             gsap.set([initiateBtnRef.current, learnMoreBtnRef.current], {
-                autoAlpha: 0,
+                opacity: 0,
+                visibility: "visible",
+                y: 20,
+                scale: 0.9,
             })
 
             // Animation sequence
@@ -122,6 +138,10 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
                         opacity: 1,
                         duration: 0.8,
                         ease: "power2.out",
+                        onStart: () =>
+                            console.log("Status badge animation started"),
+                        onComplete: () =>
+                            console.log("Status badge animation completed"),
                     }
                 )
                 // Then animate in the title
@@ -143,32 +163,15 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
                     "-=0.4" // Overlap with previous animation
                 )
                 // Finally, animate in the buttons
-                .fromTo(
-                    [initiateBtnRef.current, learnMoreBtnRef.current],
-                    {
-                        scale: 0.9,
-                        opacity: 0,
-                        y: 20,
-                    },
-                    {
-                        scale: 1,
-                        opacity: 1,
-                        y: 0,
-                        duration: 0.8,
-                        stagger: 0.1,
-                        ease: "back.out(1.2)",
-                        onStart: function () {
-                            gsap.set(
-                                [
-                                    initiateBtnRef.current,
-                                    learnMoreBtnRef.current,
-                                ],
-                                {autoAlpha: 1}
-                            )
-                        },
-                    },
-                    "-=0.4"
-                )
+                .to([initiateBtnRef.current, learnMoreBtnRef.current], {
+                    y: 0,
+                    scale: 1,
+                    opacity: 1,
+                    duration: 0.6,
+                    stagger: 0.1,
+                    ease: "power3.out",
+                    clearProps: "transform,scale",
+                }, "-=0.4")
 
             // Clean up split text
             return () => {
@@ -496,14 +499,14 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
                                     </div>
 
                                     {/* Main Content */}
-                                    <div className='col-span-12 text-center mt-[15vh]'>
+                                    <div className='col-span-12 text-center '>
                                         {/* Status Badge */}
                                         <div
                                             ref={statusBadgeRef}
-                                            className='status-badge inline-flex items-center gap-4 px-6 py-3 rounded-full bg-white/2 border border-white/10 backdrop-blur-sm'
+                                            className='status-badge inline-flex items-center gap-4 px-6 py-3 rounded-full bg-white/2 border border-white/10 backdrop-blur-[8px] relative z-50'
                                         >
-                                            <div className='w-1 h-1 bg-green-500/60 rounded-full animate-pulse'></div>
-                                            <span className='font-input text-[10px] text-white/60'>
+                                            <div className='w-1 h-1 bg-green-500/80 rounded-full animate-pulse'></div>
+                                            <span className='font-input text-[10px] text-white/80'>
                                                 REALITY MANIPULATION SYSTEM
                                                 ONLINE
                                             </span>
@@ -512,7 +515,7 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
                                         {/* Main Title */}
                                         <h1
                                             ref={heroTextRef}
-                                            className='font-[PPEditorialOld] text-white/95 text-[10vw] leading-[1.05] tracking-[-0.03em] mb-8 will-change-transform max-w-[80%] mx-auto'
+                                            className='font-[PPEditorialOld] text-white/95 text-[6vw] leading-[1.05] tracking-[-0.03em] will-change-transform max-w-[80%] mx-auto'
                                         >
                                             One sip to access
                                             <br />
@@ -524,7 +527,7 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
                                         </h1>
 
                                         {/* CTA Buttons */}
-                                        <div className='flex gap-8 justify-center mb-16'>
+                                        <div className='flex gap-8 justify-center mt-8 '>
                                             <div ref={initiateBtnRef}>
                                                 <MagneticButton
                                                     className='cta-button hover-highlight group relative px-8 py-4'
@@ -549,14 +552,9 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
                                             </div>
                                         </div>
                                     </div>
-
-                                    {/* Stats Ticker - Now positioned at bottom */}
-                                    <div className='col-span-12 mt-auto'>
-                                        <StatsTicker />
-                                    </div>
                                 </div>
                             </div>
-
+                            <StatsTicker />
                             {/* Gradient Overlay */}
                             <div
                                 className='absolute inset-0 z-[5] pointer-events-none'
