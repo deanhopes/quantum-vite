@@ -67,11 +67,6 @@ export function QuantumGroup() {
     const materialRef = useRef<PS1MaterialType>(null)
     const sphereRef = useRef<THREE.Group>(null)
     const [sphereVisible, setSphereVisible] = useState(false)
-    const [sphereAnimation] = useState({
-        startY: -8,
-        targetY: -4,
-        progress: 0,
-    })
     const atmosphereMaterialRef = useRef<PS1MaterialType>(null)
     const coreMaterialRef = useRef<PS1MaterialType>(null)
     const glowMaterialRef = useRef<PS1MaterialType>(null)

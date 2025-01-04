@@ -20,7 +20,7 @@ function App() {
 
     return (
         <>
-            <Leva />
+            <Leva hidden />
             <main className='relative'>
                 {isLoading && (
                     <QuantumLoader onLoadComplete={() => setIsLoading(false)} />
