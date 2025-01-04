@@ -1,5 +1,5 @@
-import React, {useEffect} from "react"
-import {useMagneticEffect} from "../hooks/useMagneticEffect"
+import React, { useEffect } from "react"
+import { useMagneticEffect } from "../hooks/useMagneticEffect"
 import clsx from "clsx"
 
 interface MagneticButtonProps
@@ -19,7 +19,7 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
     ease = 0.15,
     ...props
 }) => {
-    const magneticRef = useMagneticEffect({strength, radius, ease})
+    const magneticRef = useMagneticEffect({ strength, radius, ease })
 
     // Debug mount
     useEffect(() => {

@@ -1,6 +1,6 @@
-import {useEffect, useRef, useState} from "react"
+import { useEffect, useRef, useState } from "react"
 import gsap from "gsap"
-import {useEncryptionEffect} from "../hooks/useEncryptionEffect"
+import { useEncryptionEffect } from "../hooks/useEncryptionEffect"
 
 interface QuantumLoaderProps {
     onLoadComplete?: () => void
@@ -38,20 +38,21 @@ const SYSTEM_METRICS = [
     },
 ] as const
 
-export function QuantumLoader({onLoadComplete}: QuantumLoaderProps) {
+export function QuantumLoader({ onLoadComplete }: QuantumLoaderProps) {
     const [progress, setProgress] = useState(0)
     const [currentStep, setCurrentStep] = useState(0)
     const [isUnmounting, setIsUnmounting] = useState(false)
     const containerRef = useRef<HTMLDivElement>(null)
     const progressTextRef = useRef<HTMLDivElement>(null)
-    const {createEncryptionEffect} = useEncryptionEffect()
+    const backgroundRef = useRef<HTMLDivElement>(null)
+    const { createEncryptionEffect } = useEncryptionEffect()
 
     useEffect(() => {
-        if (!containerRef.current || !progressTextRef.current) return
+        if (!containerRef.current || !progressTextRef.current || !backgroundRef.current) return
 
         const tl = gsap.timeline({
             onComplete: () => {
-                const fadeOut = gsap.timeline({
+                const revealTl = gsap.timeline({
                     onComplete: () => {
                         setIsUnmounting(true)
                         setTimeout(() => {
@@ -60,11 +61,23 @@ export function QuantumLoader({onLoadComplete}: QuantumLoaderProps) {
                     },
                 })
 
-                fadeOut.to(containerRef.current, {
-                    opacity: 0,
-                    duration: 0.5,
-                    ease: "power2.inOut",
-                })
+                // Clip reveal animation
+                revealTl
+                    .to(backgroundRef.current, {
+                        clipPath: "polygon(0% 0%, 100% 0%, 85% 100%, -15% 100%)",
+                        duration: 1.2,
+                        ease: "power3.inOut",
+                    })
+                    .to(backgroundRef.current, {
+                        clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)",
+                        duration: 1.2,
+                        ease: "power3.inOut",
+                    })
+                    .to(containerRef.current, {
+                        opacity: 0,
+                        duration: 0.6,
+                        ease: "power2.inOut",
+                    }, "-=0.8") // Overlap more with the clip animation
             },
         })
 
@@ -102,13 +115,23 @@ export function QuantumLoader({onLoadComplete}: QuantumLoaderProps) {
     return (
         <div
             ref={containerRef}
-            className='fixed inset-0 bg-black z-[200] flex items-center justify-center'
+            className='fixed inset-0 z-[200] flex items-center justify-center'
             role='progressbar'
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={progress}
         >
-            <div className='container mx-auto px-16'>
+            {/* Background with clip-path animation */}
+            <div
+                ref={backgroundRef}
+                className="fixed inset-0 bg-black"
+                style={{
+                    clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+                    transition: "clip-path 2.4s cubic-bezier(0.645, 0.045, 0.355, 1.000)",
+                }}
+            />
+
+            <div className='container z-50 mx-auto px-16'>
                 <div className='max-w-4xl mx-auto space-y-16'>
                     {/* Header */}
                     <div className='border-b border-white/10 pb-6'>
@@ -154,7 +177,7 @@ export function QuantumLoader({onLoadComplete}: QuantumLoaderProps) {
                             <div className='h-[1px] w-full bg-white/5 overflow-hidden'>
                                 <div
                                     className='h-full bg-white/40 transition-all duration-500 ease-out'
-                                    style={{width: `${progress}%`}}
+                                    style={{ width: `${progress}%` }}
                                 />
                             </div>
                             <div className='flex justify-between items-center'>
