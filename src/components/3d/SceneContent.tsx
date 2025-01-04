@@ -122,69 +122,62 @@ export function SceneContent() {
             <AdaptiveEvents />
             <SpaceBackground />
 
+            {/* Enhanced lighting setup */}
+            <ambientLight intensity={0.6} color="#b0c4de" />
 
-            {/* Optimized lighting setup */}
-            <ambientLight intensity={0.1} />
-
-            {/* Main key light - positioned to avoid direct planet reflection */}
+            {/* Primary key light - dramatic top-down illumination */}
             <directionalLight
-                position={[15, 12, 8]}
-                intensity={0.2}
-                color='#ffffff'
+                position={[10, 15, 8]}
+                intensity={1.2}
+                color='#faf4e8'
                 castShadow
                 shadow-bias={-0.0001}
                 shadow-mapSize={[2048, 2048]}
-                shadow-camera-far={20}
+                shadow-camera-far={50}
                 shadow-camera-near={0.1}
+                shadow-camera-left={-10}
+                shadow-camera-right={10}
+                shadow-camera-top={10}
+                shadow-camera-bottom={-10}
             />
 
-            {/* Soft fill light from opposite side */}
+            {/* Cool fill light for depth */}
             <directionalLight
-                position={[-5, 8, -8]}
-                intensity={0.1}
-                color='#b1e1ff'
+                position={[-8, 5, -8]}
+                intensity={0.7}
+                color='#a6d1ff'
             />
 
-            {/* Subtle rim light */}
+            {/* Warm rim light for definition */}
             <directionalLight
-                position={[0, -8, -12]}
-                intensity={0.2}
-                color='#4499ff'
+                position={[0, -5, -15]}
+                intensity={0.8}
+                color='#ffd4a6'
             />
 
-            {/* Top down atmosphere light */}
+            {/* Atmospheric top light */}
             <directionalLight
-                position={[0, 15, 0]}
-                intensity={0.1}
+                position={[0, 20, 0]}
+                intensity={0.3}
                 color='#ffffff'
             />
 
+            {/* Enhanced contact shadows */}
             <ContactShadows
                 position={[0, -0.1, 0]}
-                opacity={0.4}
+                opacity={0.6}
                 scale={40}
-                // blur={0.1}
-                // far={1}
-                resolution={256}
+                blur={2.5}
+                far={4}
+                resolution={512}
                 color='#000000'
             />
+
             <QuantumGroup />
             <BakeShadows />
             <Preload all />
 
-            <EffectComposer multisampling={4}>
-                <Bloom
-                    intensity={0.5}
-                    luminanceThreshold={0.9}
-                    luminanceSmoothing={0.9}
-                    blendFunction={BlendFunction.ADD}
-                    kernelSize={KernelSize.MEDIUM}
-                    levels={1}
-                    mipmapBlur={true}
-                    resolutionScale={0.1}
-                />
 
-            </EffectComposer>
         </>
     )
 }
