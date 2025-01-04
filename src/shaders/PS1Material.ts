@@ -175,11 +175,7 @@ const fragmentShader = `
         // Enhance brightness at the center
         float center = 1.0 - length(vPosition.xy);
         baseColor += highlight * center * 0.2;
-        
-        // Add scroll-based effects
-        float scrollEffect = uScrollProgress * 2.0;
-        baseColor += accent * scrollEffect * 0.3;
-        
+              
         // Final color adjustments
         vec3 finalColor = baseColor;
         finalColor *= 1.0 + fresnel * 0.5;  // Enhance edges

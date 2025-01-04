@@ -88,12 +88,9 @@ const QuantumPage = ({ isLoading }: QuantumPageProps) => {
 
         // Start animations after a short delay
         const startAnimations = () => {
-            console.log("Starting animations")
             // Create main timeline
             const tl = gsap.timeline({
                 defaults: { ease: "power3.out" },
-                onStart: () => console.log("Timeline started"),
-                onComplete: () => console.log("Timeline completed"),
             })
 
             // Set parent container to visible first
@@ -115,7 +112,7 @@ const QuantumPage = ({ isLoading }: QuantumPageProps) => {
             // Set initial states
             gsap.set([heroTextRef.current, statusBadgeRef.current], {
                 autoAlpha: 0,
-                clearProps: "all", // Clear any previous GSAP transforms
+                clearProps: "all",
             })
             gsap.set([initiateBtnRef.current, learnMoreBtnRef.current], {
                 opacity: 0,
@@ -138,10 +135,6 @@ const QuantumPage = ({ isLoading }: QuantumPageProps) => {
                         opacity: 1,
                         duration: 0.8,
                         ease: "power2.out",
-                        onStart: () =>
-                            console.log("Status badge animation started"),
-                        onComplete: () =>
-                            console.log("Status badge animation completed"),
                     }
                 )
                 // Then animate in the title
@@ -180,7 +173,7 @@ const QuantumPage = ({ isLoading }: QuantumPageProps) => {
         }
 
         // Add a small delay before starting animations
-        const timer = setTimeout(startAnimations, 100)
+        const timer = setTimeout(startAnimations, 50)
         return () => clearTimeout(timer)
     }, [isSceneReady, isLoading])
 
@@ -245,7 +238,7 @@ const QuantumPage = ({ isLoading }: QuantumPageProps) => {
                         scrollTrigger: {
                             trigger: panel,
                             containerAnimation: horizontalScroll,
-                            start: "left left",
+                            start: "left center",
                             end: "right center",
                             toggleActions: "play none none none",
                         },
@@ -435,7 +428,7 @@ const QuantumPage = ({ isLoading }: QuantumPageProps) => {
                     {dimensions.width > 0 && (
                         <Canvas
                             shadows
-                            camera={{ position: [0, 1, 44], fov: 35 }}
+                            camera={{ position: [0, 1, 2], fov: 35 }}
                             onCreated={(state) => {
                                 console.log("Canvas created", state)
                                 handleSceneReady()

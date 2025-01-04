@@ -68,13 +68,13 @@ export function SceneContent() {
         // Use temp vectors to avoid garbage collection
         const targetPosition = _tempVector.set(
             radius * Math.sin(rotationAngle),
-            THREE.MathUtils.lerp(5, 1, scrollProgress),
+            THREE.MathUtils.lerp(4, 1, scrollProgress),
             radius * Math.cos(rotationAngle)
         )
 
         // Calculate positions for both states using pooled vectors
         const horizontalPosition = _tempVector2.copy(targetPosition)
-        const normalPosition = _tempVector3.set(0, 2, 6)
+        const normalPosition = _tempVector3.set(0, 1, 6)
         const finalPosition = _tempVector4.lerpVectors(
             normalPosition,
             horizontalPosition,
@@ -102,7 +102,7 @@ export function SceneContent() {
         // Optimize render calls
         gl.setPixelRatio(Math.min(window.devicePixelRatio, 1))
         gl.toneMapping = THREE.ACESFilmicToneMapping
-        gl.toneMappingExposure = 0.8
+        gl.toneMappingExposure = 1
 
         // Enable depth test and proper depth buffer clearing
         const glContext = gl.getContext()
@@ -119,16 +119,28 @@ export function SceneContent() {
 
     return (
         <>
-            <AdaptiveEvents />
             <SpaceBackground />
 
             {/* Enhanced lighting setup */}
-            <ambientLight intensity={0.6} color="#b0c4de" />
+            <ambientLight intensity={1} color="#b0c4de" />
+
+            {/* Center blue glow light */}
+            <spotLight
+                position={[0, -1, 0]}
+                angle={0.8}
+                penumbra={1}
+                intensity={2}
+                color="#b6b6ff"
+                distance={40}
+                castShadow
+                shadow-bias={-0.0001}
+                shadow-mapSize={[512, 512]}
+            />
 
             {/* Primary key light - dramatic top-down illumination */}
             <directionalLight
-                position={[10, 15, 8]}
-                intensity={1.2}
+                position={[10, 1, 8]}
+                intensity={2}
                 color='#faf4e8'
                 castShadow
                 shadow-bias={-0.0001}

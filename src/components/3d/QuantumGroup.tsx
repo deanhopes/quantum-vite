@@ -53,7 +53,7 @@ function Model({ canRef }: ModelProps) {
             object={scene}
             ref={canRef}
             scale={[4, 4, 4]}
-            position={[0, 0, 1]}
+            position={[0, -0.4, 1]}
             rotation={[0, Math.PI * 3, 0]}
         />
     )
@@ -464,7 +464,7 @@ export function QuantumGroup() {
         }
 
         // Smoother position clamping
-        const maxDelta = 0.2 // Increased for more dynamic movement
+        const maxDelta = 0.1 // Increased for more dynamic movement
         const positionDelta = canRef.current.position
             .clone()
             .sub(prevState.current.position)
@@ -481,7 +481,7 @@ export function QuantumGroup() {
     return (
         <group
             ref={groupRef}
-            position={[0, -1, 0]}
+            position={[0, -4, 0]}
         >
             <Float
                 speed={1.5}
@@ -494,7 +494,7 @@ export function QuantumGroup() {
 
             <group
                 ref={sphereRef}
-                position={[0, sphereAnimation.startY, 0]}
+                position={[0, 1, 0]}
                 visible={sphereVisible}
             >
                 {/* Enhanced atmospheric sphere */}
