@@ -213,4 +213,3 @@ export class PS1Material extends THREE.ShaderMaterial {
   }
 }
 export type PS1MaterialType = PS1Material;
-

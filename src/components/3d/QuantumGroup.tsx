@@ -1,5 +1,5 @@
-import React, {useRef, useState, useMemo} from "react"
-import {useFrame, extend} from "@react-three/fiber"
+import React, { useRef, useState, useMemo } from "react"
+import { useFrame, extend } from "@react-three/fiber"
 import {
     Float,
     SpotLight,
@@ -7,14 +7,14 @@ import {
     MeshTransmissionMaterial,
 } from "@react-three/drei"
 import * as THREE from "three"
-import {useControls} from "leva"
-import {useScrollContext} from "../types/ScrollContext"
-import {PS1Material, PS1MaterialType} from "../../shaders/PS1Material"
-import {lerpV3, slerpQ} from "../../utils/animations"
+import { useControls } from "leva"
+import { useScrollContext } from "../types/ScrollContext"
+import { PS1Material, PS1MaterialType } from "../../shaders/PS1Material"
+import { lerpV3, slerpQ } from "../../utils/animations"
 import gsap from "gsap"
 
 // Extend Three.js with our custom material
-extend({PS1Material})
+extend({ PS1Material })
 
 // Add proper type declarations
 declare global {
@@ -29,8 +29,8 @@ interface ModelProps {
     canRef: React.RefObject<THREE.Group>
 }
 
-function Model({canRef}: ModelProps) {
-    const {scene} = useGLTF("/src/assets/can.glb")
+function Model({ canRef }: ModelProps) {
+    const { scene } = useGLTF("/src/assets/can.glb")
 
     React.useEffect(() => {
         if (scene) {
@@ -63,7 +63,7 @@ export function QuantumGroup() {
     const groupRef = useRef<THREE.Group>(null)
     const canRef = useRef<THREE.Group>(null)
     const [isReady, setIsReady] = useState(false)
-    const {scrollProgress, isHorizontalSection} = useScrollContext()
+    const { scrollProgress, isHorizontalSection } = useScrollContext()
     const materialRef = useRef<PS1MaterialType>(null)
     const sphereRef = useRef<THREE.Group>(null)
     const [sphereVisible, setSphereVisible] = useState(false)
@@ -166,7 +166,7 @@ export function QuantumGroup() {
             label: "Light Transition Speed",
         },
         atmosphereIntensity: {
-            value: 1.2,
+            value: 0.8,
             min: 0,
             max: 3,
             step: 0.1,
@@ -195,28 +195,24 @@ export function QuantumGroup() {
         []
     )
 
-    // Debug mounting
-    React.useEffect(() => {
-        console.log("QuantumGroup mounted")
-        return () => console.log("QuantumGroup unmounted")
-    }, [])
+
 
     // Enhanced animation timeline
     React.useEffect(() => {
         if (!canRef.current || !groupRef.current) return
 
         const tl = gsap.timeline({
-            defaults: {ease: "power3.inOut"},
+            defaults: { ease: "power3.inOut" },
         })
 
         // More sophisticated entrance animation
         tl.fromTo(
             groupRef.current.position,
-            {y: -4, x: -2},
-            {y: 0, x: 0, duration: 2, ease: "elastic.out(1, 0.75)"}
+            { y: -4, x: -2 },
+            { y: 0, x: 0, duration: 2, ease: "elastic.out(1, 0.75)" }
         ).fromTo(
             canRef.current.scale,
-            {x: 0, y: 0, z: 0},
+            { x: 0, y: 0, z: 0 },
             {
                 x: 1,
                 y: 1,
@@ -236,14 +232,7 @@ export function QuantumGroup() {
         }
     }, [])
 
-    // Debug refs
-    React.useEffect(() => {
-        console.log("Refs status:", {
-            groupRef: !!groupRef.current,
-            canRef: !!canRef.current,
-            isReady,
-        })
-    }, [isReady])
+
 
     // Add state for transition targets
     const [transitionState] = useState({
@@ -394,7 +383,7 @@ export function QuantumGroup() {
             const targetEuler = new THREE.Euler(
                 Math.sin(time) * 0.2 + section2Progress * Math.PI * 0.2,
                 THREE.MathUtils.lerp(0, Math.PI * 12, section1Progress) +
-                    Math.sin(time * 0.5) * 0.3,
+                Math.sin(time * 0.5) * 0.3,
                 Math.sin(time * 0.7) * 0.15 * (1 - section3Progress)
             )
             transitionState.targetQuaternion.setFromEuler(targetEuler)
@@ -533,7 +522,7 @@ export function QuantumGroup() {
             <ambientLight intensity={values.ambientIntensity * 0.1} />
 
             {/* Dynamic lighting system */}
-            {useFrame(({clock}) => {
+            {useFrame(({ clock }) => {
                 const time = clock.elapsedTime
                 return (
                     <>
@@ -543,12 +532,12 @@ export function QuantumGroup() {
                             angle={0.3}
                             penumbra={0.9}
                             intensity={
-                                3.5 *
+                                2.5 *
                                 (1 +
                                     Math.sin(
                                         time * values.lightTransitionSpeed
                                     ) *
-                                        0.2)
+                                    0.2)
                             }
                             distance={8}
                             castShadow
@@ -563,12 +552,12 @@ export function QuantumGroup() {
                             angle={0.4}
                             penumbra={1}
                             intensity={
-                                2 *
+                                1.5 *
                                 (1 +
                                     Math.sin(
                                         time * values.lightTransitionSpeed * 0.7
                                     ) *
-                                        0.15)
+                                    0.15)
                             }
                             distance={10}
                             color='#4499ff'
@@ -580,12 +569,12 @@ export function QuantumGroup() {
                             angle={0.3}
                             penumbra={0.8}
                             intensity={
-                                1.5 *
+                                1.2 *
                                 (1 +
                                     Math.sin(
                                         time * values.lightTransitionSpeed * 1.2
                                     ) *
-                                        0.1)
+                                    0.1)
                             }
                             distance={8}
                             color='#ffffff'
@@ -597,12 +586,12 @@ export function QuantumGroup() {
                             angle={0.8}
                             penumbra={1}
                             intensity={
-                                0.5 *
+                                0.3 *
                                 (1 +
                                     Math.sin(
                                         time * values.lightTransitionSpeed * 0.5
                                     ) *
-                                        0.2)
+                                    0.2)
                             }
                             distance={5}
                             color='#4466ff'

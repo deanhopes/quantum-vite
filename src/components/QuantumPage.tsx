@@ -1,13 +1,13 @@
-import {useRef, useEffect, useState} from "react"
-import {Canvas} from "@react-three/fiber"
-import {Suspense} from "react"
+import { useRef, useEffect, useState } from "react"
+import { Canvas } from "@react-three/fiber"
+import { Suspense } from "react"
 import gsap from "gsap"
-import {ScrollTrigger} from "gsap/ScrollTrigger"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
 import SplitType from "split-type"
-import {ScrollContext, ScrollContextType} from "./types/ScrollContext"
-import {SceneContent} from "./3d/SceneContent"
-import {InteractiveGrid} from "./ui/InteractiveGrid"
-import {MagneticButton} from "./MagneticButton"
+import { ScrollContext, ScrollContextType } from "./types/ScrollContext"
+import { SceneContent } from "./3d/SceneContent"
+import { InteractiveGrid } from "./ui/InteractiveGrid"
+import { MagneticButton } from "./MagneticButton"
 import StatsTicker from "./ui/StatsTicker"
 import Footer from "./ui/Footer"
 import Testimonials from "./ui/Testimonials"
@@ -19,7 +19,7 @@ interface QuantumPageProps {
     isLoading: boolean
 }
 
-const QuantumPage = ({isLoading}: QuantumPageProps) => {
+const QuantumPage = ({ isLoading }: QuantumPageProps) => {
     const containerRef = useRef<HTMLDivElement>(null)
     const canvasContainerRef = useRef<HTMLDivElement>(null)
     const heroTextRef = useRef<HTMLHeadingElement>(null)
@@ -27,7 +27,7 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
     const learnMoreBtnRef = useRef<HTMLDivElement>(null)
     const statsContainerRef = useRef<HTMLDivElement>(null)
     const statusBadgeRef = useRef<HTMLDivElement>(null)
-    const [dimensions, setDimensions] = useState({width: 0, height: 0})
+    const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
     const [scrollState, setScrollState] = useState<ScrollContextType>({
         scrollProgress: 0,
         isHorizontalSection: false,
@@ -67,7 +67,7 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
 
         // Set initial opacity of parent container
         if (containerRef.current) {
-            gsap.set(containerRef.current, {autoAlpha: 0})
+            gsap.set(containerRef.current, { autoAlpha: 0 })
         }
 
         return () => {
@@ -77,7 +77,7 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
 
     // Handle initial animations
     useEffect(() => {
-        console.log("Animation useEffect triggered:", {isSceneReady, isLoading})
+        console.log("Animation useEffect triggered:", { isSceneReady, isLoading })
         if (!isSceneReady || isLoading) {
             console.log("Animation conditions not met:", {
                 isSceneReady,
@@ -91,7 +91,7 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
             console.log("Starting animations")
             // Create main timeline
             const tl = gsap.timeline({
-                defaults: {ease: "power3.out"},
+                defaults: { ease: "power3.out" },
                 onStart: () => console.log("Timeline started"),
                 onComplete: () => console.log("Timeline completed"),
             })
@@ -157,7 +157,7 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
                         duration: 1,
                         stagger: 0.02,
                         onStart: function () {
-                            gsap.set(heroTextRef.current, {autoAlpha: 1})
+                            gsap.set(heroTextRef.current, { autoAlpha: 1 })
                         },
                     },
                     "-=0.4" // Overlap with previous animation
@@ -245,7 +245,7 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
                         scrollTrigger: {
                             trigger: panel,
                             containerAnimation: horizontalScroll,
-                            start: "left center",
+                            start: "left left",
                             end: "right center",
                             toggleActions: "play none none none",
                         },
@@ -315,7 +315,7 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
             splitInstances.push(instance)
 
             // Create hover animation timeline
-            const tl = gsap.timeline({paused: true})
+            const tl = gsap.timeline({ paused: true })
             const chars = button.querySelectorAll(".char")
 
             // Reset initial state
@@ -353,7 +353,7 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
             })
 
             // Subtle quantum flicker effect
-            const glitchTl = gsap.timeline({paused: true, repeat: -1})
+            const glitchTl = gsap.timeline({ paused: true, repeat: -1 })
             glitchTl.to(chars, {
                 opacity: "random(0.85, 1)",
                 y: "random(-1, 1)",
@@ -435,7 +435,7 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
                     {dimensions.width > 0 && (
                         <Canvas
                             shadows
-                            camera={{position: [0, 1, 44], fov: 35}}
+                            camera={{ position: [0, 1, 44], fov: 35 }}
                             onCreated={(state) => {
                                 console.log("Canvas created", state)
                                 handleSceneReady()
@@ -499,11 +499,11 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
                                     </div>
 
                                     {/* Main Content */}
-                                    <div className='col-span-12 text-center '>
+                                    <div className='col-span-12 '>
                                         {/* Status Badge */}
                                         <div
                                             ref={statusBadgeRef}
-                                            className='status-badge inline-flex items-center gap-4 px-6 py-3 rounded-full bg-white/2 border border-white/10 backdrop-blur-[8px] relative z-50'
+                                            className='status-badge mb-8 inline-flex items-center gap-4 px-6 py-3 rounded-full bg-white/2 border border-white/10 backdrop-blur-[8px] relative z-50'
                                         >
                                             <div className='w-1 h-1 bg-green-500/80 rounded-full animate-pulse'></div>
                                             <span className='font-input text-[10px] text-white/80'>
@@ -515,7 +515,7 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
                                         {/* Main Title */}
                                         <h1
                                             ref={heroTextRef}
-                                            className='font-[PPEditorialOld] text-white/95 text-[6vw] leading-[1.05] tracking-[-0.03em] will-change-transform max-w-[80%] mx-auto'
+                                            className='font-[PPEditorialOld] text-white/95 text-[6vw] leading-[1.05] tracking-[-0.03em] will-change-transform  mx-auto'
                                         >
                                             One sip to access
                                             <br />
@@ -527,7 +527,7 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
                                         </h1>
 
                                         {/* CTA Buttons */}
-                                        <div className='flex gap-8 justify-center mt-8 '>
+                                        <div className='flex gap-8 mt-8 '>
                                             <div ref={initiateBtnRef}>
                                                 <MagneticButton
                                                     className='cta-button hover-highlight group relative px-8 py-4'
@@ -684,7 +684,7 @@ const QuantumPage = ({isLoading}: QuantumPageProps) => {
                                                 <div className='border border-white/[0.04] bg-white/[0.01] p-8'>
                                                     <p
                                                         className='font-sans font-light text-white'
-                                                        style={{opacity: 0.6}}
+                                                        style={{ opacity: 0.6 }}
                                                     >
                                                         Our quantum-infused
                                                         beverage opens doorways
