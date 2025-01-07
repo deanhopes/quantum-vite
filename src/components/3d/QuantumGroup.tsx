@@ -180,7 +180,7 @@ export function QuantumGroup() {
     const materialConfigs = useMemo(
         () => ({
             transmission: {
-                samples: 16,
+                samples: 8,
                 transmission: 1,
                 thickness: 0.2,
                 roughness: 0.9,
