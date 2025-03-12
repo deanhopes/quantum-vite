@@ -475,7 +475,7 @@ const QuantumPage = ({ isLoading }: QuantumPageProps) => {
                                         {/* Center Logo */}
                                         <div className='absolute left-1/2 mt-[3vh] -translate-x-1/2'>
                                             <img
-                                                src='/src/assets/ctrlz-logo.svg'
+                                                src='/ctrlz-logo.svg'
                                                 alt='CTRL-Z'
                                                 className='w-24 opacity-80'
                                             />

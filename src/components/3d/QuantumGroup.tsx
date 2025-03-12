@@ -30,7 +30,7 @@ interface ModelProps {
 }
 
 function Model({canRef}: ModelProps) {
-    const {scene} = useGLTF("/src/assets/can.glb")
+    const {scene} = useGLTF("/can.glb")
 
     React.useEffect(() => {
         if (scene) {
@@ -517,4 +517,4 @@ export function QuantumGroup() {
 }
 
 // Preload the model
-useGLTF.preload("/src/assets/can.glb")
+useGLTF.preload("/can.glb")

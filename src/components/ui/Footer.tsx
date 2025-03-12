@@ -8,7 +8,7 @@ const Footer = () => {
                     {/* Logo Column */}
                     <div className='col-span-3 space-y-8'>
                         <img
-                            src='/src/assets/ctrlz-logo.svg'
+                            src='/ctrlz-logo.svg'
                             alt='CTRL-Z'
                             className='w-32 opacity-80'
                         />
